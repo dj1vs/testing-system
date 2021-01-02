@@ -117,40 +117,59 @@ void MyClient::solveMsg(QString msg)
         qDebug() << msg;
         return;
     }
-    else
+    QString cmd = cutArg(msg, "cmd");
+    if(cmd == "authorize")
     {
-        if(cutArg(msg, "cmd") == "authorize")
+        if(cutArg(msg, "status") == "0")
         {
-            if(cutArg(msg, "status") == "0")
-            {
-                QString role = cutArg(msg, "role");
-                qDebug() << "Succesfuly logged in!";
-                qDebug() << "Role: " + role;
-                hideAuthorizationWindow();
-                if(role == "admin+")
-                    setAdminPlusWindow();
-            }
-            else
-               showError("Invalid login/password :(");
+            QString role = cutArg(msg, "role");
+            qDebug() << "Succesfuly logged in!";
+            qDebug() << "Role: " + role;
+            hideAuthorizationWindow();
+            if(role == "admin+")
+                setAdminPlusWindow();
         }
-        else if(cutArg(msg, "cmd") == "add group")
+        else
+           showError("Invalid login/password :(");
+    }
+    else if(cmd == "add group")
+    {
+        int r = cutArg(msg, "status").toInt();
+        switch(r)
         {
-            int r = cutArg(msg, "status").toInt();
-            switch(r)
-            {
-                case 0:
-                    qDebug() << "Group added succesfully";
-                    addGroupTeacherName->setText("");
-                    addGroupTeacherSurname->setText("");
-                    addGroupTitle->setText("");
-                break;
-                case 1:
-                    qDebug() << "No such  teacher";
-                break;
-                case 2:
-                    qDebug() << "Введённые имя и фамилия не принадлежат учителю";
-                break;
+            case 0:
+                qDebug() << "Group added succesfully";
+                addGroupTeacherName->setText("");
+                addGroupTeacherSurname->setText("");
+                addGroupTitle->setText("");
+            break;
+            case 1:
+                showError("No such  teacher");
+            break;
+            case 2:
+                showError("Введённые имя и фамилия не принадлежат учителю");
+            break;
             }
+    }
+    else if(cmd == "add to group")
+    {
+        int r = cutArg(msg, "status").toInt();
+        switch(r)
+        {
+        case 0:
+            qDebug() << "added to group succesfully";
+            addToGroupName->setText("");
+            addToGroupSurname->setText("");
+            break;
+        case 1:
+            showError("Cant find group with entered name");
+            break;
+        case 2:
+            showError("Cant find student with entered name");
+            break;
+        case 3:
+            showError("Already added");
+            break;
         }
     }
 }
@@ -259,12 +278,7 @@ void MyClient::sendGroupToSystem()
     QString teacherName = addGroupTeacherName->text();
     QString teacherSurname = addGroupTeacherSurname->text();
     QString groupTitle = addGroupTitle->text();
-    if(teacherName == "" || teacherSurname == "")
-    {
-        showError("Enter full teachers name");
-        return;
-    }
-    else if(groupTitle == "")
+    if(groupTitle == "")
     {
         showError("Group title is empty");
         return;

@@ -140,12 +140,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         else
         {
-            if(query.size() == 0)
-            {
-                sendToClient(pSocket, "{cmd='add group';status='1';}");
-                return;
-            }
-            else
+            if(query.size())
             {
                 while(query.next())
                 {
@@ -163,14 +158,26 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
                         teacherId = id;
                 }
             }
-            query.prepare("INSERT INTO groups (teacherid, name) "
-                           "VALUES (:teacherid, :name)");
-            query.bindValue(":teacherid", teacherId);
-            query.bindValue(":name", groupName);
+        }
+            if(teacherId)
+            {
+                query.prepare("INSERT INTO groups (teacherid, name) "
+                               "VALUES (:teacherid, :name)");
+                query.bindValue(":teacherid", teacherId);
+                query.bindValue(":name", groupName);
+            }
+            else
+            {
+                query.prepare("INSERT INTO groups (name) "
+                               "VALUES (:name)");
+                query.bindValue(":name", groupName);
+            }
             if(query.exec())
                 sendToClient(pSocket,  "{cmd='add group';status='0';}");
-
-        }
+            else
+                qDebug() << "Can not run database query :("
+                << query.lastError().databaseText()
+                << query.lastError().driverText();
     }
     else if (cmd == "add to group")
     {
@@ -208,14 +215,12 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             if(!query.size())
             {
                 sendToClient(pSocket, "{cmd='add to group';status='2';}");
-                qDebug() << ":(";
                 return;
             }
             else
                 while(query.next())
                     userId = query.record().field(0).value().toInt();
         }
-        qDebug() << userId;
         sqlRequest = "SELECT group_by_user.userId FROM group_by_user";
         sqlRequest += " INNER JOIN users ON users.id = group_by_user.userId";
         sqlRequest += " INNER JOIN groups ON groups.id = group_by_user.groupId";
@@ -236,10 +241,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         query.bindValue(":userId", userId);
         query.bindValue(":groupId", groupId);
         if(query.exec())
-        {
             sendToClient(pSocket,  "{cmd='add to group';status='0';}");
-            qDebug() << "ok";
-        }
         else
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
