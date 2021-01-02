@@ -203,6 +203,92 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
+    }
+    else if(cmd == "appoint")
+    {
+        QString teacherName = cutArg(msg, "teachername");
+        QString teacherSurname = cutArg(msg, "teachersurname");
+        QString groupName = cutArg(msg, "groupname");
+        int teacherId = 0;
+
+        QString sqlRequest = "SELECT id FROM users WHERE ";
+        sqlRequest += "role = 'teacher' AND name = '" + teacherName;
+        sqlRequest += "' AND surname = '" + teacherSurname + "';";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(sqlRequest))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if(!query.size())
+        {
+            sendToClient(pSocket, "{cmd='appoint';status='1';}");
+            return;
+        }
+        else
+            while(query.next())
+                teacherId = query.record().field(0).value().toInt();
+        sqlRequest = "SELECT id FROM groups WHERE name = '" + groupName + "';";
+        if(!query.exec(sqlRequest))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if(!query.size())
+        {
+            sendToClient(pSocket, "{cmd='appoint';status='2';}");
+            return;
+        }
+
+        query.prepare("UPDATE groups SET teacherid = (:teacherid) "
+                        "WHERE name = '" + groupName + "';");
+        query.bindValue(":teacherid", teacherId);
+        if(query.exec())
+            qDebug() << "success";
+        else
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+    }
+    else if(cmd == "add user")
+    {
+        QString name = cutArg(msg, "name");
+        QString surname = cutArg(msg, "surname");
+        QString login = cutArg(msg, "login");
+        QString pass = cutArg(msg, "pass");
+        QString role = cutArg(msg, "role");
+
+        QString sqlRequest = "SELECT id FROM users WHERE ";
+        sqlRequest += "name = '" + name + "' AND ";
+        sqlRequest += "surname = '" + surname + "' AND ";
+        sqlRequest += "login = '" + login + "' AND ";
+        sqlRequest += "password = '" + pass + "' AND ";
+        sqlRequest += "role = '" + role + "';";
+        qDebug() << sqlRequest;
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(sqlRequest))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if (query.size())
+        {
+            sendToClient(pSocket, "{cmd='add user', status='1'");
+            return;
+        }
+        qDebug() << "Hi!";
+        query.prepare("INSERT INTO users (login, password, name, surname, role)"
+                        "VALUES (:login, :password, :name, :surname, :role);");
+        query.bindValue(":login", login);
+        query.bindValue(":password", pass);
+        query.bindValue(":name", name);
+        query.bindValue(":surname", surname);
+        query.bindValue(":role", role);
+
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+            qDebug() << "succes";
+
 
     }
 }

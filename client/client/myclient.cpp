@@ -53,6 +53,7 @@ void MyClient::setAuthorizationWindow()
     QWidget *w = new QWidget();
     w->setLayout(authorizeLayout);
     setCentralWidget(w);
+
     connect(authorize, &QPushButton::clicked, this, [this] () {logInToSystem();});
 }
 
@@ -223,6 +224,8 @@ void MyClient::setAdminPlusWindow()
 
     connect(appointGroup, &QPushButton::clicked, this,
             [this] () {hideAdminPlusWindow(); setAppointGroupWindow();});
+    connect(addUser, &QPushButton::clicked, this,
+            [this] () {hideAdminPlusWindow(); setAddUserWindow();});
 
     adminPlusLayout = new QVBoxLayout();
     adminPlusLayout->addWidget(addStudentsGroup);
@@ -366,6 +369,8 @@ void MyClient::setAppointGroupWindow()
 
     connect(appointGroupGoBack, &QPushButton::clicked, this,
             [this] () {hideAppointGroupWindow(); setAdminPlusWindow();});
+    connect(sendAppointGroup, &QPushButton::clicked, this,
+            [this] () {sendAppointGroupToSystem();});
 
     QFormLayout *f = new QFormLayout();
     f->addRow(appointGroupTeacherNameLabel, appointGroupTeacherName);
@@ -392,6 +397,87 @@ void MyClient::hideAppointGroupWindow()
     appointGroupTitle->hide();
     sendAppointGroup->hide();
     appointGroupGoBack->hide();
+}
+
+void MyClient::setAddUserWindow()
+{
+    addUserLoginLabel = new QLabel("Login:", this);
+    addUserPasswordLabel = new QLabel("Password:", this);
+    addUserNameLabel = new QLabel("Name:", this);
+    addUserSurnameLabel = new QLabel("Surname:", this);
+    addUserRoleLabel = new QLabel("Role:", this);
+
+    addUserBox = new QComboBox(this);
+    addUserBox->addItem("admin+");
+    addUserBox->addItem("admin");
+    addUserBox->addItem("teacher");
+    addUserBox->addItem("student");
+
+    addUserLogin = new QLineEdit(this);
+    addUserPassword = new QLineEdit(this);
+    addUserName = new QLineEdit(this);
+    addUserSurname = new QLineEdit(this);
+    addUserButton = new QPushButton("Add user", this);
+    addUserGoBack = new QPushButton("Go back", this);
+
+    connect(addUserGoBack, &QPushButton::clicked, this,
+            [this] () {hideAddUserWindow(); setAdminPlusWindow(); });
+    connect(addUserButton, &QPushButton::clicked, this,
+            [this] () {sendUserToSystem();});
+
+    addUserLayout = new QFormLayout();
+    addUserLayout->addRow(addUserLoginLabel, addUserLogin);
+    addUserLayout->addRow(addUserPasswordLabel, addUserPassword);
+    addUserLayout->addRow(addUserNameLabel, addUserName);
+    addUserLayout->addRow(addUserSurnameLabel, addUserSurname);
+    addUserLayout->addRow(addUserRoleLabel, addUserBox);
+    addUserLayout->addWidget(addUserButton);
+    addUserLayout->addWidget(addUserGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(addUserLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideAddUserWindow()
+{
+    addUserLoginLabel->hide();
+    addUserPasswordLabel->hide();
+    addUserNameLabel->hide();
+    addUserSurnameLabel->hide();
+    addUserRoleLabel->hide();
+    addUserBox->hide();
+    addUserLogin->hide();
+    addUserPassword->hide();
+    addUserName->hide();
+    addUserSurname->hide();
+    addUserButton->hide();
+    addUserGoBack->hide();
+}
+
+void MyClient::sendAppointGroupToSystem()
+{
+    QString teacherName = appointGroupTeacherName->text();
+    QString teacherSurname = appointGroupTeacherSurname->text();
+    QString groupName = appointGroupTitle->text();
+    QString msg = "{cmd='appoint';";
+    msg +="teachername='" + teacherName + "';";
+    msg += "teachersurname='" + teacherSurname + "';";
+    msg += "groupname='" + groupName + "';}";
+    slotSendToServer(msg);
+}
+
+void MyClient::sendUserToSystem()
+{
+    QString msg = "{cmd='add user';";
+    msg += "login='" + addUserLogin->text() + "';";
+    msg += "pass='" + addUserPassword->text() + "';";
+    msg += "name='" + addUserName->text() + "';";
+    msg += "surname='" + addUserSurname->text() + "';";
+    msg += "role='" + addUserBox->itemText(addUserBox->currentIndex()) + "';";
+    msg += "}";
+    slotSendToServer(msg);
+
 }
 
 

@@ -14,6 +14,7 @@
 #include <QErrorMessage>
 #include <QFormLayout>
 #include <QVBoxLayout>
+#include <QComboBox>
 
 class MyClient : public QMainWindow
 {
@@ -64,6 +65,20 @@ private:
     QPushButton *appointGroupGoBack;
     QVBoxLayout *appointGroupLayout;
 
+    QLabel *addUserLoginLabel;
+    QLabel *addUserPasswordLabel;
+    QLabel *addUserNameLabel;
+    QLabel *addUserSurnameLabel;
+    QLabel *addUserRoleLabel;
+    QComboBox *addUserBox;
+    QLineEdit *addUserLogin;
+    QLineEdit *addUserPassword;
+    QLineEdit *addUserName;
+    QLineEdit *addUserSurname;
+    QPushButton *addUserButton;
+    QPushButton *addUserGoBack;
+    QFormLayout *addUserLayout;
+
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
@@ -85,11 +100,16 @@ private:
     void setAppointGroupWindow();
     void hideAppointGroupWindow();
 
+    void setAddUserWindow();
+    void hideAddUserWindow();
+
     void solveMsg(QString msg);
 
     void logInToSystem ();
     void sendGroupToSystem();
     void sendToGroupToSystem();
+    void sendAppointGroupToSystem();
+    void sendUserToSystem();
 
     void showError(QString err);
     QString cutArg(QString str, QString cmd);
