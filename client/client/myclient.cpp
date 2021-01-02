@@ -171,6 +171,23 @@ void MyClient::solveMsg(QString msg)
             break;
         }
     }
+    else if(cmd == "appoint")
+    {
+        int r = cutArg(msg, "status").toInt();
+        switch(r)
+        {
+        case 0:
+            qDebug() << "successfully appointed";
+            appointGroupTitle->setText("");
+            break;
+        case 1:
+            showError("Введённые имя и фамилия не принадлежат ни одному учителю");
+            break;
+        case 2:
+            showError("No groups with this name");
+            break;
+        }
+    }
 }
 
 void MyClient::logInToSystem()
@@ -477,7 +494,6 @@ void MyClient::sendUserToSystem()
     msg += "role='" + addUserBox->itemText(addUserBox->currentIndex()) + "';";
     msg += "}";
     slotSendToServer(msg);
-
 }
 
 

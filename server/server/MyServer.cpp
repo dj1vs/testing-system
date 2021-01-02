@@ -242,7 +242,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
                         "WHERE name = '" + groupName + "';");
         query.bindValue(":teacherid", teacherId);
         if(query.exec())
-            qDebug() << "success";
+            sendToClient(pSocket, "{cmd='appoint';status='0';}");
         else
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
