@@ -287,7 +287,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().databaseText()
             << query.lastError().driverText();
         else
-            qDebug() << "succes";
+            sendToClient(pSocket, "{cmd='add user', status='0'");
 
 
     }

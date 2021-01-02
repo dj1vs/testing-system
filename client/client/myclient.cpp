@@ -188,6 +188,19 @@ void MyClient::solveMsg(QString msg)
             break;
         }
     }
+    else if (cmd == "add user")
+    {
+        int r = cutArg(msg, "status").toInt();
+        switch(r)
+        {
+        case 0:
+            qDebug() << "User succesfully added";
+            break;
+        case 1:
+            showError("This user already exists");
+            break;
+        }
+    }
 }
 
 void MyClient::logInToSystem()
