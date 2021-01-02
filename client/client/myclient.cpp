@@ -128,13 +128,7 @@ void MyClient::solveMsg(QString msg)
                 qDebug() << "Role: " + role;
                 hideAuthorizationWindow();
                 if(role == "admin+")
-                {
-                    if(!admin_plus)
-                    {
-                        admin_plus = true;
-                        setAdminPlusWindow();
-                    }
-                }
+                    setAdminPlusWindow();
             }
             else
                showError("Invalid login/password :(");
@@ -205,7 +199,9 @@ void MyClient::setAdminPlusWindow()
     appointGroup->show();
     addUser->show();
 
-    connect(addStudentsGroup, &QPushButton::clicked, this,  [this] () {gotoAddGroupWindow();});
+    connect(addStudentsGroup, &QPushButton::clicked, this,
+            [this] () {hideAdminPlusWindow(); setAddGroupWindow();});
+    connect(addStudentsToGroup, &QPushButton::clicked, this, [this] () {hideAdminPlusWindow(); setAddToGroupWindow();});
 
     adminPlusLayout = new QVBoxLayout();
     adminPlusLayout->addWidget(addStudentsGroup);
@@ -218,17 +214,6 @@ void MyClient::setAdminPlusWindow()
     setCentralWidget(w);
 }
 
-void MyClient::showAuthorizationWindow()
-{
-    authorizeLoginLabel->show();
-    authorizePasswordLabel->show();
-    authorizeLogin->show();
-    authorizePassword->show();
-    authorize->show();
-    QWidget *w = new QWidget();
-    w->setLayout(authorizeLayout);
-    setCentralWidget(w);
-}
 
 void MyClient::hideAdminPlusWindow()
 {
@@ -247,8 +232,11 @@ void MyClient::setAddGroupWindow()
     addGroupTeacherSurname = new QLineEdit(this);
     addGroupTitle = new QLineEdit(this);
     sendGroup = new QPushButton("&Add group", this);
+    addGroupGoBack = new QPushButton("&Go back", this);
 
     connect(sendGroup, &QPushButton::clicked, this,  [this] () {sendGroupToSystem();});
+    connect(addGroupGoBack, &QPushButton::clicked, this,
+            [this] () {hideAddGroupWindow(); setAdminPlusWindow();});
 
     QFormLayout *fl = new QFormLayout();
     fl->addRow(addGroupTeacherNameLabel, addGroupTeacherName);
@@ -259,22 +247,11 @@ void MyClient::setAddGroupWindow()
     addGroupLayout = new QVBoxLayout();
     addGroupLayout->addLayout(fl);
     addGroupLayout->addWidget(sendGroup);
+    addGroupLayout->addWidget(addGroupGoBack);
 
     QWidget *w = new QWidget();
     w->setLayout(addGroupLayout);
     setCentralWidget(w);
-}
-
-void MyClient::gotoAddGroupWindow()
-{
-    hideAdminPlusWindow();
-    if(!add_group)
-    {
-        add_group = true;
-        setAddGroupWindow();
-    }
-    else
-        qDebug() << "Welcum back gachi Lord";
 }
 
 void MyClient::sendGroupToSystem()
@@ -284,7 +261,7 @@ void MyClient::sendGroupToSystem()
     QString groupTitle = addGroupTitle->text();
     if(teacherName == "" || teacherSurname == "")
     {
-        showError("Invalid teacher name");
+        showError("Enter full teachers name");
         return;
     }
     else if(groupTitle == "")
@@ -297,4 +274,79 @@ void MyClient::sendGroupToSystem()
     req += "teachersurname='"+teacherSurname+"';";
     req += "groupname='" + groupTitle+"';}";\
     slotSendToServer(req);
+}
+
+void MyClient::hideAddGroupWindow()
+{
+    addGroupTeacherNameLabel->hide();
+    addGroupTeacherSurnameLabel->hide();
+    addGroupTitleLabel->hide();
+    addGroupTeacherName->hide();
+    addGroupTeacherSurname->hide();
+    addGroupTitle->hide();
+    sendGroup->hide();
+    addGroupGoBack->hide();
+}
+
+void MyClient::setAddToGroupWindow()
+{
+    addToGroupNameLabel = new QLabel("Name:", this);
+    addToGroupSurnameLabel = new QLabel("Surname:", this);
+    addToGroupTitleLabel = new QLabel("Group title:", this);
+    addToGroupName = new QLineEdit(this);
+    addToGroupSurname = new QLineEdit(this);
+    addToGroupTitle = new QLineEdit(this);
+    sendToGroup = new QPushButton("&Add", this);
+    addToGroupGoBack = new QPushButton("&Go back", this);
+
+    connect(sendToGroup, &QPushButton::clicked, this,
+            [this] () {sendToGroupToSystem();});
+    connect(addToGroupGoBack, &QPushButton::clicked, this,
+            [this] () {hideAddToGroupWindow(); setAdminPlusWindow();});
+
+    QFormLayout *fl = new QFormLayout();
+    fl->addRow(addToGroupNameLabel, addToGroupName);
+    fl->addRow(addToGroupSurnameLabel, addToGroupSurname);
+    fl->addRow(addToGroupTitleLabel, addToGroupTitle);
+
+    addToGroupLayout = new QVBoxLayout();
+    addToGroupLayout->addLayout(fl);
+    addToGroupLayout->addWidget(sendToGroup);
+    addToGroupLayout->addWidget(addToGroupGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(addToGroupLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideAddToGroupWindow()
+{
+    addToGroupNameLabel->hide();
+    addToGroupSurnameLabel->hide();
+    addToGroupTitleLabel->hide();
+    addToGroupName->hide();
+    addToGroupSurname->hide();
+    addToGroupTitle->hide();
+    sendToGroup->hide();
+    addToGroupGoBack->hide();
+}
+
+void MyClient::sendToGroupToSystem()
+{
+    QString name = addToGroupName->text();
+    QString surname = addToGroupSurname->text();
+    QString title = addToGroupTitle->text();
+    if(name == "" || surname == "" || title == "")
+    {
+        showError("Заполните все поля");
+        return;
+    }
+    else
+    {
+        QString msg = "{cmd='add to group';";
+        msg += "studentsname='" + name + "';";
+        msg += "studentssurname='" + surname + "';";
+        msg+= "groupname='" + title + "';}";
+        slotSendToServer(msg);
+    }
 }

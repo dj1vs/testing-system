@@ -45,41 +45,49 @@ private:
     QLineEdit *addGroupTeacherSurname;
     QLineEdit *addGroupTitle;
     QPushButton *sendGroup;
+    QPushButton *addGroupGoBack;
     QVBoxLayout *addGroupLayout;
+
+    QLabel *addToGroupNameLabel;
+    QLabel *addToGroupSurnameLabel;
+    QLabel *addToGroupTitleLabel;
+    QLineEdit *addToGroupName;
+    QLineEdit *addToGroupSurname;
+    QLineEdit *addToGroupTitle;
+    QPushButton *sendToGroup;
+    QPushButton *addToGroupGoBack;
+    QVBoxLayout *addToGroupLayout;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
     const int WINH = 200;
     const int WINW = 400;
-
-    bool admin_plus = 0;
-    bool add_group = 0;
-//    bool add_to_group = 0;
-//    bool appoint_group = 0;
-//    bool add_user = 0;
 private:
     void setAuthorizationWindow();
     void hideAuthorizationWindow();
-    void showAuthorizationWindow();
 
     void setAdminPlusWindow();
     void hideAdminPlusWindow();
 
-    void gotoAddGroupWindow();
     void setAddGroupWindow();
+    void hideAddGroupWindow();
+
+    void setAddToGroupWindow();
+    void hideAddToGroupWindow();
 
     void solveMsg(QString msg);
 
     void logInToSystem ();
     void sendGroupToSystem();
+    void sendToGroupToSystem();
 
     void showError(QString err);
     QString cutArg(QString str, QString cmd);
 private slots:
     void slotReadyRead   (                            );
     void slotError       (QAbstractSocket::SocketError);
-    void slotSendToServer(           QString msg      );
+    void slotSendToServer(QString msg                 );
     void slotConnected   (                            );
 };
 #endif // MYCLIENT_H
