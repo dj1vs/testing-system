@@ -123,61 +123,18 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "add group")
     {
-        QString teacherName = cutArg(msg, "teachername");
-        QString teacherSurname = cutArg(msg, "teachersurname");
         QString groupName = cutArg(msg, "groupname");
-        QString sqlRequest = "SELECT id, role FROM users WHERE name = '";
-        int teacherId = 0;
-
-        sqlRequest += teacherName + "' AND surname = '" + teacherSurname;
-        sqlRequest += "';";
+        QString sqlRequest;
         QSqlQuery query = QSqlQuery(db);
-        if (!query.exec(sqlRequest))
-        {
-            qDebug() << "Can not run database query :(";
-            qDebug() << query.lastError().databaseText();
-            qDebug() << query.lastError().driverText();
-        }
+        query.prepare("INSERT INTO groups (name) "
+                       "VALUES (:name)");
+        query.bindValue(":name", groupName);
+        if(query.exec())
+            sendToClient(pSocket,  "{cmd='add group';status='0';}");
         else
-        {
-            if(query.size())
-            {
-                while(query.next())
-                {
-                    QSqlRecord record = query.record();
-                    QSqlField fieldId = record.field(0);
-                    QSqlField fieldName = record.field(1);
-                    QString var = fieldName.value().toString();
-                    int id = fieldId.value().toInt();
-                    if(var != "teacher")
-                    {
-                        sendToClient(pSocket, "{cmd='add group';status='2';}");
-                        return;
-                    }
-                    else
-                        teacherId = id;
-                }
-            }
-        }
-            if(teacherId)
-            {
-                query.prepare("INSERT INTO groups (teacherid, name) "
-                               "VALUES (:teacherid, :name)");
-                query.bindValue(":teacherid", teacherId);
-                query.bindValue(":name", groupName);
-            }
-            else
-            {
-                query.prepare("INSERT INTO groups (name) "
-                               "VALUES (:name)");
-                query.bindValue(":name", groupName);
-            }
-            if(query.exec())
-                sendToClient(pSocket,  "{cmd='add group';status='0';}");
-            else
-                qDebug() << "Can not run database query :("
-                << query.lastError().databaseText()
-                << query.lastError().driverText();
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
     }
     else if (cmd == "add to group")
     {

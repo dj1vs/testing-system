@@ -38,11 +38,7 @@ private:
     QPushButton *addUser;
     QVBoxLayout *adminPlusLayout;
 
-    QLabel *addGroupTeacherNameLabel;
-    QLabel *addGroupTeacherSurnameLabel;
     QLabel *addGroupTitleLabel;
-    QLineEdit *addGroupTeacherName;
-    QLineEdit *addGroupTeacherSurname;
     QLineEdit *addGroupTitle;
     QPushButton *sendGroup;
     QPushButton *addGroupGoBack;
@@ -57,6 +53,16 @@ private:
     QPushButton *sendToGroup;
     QPushButton *addToGroupGoBack;
     QVBoxLayout *addToGroupLayout;
+
+    QLabel *appointGroupTeacherNameLabel;
+    QLabel *appointGroupTeacherSurnameLabel;
+    QLabel *appointGroupTitleLabel;
+    QLineEdit *appointGroupTeacherName;
+    QLineEdit *appointGroupTeacherSurname;
+    QLineEdit *appointGroupTitle;
+    QPushButton *sendAppointGroup;
+    QPushButton *appointGroupGoBack;
+    QVBoxLayout *appointGroupLayout;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -75,6 +81,9 @@ private:
 
     void setAddToGroupWindow();
     void hideAddToGroupWindow();
+
+    void setAppointGroupWindow();
+    void hideAppointGroupWindow();
 
     void solveMsg(QString msg);
 

@@ -139,8 +139,6 @@ void MyClient::solveMsg(QString msg)
         {
             case 0:
                 qDebug() << "Group added succesfully";
-                addGroupTeacherName->setText("");
-                addGroupTeacherSurname->setText("");
                 addGroupTitle->setText("");
             break;
             case 1:
@@ -220,7 +218,11 @@ void MyClient::setAdminPlusWindow()
 
     connect(addStudentsGroup, &QPushButton::clicked, this,
             [this] () {hideAdminPlusWindow(); setAddGroupWindow();});
-    connect(addStudentsToGroup, &QPushButton::clicked, this, [this] () {hideAdminPlusWindow(); setAddToGroupWindow();});
+    connect(addStudentsToGroup, &QPushButton::clicked, this,
+            [this] () {hideAdminPlusWindow(); setAddToGroupWindow();});
+
+    connect(appointGroup, &QPushButton::clicked, this,
+            [this] () {hideAdminPlusWindow(); setAppointGroupWindow();});
 
     adminPlusLayout = new QVBoxLayout();
     adminPlusLayout->addWidget(addStudentsGroup);
@@ -244,11 +246,7 @@ void MyClient::hideAdminPlusWindow()
 
 void MyClient::setAddGroupWindow()
 {
-    addGroupTeacherNameLabel = new QLabel("Teacher name: ", this);
-    addGroupTeacherSurnameLabel = new QLabel("Teacher surname: ", this);
     addGroupTitleLabel = new QLabel("Group title: ", this);
-    addGroupTeacherName = new QLineEdit(this);
-    addGroupTeacherSurname = new QLineEdit(this);
     addGroupTitle = new QLineEdit(this);
     sendGroup = new QPushButton("&Add group", this);
     addGroupGoBack = new QPushButton("&Go back", this);
@@ -258,8 +256,6 @@ void MyClient::setAddGroupWindow()
             [this] () {hideAddGroupWindow(); setAdminPlusWindow();});
 
     QFormLayout *fl = new QFormLayout();
-    fl->addRow(addGroupTeacherNameLabel, addGroupTeacherName);
-    fl->addRow(addGroupTeacherSurnameLabel, addGroupTeacherSurname);
     fl->addRow(addGroupTitleLabel, addGroupTitle);
 
 
@@ -275,8 +271,6 @@ void MyClient::setAddGroupWindow()
 
 void MyClient::sendGroupToSystem()
 {
-    QString teacherName = addGroupTeacherName->text();
-    QString teacherSurname = addGroupTeacherSurname->text();
     QString groupTitle = addGroupTitle->text();
     if(groupTitle == "")
     {
@@ -284,19 +278,13 @@ void MyClient::sendGroupToSystem()
         return;
     }
     QString req = "{cmd='add group';";
-    req += "teachername='"+teacherName+"';";
-    req += "teachersurname='"+teacherSurname+"';";
     req += "groupname='" + groupTitle+"';}";\
     slotSendToServer(req);
 }
 
 void MyClient::hideAddGroupWindow()
 {
-    addGroupTeacherNameLabel->hide();
-    addGroupTeacherSurnameLabel->hide();
     addGroupTitleLabel->hide();
-    addGroupTeacherName->hide();
-    addGroupTeacherSurname->hide();
     addGroupTitle->hide();
     sendGroup->hide();
     addGroupGoBack->hide();
@@ -364,3 +352,47 @@ void MyClient::sendToGroupToSystem()
         slotSendToServer(msg);
     }
 }
+
+void MyClient::setAppointGroupWindow()
+{
+    appointGroupTeacherNameLabel = new QLabel("Teacher name:", this);
+    appointGroupTeacherSurnameLabel = new QLabel("Teacher surname:", this);
+    appointGroupTitleLabel = new QLabel("Group name:", this);
+    appointGroupTeacherName = new QLineEdit();
+    appointGroupTeacherSurname = new QLineEdit();
+    appointGroupTitle = new QLineEdit();
+    sendAppointGroup = new QPushButton("Appoint group", this);
+    appointGroupGoBack = new QPushButton("Go back", this);
+
+    connect(appointGroupGoBack, &QPushButton::clicked, this,
+            [this] () {hideAppointGroupWindow(); setAdminPlusWindow();});
+
+    QFormLayout *f = new QFormLayout();
+    f->addRow(appointGroupTeacherNameLabel, appointGroupTeacherName);
+    f->addRow(appointGroupTeacherSurnameLabel, appointGroupTeacherSurname);
+    f->addRow(appointGroupTitleLabel, appointGroupTitle);
+
+    appointGroupLayout = new QVBoxLayout();
+    appointGroupLayout->addLayout(f);
+    appointGroupLayout->addWidget(sendAppointGroup);
+    appointGroupLayout->addWidget(appointGroupGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(appointGroupLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideAppointGroupWindow()
+{
+    appointGroupTeacherNameLabel->hide();
+    appointGroupTeacherSurnameLabel->hide();
+    appointGroupTitleLabel->hide();
+    appointGroupTeacherName->hide();
+    appointGroupTeacherSurname->hide();
+    appointGroupTitle->hide();
+    sendAppointGroup->hide();
+    appointGroupGoBack->hide();
+}
+
+
+
