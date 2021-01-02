@@ -79,6 +79,14 @@ private:
     QPushButton *addUserGoBack;
     QFormLayout *addUserLayout;
 
+    QPushButton *adminViewResults;
+    QPushButton *adminViewGroups;
+    QPushButton *adminViewPlannedTest;
+    QPushButton *adminViewGrades;
+    QPushButton *adminViewTasks;
+    QVBoxLayout *adminLayout;
+
+
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
@@ -90,6 +98,10 @@ private:
 
     void setAdminPlusWindow();
     void hideAdminPlusWindow();
+
+    void setAdminWindow();
+    void hideAdminWindow();
+
 
     void setAddGroupWindow();
     void hideAddGroupWindow();

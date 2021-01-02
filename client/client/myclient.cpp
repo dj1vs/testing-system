@@ -129,6 +129,8 @@ void MyClient::solveMsg(QString msg)
             hideAuthorizationWindow();
             if(role == "admin+")
                 setAdminPlusWindow();
+            else if(role == "admin")
+                setAdminWindow();
         }
         else
            showError("Invalid login/password :(");
@@ -509,5 +511,31 @@ void MyClient::sendUserToSystem()
     slotSendToServer(msg);
 }
 
+void MyClient::setAdminWindow()
+{
+    adminViewResults = new QPushButton("View Results", this);
+    adminViewGroups = new QPushButton("View Groups", this);
+    adminViewPlannedTest = new QPushButton("View Planned Tests", this);
+    adminViewGrades = new QPushButton("View Grades", this);
+    adminViewTasks = new QPushButton("View Tasks", this);
 
+    adminLayout = new QVBoxLayout();
+    adminLayout->addWidget(adminViewResults);
+    adminLayout->addWidget(adminViewGroups);
+    adminLayout->addWidget(adminViewPlannedTest);
+    adminLayout->addWidget(adminViewGrades);
+    adminLayout->addWidget(adminViewTasks);
 
+    QWidget *w = new QWidget();
+    w->setLayout(adminLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideAdminWindow()
+{
+    adminViewResults->hide();
+    adminViewGroups->hide();
+    adminViewPlannedTest->hide();
+    adminViewGrades->hide();
+    adminViewTasks->hide();
+}
