@@ -97,6 +97,7 @@ private:
     QTableView *allResultsTable;
     QStandardItemModel *allResultsModel;
     QPushButton *allResultsGoBack;
+    QPushButton *sortAllResults;
     QVBoxLayout *viewAllResultsLayout;
     QList <QList<QString>> allResultsList;
 

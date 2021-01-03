@@ -611,6 +611,7 @@ void MyClient::hideAdminWindow()
 void MyClient::setViewAllResultsWindow()
 {
     allResultsGoBack = new QPushButton("Go Back", this);
+    sortAllResults = new QPushButton("Редактировать параметры сортировки", this);
 
     connect(allResultsGoBack, &QPushButton::clicked, this,
             [this] () {hideViewAllResultsWindow(); setAdminWindow();});
@@ -641,6 +642,7 @@ void MyClient::setViewAllResultsWindow()
 
     viewAllResultsLayout = new QVBoxLayout();
     viewAllResultsLayout->addWidget(allResultsTable);
+    viewAllResultsLayout->addWidget(sortAllResults);
     viewAllResultsLayout->addWidget(allResultsGoBack);
 
     QWidget *w = new QWidget();
