@@ -124,7 +124,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     else if(cmd == "add group")
     {
         QString groupName = cutArg(msg, "groupname");
-        QString sqlRequest;
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO groups (name) "
                        "VALUES (:name)");
@@ -288,8 +287,32 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().driverText();
         else
             sendToClient(pSocket, "{cmd='add user', status='0'");
-
-
+    }
+    else if(cmd == "view all results")
+    {
+        QString req = "SELECT tests.name, tests.date, tests.subject, users.name, users.surname, results.percent ";
+        req += "FROM results INNER JOIN users ON results.studentid = users.id ";
+        req += "INNER JOIN tests ON results.testid = tests.id;";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            if(!query.size())
+                return;
+            QList <QString> params = {"testname", "date", "subject", "studentsname", "studentssurname", "percent"};
+            while(query.next())
+            {
+                QString processMsg = "{cmd='view all results';";
+                for(int i = 0; i < 6; ++i)
+                    processMsg += params[i] + "='" + query.record().field(i).value().toString() + "';";
+                processMsg += '}';
+                sendToClient(pSocket, processMsg);
+            }
+            sendToClient(pSocket, "{cmd='view all results';status='sended';}");
+        }
     }
 }
 

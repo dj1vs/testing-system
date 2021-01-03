@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QTcpSocket>
 #include <QTime>
+#include <QTimer>
 #include <QTcpServer>
 #include <QMessageBox>
 #include <QDebug>
@@ -15,6 +16,12 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QComboBox>
+#include <QListView>
+#include <QSlider>
+#include <QTableView>
+#include <QAbstractTableModel>
+#include <QStandardItemModel>
+#include <QStatusBar>
 
 class MyClient : public QMainWindow
 {
@@ -86,12 +93,17 @@ private:
     QPushButton *adminViewTasks;
     QVBoxLayout *adminLayout;
 
+    QTableView *allResultsTable;
+    QStandardItemModel *allResultsModel;
+    QPushButton *allResultsGoBack;
+    QVBoxLayout *viewAllResultsLayout;
+    QList <QList<QString>> allResultsList;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
-    const int WINH = 200;
-    const int WINW = 400;
+    const int WINH = 350;
+    const int WINW = 700;
 private:
     void setAuthorizationWindow();
     void hideAuthorizationWindow();
@@ -115,6 +127,9 @@ private:
     void setAddUserWindow();
     void hideAddUserWindow();
 
+    //void setViewAllResultsWindow(); - private slot
+    void hideViewAllResultsWindow();
+
     void solveMsg(QString msg);
 
     void logInToSystem ();
@@ -124,11 +139,16 @@ private:
     void sendUserToSystem();
 
     void showError(QString err);
+    void showMsg(QString msg);
     QString cutArg(QString str, QString cmd);
 private slots:
-    void slotReadyRead   (                            );
-    void slotError       (QAbstractSocket::SocketError);
-    void slotSendToServer(QString msg                 );
-    void slotConnected   (                            );
+    void slotReadyRead          (                            );
+    void slotError              (QAbstractSocket::SocketError);
+    void slotSendToServer       (QString msg                 );
+    void slotConnected          (                            );
+
+    void setViewAllResultsWindow(                            );
+signals:
+    void allResultsCollected();
 };
 #endif // MYCLIENT_H

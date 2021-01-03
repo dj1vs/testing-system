@@ -13,7 +13,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
            );
     d = new QErrorMessage(this);
 
-    this->resize(WINW, WINH);
+    this->setMinimumSize(WINW, WINH);
 
     setAuthorizationWindow();
 }
@@ -107,7 +107,7 @@ void MyClient::slotSendToServer(QString msg)
 
 void MyClient::slotConnected()
 {
-    qDebug() << "Received the connected() signal";
+    showMsg("Received the connected() signal");
 }
 
 void MyClient::solveMsg(QString msg)
@@ -124,8 +124,7 @@ void MyClient::solveMsg(QString msg)
         if(cutArg(msg, "status") == "0")
         {
             QString role = cutArg(msg, "role");
-            qDebug() << "Succesfuly logged in!";
-            qDebug() << "Role: " + role;
+            showMsg("Succesfuly logged in!\nRole: " + role);
             hideAuthorizationWindow();
             if(role == "admin+")
                 setAdminPlusWindow();
@@ -141,7 +140,7 @@ void MyClient::solveMsg(QString msg)
         switch(r)
         {
             case 0:
-                qDebug() << "Group added succesfully";
+                showMsg("Group added succesfully");
                 addGroupTitle->setText("");
             break;
             case 1:
@@ -158,7 +157,7 @@ void MyClient::solveMsg(QString msg)
         switch(r)
         {
         case 0:
-            qDebug() << "added to group succesfully";
+            showMsg("added to group succesfully");
             addToGroupName->setText("");
             addToGroupSurname->setText("");
             break;
@@ -179,7 +178,7 @@ void MyClient::solveMsg(QString msg)
         switch(r)
         {
         case 0:
-            qDebug() << "successfully appointed";
+            showMsg("successfully appointed");
             appointGroupTitle->setText("");
             break;
         case 1:
@@ -196,12 +195,24 @@ void MyClient::solveMsg(QString msg)
         switch(r)
         {
         case 0:
-            qDebug() << "User succesfully added";
+            showMsg("User succesfully added");
             break;
         case 1:
             showError("This user already exists");
             break;
         }
+    }
+    else if(cmd == "view all results")
+    {
+        if(cutArg(msg, "status") == "sended")
+        {
+            emit allResultsCollected();
+            return;
+        }
+        QList <QString> buf = {cutArg(msg, "testname"), cutArg(msg, "date"),
+                    cutArg(msg, "subject"),cutArg(msg, "studentsname"),
+                    cutArg(msg, "studentssurname"),cutArg(msg, "percent"),};
+        allResultsList.push_back(buf);
     }
 }
 
@@ -226,6 +237,11 @@ QString MyClient::cutArg(QString str, QString cmd)
 void MyClient::showError(QString err)
 {
     d->showMessage(err);
+}
+
+void MyClient::showMsg(QString msg)
+{
+    this->statusBar()->showMessage(msg);
 }
 
 void MyClient::hideAuthorizationWindow()
@@ -290,8 +306,9 @@ void MyClient::setAddGroupWindow()
     connect(addGroupGoBack, &QPushButton::clicked, this,
             [this] () {hideAddGroupWindow(); setAdminPlusWindow();});
 
-    QFormLayout *fl = new QFormLayout();
-    fl->addRow(addGroupTitleLabel, addGroupTitle);
+    QHBoxLayout *fl = new QHBoxLayout();
+    fl->addWidget(addGroupTitleLabel);
+    fl->addWidget(addGroupTitle);
 
 
     addGroupLayout = new QVBoxLayout();
@@ -519,6 +536,11 @@ void MyClient::setAdminWindow()
     adminViewGrades = new QPushButton("View Grades", this);
     adminViewTasks = new QPushButton("View Tasks", this);
 
+    connect(adminViewResults, &QPushButton::clicked, this,
+            [this] () {hideAdminWindow();
+                       connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
+                       slotSendToServer("{cmd='view all results';}");});
+
     adminLayout = new QVBoxLayout();
     adminLayout->addWidget(adminViewResults);
     adminLayout->addWidget(adminViewGroups);
@@ -538,4 +560,51 @@ void MyClient::hideAdminWindow()
     adminViewPlannedTest->hide();
     adminViewGrades->hide();
     adminViewTasks->hide();
+}
+
+void MyClient::setViewAllResultsWindow()
+{
+    allResultsGoBack = new QPushButton("Go Back", this);
+
+    connect(allResultsGoBack, &QPushButton::clicked, this,
+            [this] () {hideViewAllResultsWindow(); setAdminWindow();});
+
+    allResultsTable = new QTableView();
+    allResultsModel = new QStandardItemModel(allResultsList.size(), 6, this);
+
+    QList <QString> params = {"Test", "Date", "Subject", "Name", "Surname", "Percent"};
+
+    for(int i = 0; i < 6; ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        allResultsModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+
+    for(int row = 0; row < allResultsList.size(); ++row)
+    {
+        for(int col = 0; col < 6; ++col)
+        {
+            QModelIndex index=allResultsModel->index(row,col,QModelIndex());
+            allResultsModel->setData(index, allResultsList[row][col]);
+        }
+    }
+
+    allResultsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    allResultsTable->setModel(allResultsModel);
+
+    viewAllResultsLayout = new QVBoxLayout();
+    viewAllResultsLayout->addWidget(allResultsTable);
+    viewAllResultsLayout->addWidget(allResultsGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(viewAllResultsLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideViewAllResultsWindow()
+{
+    allResultsTable->hide();
+    allResultsGoBack->hide();
+
 }
