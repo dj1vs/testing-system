@@ -334,6 +334,50 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='view all groups';status='sended';}");
         }
     }
+    else if (cmd == "view group teachers")
+    {
+        sendToClient(pSocket, "{cmd='view group teachers';status='started';}");
+        QString req = "SELECT users.name, users.surname FROM groups ";
+        req += "INNER JOIN users ON groups.teacherid = users.id WHERE groups.name = '" + cutArg(msg, "groupname") + "';";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            while(query.next())
+            {
+                QString procMsg = "{cmd='view group teachers';name='" + query.record().field(0).value().toString();
+                procMsg += "';surname='" + query.record().field(1).value().toString() + "';}";
+                sendToClient(pSocket, procMsg);
+            }
+            sendToClient(pSocket, "{cmd='view group teachers';status='sended';}");
+        }
+    }
+    else if (cmd == "view group students")
+    {
+        sendToClient(pSocket, "{cmd='view group students';status='started';}");
+        QString req = "SELECT users.name, users.surname FROM group_by_user ";
+        req += "INNER JOIN users ON group_by_user.userid = users.id ";
+        req += "INNER JOIN groups ON group_by_user.groupid = groups.id ";
+        req += "WHERE groups.name = '" + cutArg(msg, "groupname") + "';";
+        QSqlQuery query = QSqlQuery(db);
+        if (!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            while(query.next())
+            {
+                QString procMsg = "{cmd='view group students';name='" + query.record().field(0).value().toString();
+                procMsg += "';surname='" + query.record().field(1).value().toString() + "';}";
+                sendToClient(pSocket, procMsg);
+            }
+            sendToClient(pSocket, "{cmd='view group students';status='sended';}");
+        }
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)

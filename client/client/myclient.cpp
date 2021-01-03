@@ -233,6 +233,26 @@ void MyClient::solveMsg(QString msg)
         }
         allGroupsList.push_back(cutArg(msg, "name"));
     }
+    else if (cmd == "view group teachers")
+    {
+        QString status = cutArg(msg, "status");
+        if(status == "sended")
+            emit groupTeachersCollected();
+        else if(status == "started")
+            groupTeachers.clear();
+        else
+            groupTeachers.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
+    }
+    else if (cmd == "view group students")
+    {
+        QString status = cutArg(msg, "status");
+        if(status == "sended")
+            emit groupStudentsCollected();
+        else if(status == "started")
+            groupStudents.clear();
+        else
+            groupStudents.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
+    }
 }
 
 void MyClient::logInToSystem()
@@ -563,6 +583,8 @@ void MyClient::setAdminWindow()
             [this] () {hideAdminWindow();
                        connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
                        slotSendToServer("{cmd='view all groups';}");});
+     connect(this, SIGNAL(groupTeachersCollected()), this, SLOT(showGroupTeachers()));
+     connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
 
     adminLayout = new QVBoxLayout();
     adminLayout->addWidget(adminViewResults);
@@ -641,7 +663,7 @@ void MyClient::setViewAllGroupsWindow()
     allGroupsTable = new QTableView();
     allGroupsModel = new QStandardItemModel(allGroupsList.size(), 3, this);
 
-    QList <QString> params = {"Test", "Date", "Subject"};
+    QList <QString> params = {"Name", "Teachers", "Students"};
 
     for(int i = 0; i < 3; ++i)
     {
@@ -652,15 +674,33 @@ void MyClient::setViewAllGroupsWindow()
 
     for(int row = 0; row < allGroupsList.size(); ++row)
     {
-        for(int col = 0; col < 3; ++col)
-        {
-            QModelIndex index=allGroupsModel->index(row,col,QModelIndex());
-            allGroupsModel->setData(index, allGroupsList[row]);
-        }
+        QModelIndex index=allGroupsModel->index(row,0,QModelIndex());
+        allGroupsModel->setData(index, allGroupsList[row]);
     }
 
     allGroupsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     allGroupsTable->setModel(allGroupsModel);
+
+    for(int row = 0; row < allGroupsList.size(); ++row)
+    {
+        QModelIndex index1=allGroupsModel->index(row,1,QModelIndex());
+        QString str = allGroupsModel->index(row,0,QModelIndex()).data().toString();
+        QPushButton *button1 = new QPushButton(this);
+        button1->setAccessibleName(str);
+        connect(button1, &QPushButton::clicked, this,
+                [this, button1] () {askGroupTeachers(button1->accessibleName());});
+
+        allGroupsTable->setIndexWidget(index1, button1);
+
+        QModelIndex index2=allGroupsModel->index(row,2,QModelIndex());
+        QPushButton *button2 = new QPushButton(this);
+        button2->setAccessibleName(str);
+
+        connect(button2, &QPushButton::clicked, this,
+                [this, button2] () {askGroupStudents(button2->accessibleName());});
+
+        allGroupsTable->setIndexWidget(index2, button2);
+    }
 
     viewAllGroupsLayout = new QVBoxLayout();
     viewAllGroupsLayout->addWidget(allGroupsTable);
@@ -675,4 +715,69 @@ void MyClient::hideViewAllGroupsWindow()
 {
     allGroupsTable->hide();
     allGroupsGoBack->hide();
+}
+
+void MyClient::askGroupTeachers(QString groupName)
+{
+    slotSendToServer("{cmd='view group teachers';groupname='" + groupName + "';}");
+}
+void MyClient::askGroupStudents(QString groupName)
+{
+    slotSendToServer("{cmd='view group students';groupname='" + groupName + "';}");
+}
+void MyClient::showGroupTeachers()
+{
+    QTableView *table = new QTableView(this);
+    table->setAttribute( Qt::WA_DeleteOnClose );
+    QStandardItemModel *model = new QStandardItemModel(groupTeachers.size(), 2, this);
+    QList <QString> params = {"Name", "Surname"};
+    for(int i = 0; i < 2; ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    for(int row = 0; row < groupTeachers.size(); ++row)
+    {
+        for(int col = 0; col < 2; ++col)
+        {
+            QModelIndex index=model->index(row,col,QModelIndex());
+            model->setData(index, groupTeachers[row][col]);
+        }
+    }
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setModel(model);
+    QDialog *d = new QDialog(this);
+    QVBoxLayout *v = new QVBoxLayout();
+    v->addWidget(table);
+    d->setLayout(v);
+    d->show();
+}
+void MyClient::showGroupStudents()
+{
+    QTableView *table = new QTableView(this);
+    table->setAttribute( Qt::WA_DeleteOnClose );
+    QStandardItemModel *model = new QStandardItemModel(groupStudents.size(), 2, this);
+    QList <QString> params = {"Name", "Surname"};
+    for(int i = 0; i < 2; ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    for(int row = 0; row < groupStudents.size(); ++row)
+    {
+        for(int col = 0; col < 2; ++col)
+        {
+            QModelIndex index=model->index(row,col,QModelIndex());
+            model->setData(index, groupStudents[row][col]);
+        }
+    }
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setModel(model);
+    QDialog *d = new QDialog(this);
+    QVBoxLayout *v = new QVBoxLayout();
+    v->addWidget(table);
+    d->setLayout(v);
+    d->show();
 }

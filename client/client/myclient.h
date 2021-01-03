@@ -22,6 +22,7 @@
 #include <QAbstractTableModel>
 #include <QStandardItemModel>
 #include <QStatusBar>
+#include <QSignalMapper>
 
 class MyClient : public QMainWindow
 {
@@ -104,8 +105,8 @@ private:
     QPushButton *allGroupsGoBack;
     QVBoxLayout *viewAllGroupsLayout;
     QList <QString> allGroupsList;
-    //QList <QList <QString>> groupStudents;
-   // QList <QList <QString>> groupTeachers;
+    QList <QList<QString>> groupStudents;
+    QList <QList <QString>> groupTeachers;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -157,8 +158,15 @@ private slots:
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();
+
+    void showGroupTeachers();
+    void showGroupStudents();
+    void askGroupTeachers(QString groupName);
+    void askGroupStudents(QString groupName);
 signals:
     void allResultsCollected();
     void allGroupsCollected();
+    void groupTeachersCollected();
+    void groupStudentsCollected();
 };
 #endif // MYCLIENT_H
