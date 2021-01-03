@@ -45,12 +45,17 @@ void MyClient::setAuthorizationWindow()
     authorize = new QPushButton("&Log in", this);
     authorize->setFont(QFont("Arial", 15));
 
-    QFormLayout *fl = new QFormLayout();
-    fl->addRow(authorizeLoginLabel, authorizeLogin);
-    fl->addRow(authorizePasswordLabel, authorizePassword);
+    QHBoxLayout *l1 = new QHBoxLayout();
+    l1->addWidget(authorizeLoginLabel);
+    l1->addWidget(authorizeLogin);
+
+    QHBoxLayout *l2 = new QHBoxLayout();
+    l2->addWidget(authorizePasswordLabel);
+    l2->addWidget(authorizePassword);
 
     authorizeLayout = new QVBoxLayout();
-    authorizeLayout->addLayout(fl);
+    authorizeLayout->addLayout(l1);
+    authorizeLayout->addLayout(l2);
     authorizeLayout->addWidget(authorize);
 
     QWidget *w = new QWidget();
