@@ -15,6 +15,9 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
 
     this->setMinimumSize(WINW, WINH);
 
+    connect(this, SIGNAL(groupTeachersCollected()), this, SLOT(showGroupTeachers()));
+    connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
+
     setAuthorizationWindow();
 }
 
@@ -214,7 +217,7 @@ void MyClient::solveMsg(QString msg)
             allResultsList.clear();
             return;
         }
-        QList <QString> buf = {cutArg(msg, "testname"), cutArg(msg, "date"),
+        QList <QString> buf = {cutArg(msg, "testname"),
                     cutArg(msg, "subject"),cutArg(msg, "studentsname"),
                     cutArg(msg, "studentssurname"),cutArg(msg, "percent"),};
         allResultsList.push_back(buf);
@@ -583,8 +586,6 @@ void MyClient::setAdminWindow()
             [this] () {hideAdminWindow();
                        connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
                        slotSendToServer("{cmd='view all groups';}");});
-     connect(this, SIGNAL(groupTeachersCollected()), this, SLOT(showGroupTeachers()));
-     connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
 
     adminLayout = new QVBoxLayout();
     adminLayout->addWidget(adminViewResults);
@@ -615,11 +616,11 @@ void MyClient::setViewAllResultsWindow()
             [this] () {hideViewAllResultsWindow(); setAdminWindow();});
 
     allResultsTable = new QTableView();
-    allResultsModel = new QStandardItemModel(allResultsList.size(), 6, this);
+    allResultsModel = new QStandardItemModel(allResultsList.size(), 5, this);
 
-    QList <QString> params = {"Test", "Date", "Subject", "Name", "Surname", "Percent"};
+    QList <QString> params = {"Test", "Subject", "Name", "Surname", "Percent"};
 
-    for(int i = 0; i < 6; ++i)
+    for(int i = 0; i < 5; ++i)
     {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
@@ -628,7 +629,7 @@ void MyClient::setViewAllResultsWindow()
 
     for(int row = 0; row < allResultsList.size(); ++row)
     {
-        for(int col = 0; col < 6; ++col)
+        for(int col = 0; col < 5; ++col)
         {
             QModelIndex index=allResultsModel->index(row,col,QModelIndex());
             allResultsModel->setData(index, allResultsList[row][col]);

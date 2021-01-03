@@ -291,7 +291,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     else if(cmd == "view all results")
     {
         sendToClient(pSocket, "{cmd='view all results';status='started';}");
-        QString req = "SELECT tests.name, tests.date, tests.subject, users.name, users.surname, results.percent ";
+        QString req = "SELECT tests.name, tests.subject, users.name, users.surname, results.percent ";
         req += "FROM results INNER JOIN users ON results.studentid = users.id ";
         req += "INNER JOIN tests ON results.testid = tests.id;";
         QSqlQuery query = QSqlQuery(db);
@@ -303,11 +303,11 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         {
             if(!query.size())
                 return;
-            QList <QString> params = {"testname", "date", "subject", "studentsname", "studentssurname", "percent"};
+            QList <QString> params = {"testname", "subject", "studentsname", "studentssurname", "percent"};
             while(query.next())
             {
                 QString processMsg = "{cmd='view all results';";
-                for(int i = 0; i < 6; ++i)
+                for(int i = 0; i < 5; ++i)
                     processMsg += params[i] + "='" + query.record().field(i).value().toString() + "';";
                 processMsg += '}';
                 sendToClient(pSocket, processMsg);
