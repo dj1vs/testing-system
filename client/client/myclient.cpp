@@ -209,10 +209,29 @@ void MyClient::solveMsg(QString msg)
             emit allResultsCollected();
             return;
         }
+        else if(cutArg(msg, "status") == "started")
+        {
+            allResultsList.clear();
+            return;
+        }
         QList <QString> buf = {cutArg(msg, "testname"), cutArg(msg, "date"),
                     cutArg(msg, "subject"),cutArg(msg, "studentsname"),
                     cutArg(msg, "studentssurname"),cutArg(msg, "percent"),};
         allResultsList.push_back(buf);
+    }
+    else if(cmd == "view all groups")
+    {
+        if(cutArg(msg, "status") == "sended")
+        {
+            emit allGroupsCollected();
+            return;
+        }
+        else if(cutArg(msg, "status") == "started")
+        {
+            allGroupsList.clear();
+            return;
+        }
+        allGroupsList.push_back(cutArg(msg, "name"));
     }
 }
 
@@ -540,6 +559,10 @@ void MyClient::setAdminWindow()
             [this] () {hideAdminWindow();
                        connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
                        slotSendToServer("{cmd='view all results';}");});
+    connect(adminViewGroups, &QPushButton::clicked, this,
+            [this] () {hideAdminWindow();
+                       connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
+                       slotSendToServer("{cmd='view all groups';}");});
 
     adminLayout = new QVBoxLayout();
     adminLayout->addWidget(adminViewResults);
@@ -606,5 +629,50 @@ void MyClient::hideViewAllResultsWindow()
 {
     allResultsTable->hide();
     allResultsGoBack->hide();
+}
 
+void MyClient::setViewAllGroupsWindow()
+{
+    allGroupsGoBack = new QPushButton("Go Back", this);
+
+    connect(allGroupsGoBack, &QPushButton::clicked, this,
+            [this] () {hideViewAllGroupsWindow(); setAdminWindow();});
+
+    allGroupsTable = new QTableView();
+    allGroupsModel = new QStandardItemModel(allGroupsList.size(), 3, this);
+
+    QList <QString> params = {"Test", "Date", "Subject"};
+
+    for(int i = 0; i < 3; ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        allGroupsModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+
+    for(int row = 0; row < allGroupsList.size(); ++row)
+    {
+        for(int col = 0; col < 3; ++col)
+        {
+            QModelIndex index=allGroupsModel->index(row,col,QModelIndex());
+            allGroupsModel->setData(index, allGroupsList[row]);
+        }
+    }
+
+    allGroupsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    allGroupsTable->setModel(allGroupsModel);
+
+    viewAllGroupsLayout = new QVBoxLayout();
+    viewAllGroupsLayout->addWidget(allGroupsTable);
+    viewAllGroupsLayout->addWidget(allGroupsGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(viewAllGroupsLayout);
+    setCentralWidget(w);
+}
+
+void MyClient::hideViewAllGroupsWindow()
+{
+    allGroupsTable->hide();
+    allGroupsGoBack->hide();
 }

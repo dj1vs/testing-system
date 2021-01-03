@@ -99,12 +99,29 @@ private:
     QVBoxLayout *viewAllResultsLayout;
     QList <QList<QString>> allResultsList;
 
+    QTableView *allGroupsTable;
+    QStandardItemModel *allGroupsModel;
+    QPushButton *allGroupsGoBack;
+    QVBoxLayout *viewAllGroupsLayout;
+    QList <QString> allGroupsList;
+    //QList <QList <QString>> groupStudents;
+   // QList <QList <QString>> groupTeachers;
+
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
     const int WINH = 350;
     const int WINW = 700;
 private:
+    void showError(QString err);
+    void showMsg(QString msg);
+    QString cutArg(QString str, QString cmd);
+private slots:
+    void slotReadyRead          (                            );
+    void slotError              (QAbstractSocket::SocketError);
+    void slotSendToServer       (QString msg                 );
+    void slotConnected          (                            );
+
     void setAuthorizationWindow();
     void hideAuthorizationWindow();
 
@@ -127,8 +144,11 @@ private:
     void setAddUserWindow();
     void hideAddUserWindow();
 
-    //void setViewAllResultsWindow(); - private slot
+    void setViewAllResultsWindow();
     void hideViewAllResultsWindow();
+
+    void setViewAllGroupsWindow();
+    void hideViewAllGroupsWindow();
 
     void solveMsg(QString msg);
 
@@ -137,18 +157,8 @@ private:
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();
-
-    void showError(QString err);
-    void showMsg(QString msg);
-    QString cutArg(QString str, QString cmd);
-private slots:
-    void slotReadyRead          (                            );
-    void slotError              (QAbstractSocket::SocketError);
-    void slotSendToServer       (QString msg                 );
-    void slotConnected          (                            );
-
-    void setViewAllResultsWindow(                            );
 signals:
     void allResultsCollected();
+    void allGroupsCollected();
 };
 #endif // MYCLIENT_H

@@ -290,6 +290,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "view all results")
     {
+        sendToClient(pSocket, "{cmd='view all results';status='started';}");
         QString req = "SELECT tests.name, tests.date, tests.subject, users.name, users.surname, results.percent ";
         req += "FROM results INNER JOIN users ON results.studentid = users.id ";
         req += "INNER JOIN tests ON results.testid = tests.id;";
@@ -312,6 +313,25 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
                 sendToClient(pSocket, processMsg);
             }
             sendToClient(pSocket, "{cmd='view all results';status='sended';}");
+        }
+    }
+    else if(cmd == "view all groups")
+    {
+        sendToClient(pSocket, "{cmd='view all groups';status='started';}");
+        QString req = "SELECT name FROM groups";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            while(query.next())
+            {
+                QString processMsg = "{cmd='view all groups';name='" + query.record().field(0).value().toString()+ "';}";
+                sendToClient(pSocket, processMsg);
+            }
+            sendToClient(pSocket, "{cmd='view all groups';status='sended';}");
         }
     }
 }
