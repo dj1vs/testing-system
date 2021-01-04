@@ -378,6 +378,30 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='view group students';status='sended';}");
         }
     }
+    else if(cmd == "view all planned tests")
+    {
+        sendToClient(pSocket, "{cmd='view all planned tests';status='started';}");
+        QString req = "SELECT users.name, users.surname, tests.name, tests.subject, tests.planneddate ";
+        req += "FROM tests INNER JOIN users ON tests.teacherid = users.id;";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            while(query.next())
+            {
+                QString procMsg = "{cmd='view all planned tests';";
+                QList <QString> params = {"teachername", "teachersurname", "testname", "subject", "date"};
+                for(int i = 0; i < query.record().count(); ++i)
+                    procMsg += params[i] + "='" + query.record().field(i).value().toString() + "';";
+                procMsg += '}';
+                sendToClient(pSocket, procMsg);
+            }
+            sendToClient(pSocket, "{cmd='view all planned tests';status='sended';}");
+        }
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)

@@ -119,6 +119,13 @@ private:
     QList <QList<QString>> groupStudents;
     QList <QList <QString>> groupTeachers;
 
+    QTableView *allPlannedTestsTable;
+    QStandardItemModel *allPlannedTestsModel;
+    QPushButton *allPlannedTestsGoBack;
+    QVBoxLayout *allPlannedTestsLayout;
+    QList <QList <QString>> allPlannedTestsList;
+
+
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
@@ -162,6 +169,9 @@ private slots:
     void setViewAllGroupsWindow();
     void hideViewAllGroupsWindow();
 
+    void setViewAllPlannedTestsWindow();
+    void hideViewAllPlannedTestsWindow();
+
     void solveMsg(QString msg);
 
     void logInToSystem ();
@@ -182,5 +192,6 @@ signals:
     void allGroupsCollected();
     void groupTeachersCollected();
     void groupStudentsCollected();
+    void allPlannedTestsCollected();
 };
 #endif // MYCLIENT_H

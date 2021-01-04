@@ -17,6 +17,9 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
 
     connect(this, SIGNAL(groupTeachersCollected()), this, SLOT(showGroupTeachers()));
     connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
+    connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
+    connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
+    connect(this, SIGNAL(allPlannedTestsCollected()), this, SLOT(setViewAllPlannedTestsWindow()));
 
     setAuthorizationWindow();
 }
@@ -260,6 +263,18 @@ void MyClient::solveMsg(QString msg)
             groupStudents.clear();
         else
             groupStudents.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
+    }
+    else if(cmd == "view all planned tests")
+    {
+        qDebug() << msg;
+        QString status = cutArg(msg, "status");
+        if (status == "sended")
+            emit allPlannedTestsCollected();
+        else if (status == "started")
+            allPlannedTestsList.clear();
+        else
+            allPlannedTestsList.push_back({cutArg(msg, "teachername"), cutArg(msg, "teachersurname"), cutArg(msg, "testname"),
+                                          cutArg(msg, "subject"), cutArg(msg, "date")});
     }
 }
 
@@ -585,12 +600,13 @@ void MyClient::setAdminWindow()
 
     connect(adminViewResults, &QPushButton::clicked, this,
             [this] () {hideAdminWindow();
-                       connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
                        slotSendToServer("{cmd='view all results';}");});
     connect(adminViewGroups, &QPushButton::clicked, this,
             [this] () {hideAdminWindow();
-                       connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
                        slotSendToServer("{cmd='view all groups';}");});
+    connect(adminViewPlannedTest, &QPushButton::clicked, this,
+            [this] () {hideAdminWindow();
+                       slotSendToServer("{cmd='view all planned tests';}");});
 
     adminLayout = new QVBoxLayout();
     adminLayout->addWidget(adminViewResults);
@@ -864,4 +880,51 @@ void MyClient::editAllResultsTable()
         }
     }
     allResultsTable->setModel(allResultsModel);
+}
+
+void MyClient::setViewAllPlannedTestsWindow()
+{
+    //    QTableView *allPlannedTestsTable;
+    //    QStandardItemModel *allPlannedTestsModel;
+    //    QPushButton *allPlannedTestsGoBack;
+    //    QVBoxLayout *allPlannedTestsLayout;
+    allPlannedTestsTable = new QTableView(this);
+    allPlannedTestsTable->setAttribute(Qt::WA_DeleteOnClose);
+    allPlannedTestsModel = new QStandardItemModel(allPlannedTestsList.size(), allPlannedTestsList[0].size(), this);
+    QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date"};
+    for(int i = 0; i < allPlannedTestsList[0].size(); ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        allPlannedTestsModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    for(int row = 0; row < allPlannedTestsList.size(); ++row)
+    {
+        for(int col = 0; col < allPlannedTestsList[0].size(); ++col)
+        {
+            QModelIndex index=allPlannedTestsModel->index(row,col,QModelIndex());
+            allPlannedTestsModel->setData(index, allPlannedTestsList[row][col]);
+        }
+    }
+    allPlannedTestsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    allPlannedTestsTable->setModel(allPlannedTestsModel);
+
+    allPlannedTestsGoBack = new QPushButton("Go back");
+    allPlannedTestsGoBack->setAttribute(Qt::WA_DeleteOnClose);
+    connect(allPlannedTestsGoBack, &QPushButton::clicked, this,
+            [this] {hideViewAllPlannedTestsWindow(); setAdminWindow();});
+
+    allPlannedTestsLayout = new QVBoxLayout();
+    allPlannedTestsLayout->addWidget(allPlannedTestsTable);
+    allPlannedTestsLayout->addWidget(allPlannedTestsGoBack);
+
+    QWidget *w = new QWidget();
+    w->setLayout(allPlannedTestsLayout);
+    setCentralWidget(w);
+
+}
+void MyClient::hideViewAllPlannedTestsWindow()
+{
+    allPlannedTestsTable->close();
+    allPlannedTestsGoBack->close();
 }
