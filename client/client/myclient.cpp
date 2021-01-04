@@ -798,10 +798,12 @@ void MyClient::showAllResultsSort()
     allResultsSortSurnameLabel = new QLabel("Surname:", this);
     allResultsSortSubjectLabel = new QLabel("Subject:", this);
     allResultsSortTestLabel = new QLabel("Test:", this);
+
     allResultsSortName = new QLineEdit(this);
     allResultsSortSurname = new QLineEdit(this);
     allResultsSortSubject = new QLineEdit(this);
     allResultsSortTest = new QLineEdit(this);
+
     allResultsSortSave = new QPushButton("Save", this);
 
     QHBoxLayout *name = new QHBoxLayout();
@@ -827,4 +829,6 @@ void MyClient::showAllResultsSort()
     QDialog *d = new QDialog(this);
     d->setLayout(allResultsSortLayout);
     d->show();
+
+    connect(allResultsSortSave, SIGNAL(clicked()), d, SLOT(close()));
 }
