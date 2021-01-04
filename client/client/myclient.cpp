@@ -620,6 +620,8 @@ void MyClient::setViewAllResultsWindow()
 
     connect(allResultsGoBack, &QPushButton::clicked, this,
             [this] () {hideViewAllResultsWindow(); setAdminWindow();});
+    connect(sortAllResults, &QPushButton::clicked, this,
+            [this] () {showAllResultsSort();});
 
     allResultsTable = new QTableView();
     allResultsModel = new QStandardItemModel(allResultsList.size(), 5, this);
@@ -787,5 +789,42 @@ void MyClient::showGroupStudents()
     QVBoxLayout *v = new QVBoxLayout();
     v->addWidget(table);
     d->setLayout(v);
+    d->show();
+}
+
+void MyClient::showAllResultsSort()
+{
+    allResultsSortNameLabel = new QLabel("Name:", this);
+    allResultsSortSurnameLabel = new QLabel("Surname:", this);
+    allResultsSortSubjectLabel = new QLabel("Subject:", this);
+    allResultsSortTestLabel = new QLabel("Test:", this);
+    allResultsSortName = new QLineEdit(this);
+    allResultsSortSurname = new QLineEdit(this);
+    allResultsSortSubject = new QLineEdit(this);
+    allResultsSortTest = new QLineEdit(this);
+    allResultsSortSave = new QPushButton("Save", this);
+
+    QHBoxLayout *name = new QHBoxLayout();
+    name->addWidget(allResultsSortNameLabel);
+    name->addWidget(allResultsSortName);
+    QHBoxLayout *surname = new QHBoxLayout();
+    surname->addWidget(allResultsSortSurnameLabel);
+    surname->addWidget(allResultsSortSurname);
+    QHBoxLayout *subject = new QHBoxLayout();
+    subject->addWidget(allResultsSortSubjectLabel);
+    subject->addWidget(allResultsSortSubject);
+    QHBoxLayout *test = new QHBoxLayout();
+    test->addWidget(allResultsSortTestLabel);
+    test->addWidget(allResultsSortTest);
+
+    allResultsSortLayout = new QVBoxLayout();
+    allResultsSortLayout->addLayout(name);
+    allResultsSortLayout->addLayout(surname);
+    allResultsSortLayout->addLayout(subject);
+    allResultsSortLayout->addLayout(test);
+    allResultsSortLayout->addWidget(allResultsSortSave);
+
+    QDialog *d = new QDialog(this);
+    d->setLayout(allResultsSortLayout);
     d->show();
 }

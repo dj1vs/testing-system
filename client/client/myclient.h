@@ -100,6 +100,16 @@ private:
     QPushButton *sortAllResults;
     QVBoxLayout *viewAllResultsLayout;
     QList <QList<QString>> allResultsList;
+    QLabel *allResultsSortNameLabel;
+    QLabel *allResultsSortSurnameLabel;
+    QLabel *allResultsSortSubjectLabel;
+    QLabel *allResultsSortTestLabel;
+    QLineEdit *allResultsSortName;
+    QLineEdit *allResultsSortSurname;
+    QLineEdit *allResultsSortSubject;
+    QLineEdit *allResultsSortTest;
+    QPushButton *allResultsSortSave;
+    QVBoxLayout *allResultsSortLayout;
 
     QTableView *allGroupsTable;
     QStandardItemModel *allGroupsModel;
@@ -159,6 +169,8 @@ private slots:
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();
+
+    void showAllResultsSort();
 
     void showGroupTeachers();
     void showGroupStudents();
