@@ -943,7 +943,7 @@ void MyClient::showAllPlannedTestsSort()
     allPlannedTestsSortName = new QLineEdit();
     allPlannedTestsSortSurname = new QLineEdit();
     allPlannedTestsSortTest = new QLineEdit();
-    allPlannedTestsSortDate = new QDateEdit();
+    allPlannedTestsSortDate = new QDateEdit(QDate::currentDate());
     allPlannedTestsSortSubject = new QLineEdit();
     allPlannedTestsSortViewPast = new QRadioButton("Прошедшие");
     allPlannedTestsSortViewFuture= new QRadioButton("Запланированные");
@@ -987,6 +987,8 @@ void MyClient::showAllPlannedTestsSort()
     allPlannedTestsSortLayout->addWidget(allPlannedTestsSortSave);
 
     QDialog *d = new QDialog();
+    connect(allPlannedTestsSortSave, &QPushButton::clicked, this, [this, d] {editAllPlannedTestsTable(); d->close();});
+
     d->setLayout(allPlannedTestsSortLayout);
     d->show();
 
