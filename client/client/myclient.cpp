@@ -910,12 +910,16 @@ void MyClient::setViewAllPlannedTestsWindow()
     allPlannedTestsTable->setModel(allPlannedTestsModel);
 
     allPlannedTestsGoBack = new QPushButton("Go back");
+    allPlannedTestsSort = new QPushButton("Sort");
     allPlannedTestsGoBack->setAttribute(Qt::WA_DeleteOnClose);
+
     connect(allPlannedTestsGoBack, &QPushButton::clicked, this,
             [this] {hideViewAllPlannedTestsWindow(); setAdminWindow();});
 
+    connect(allPlannedTestsSort, SIGNAL(clicked()), this, SLOT(showAllPlannedTestsSort()));
     allPlannedTestsLayout = new QVBoxLayout();
     allPlannedTestsLayout->addWidget(allPlannedTestsTable);
+    allPlannedTestsLayout->addWidget(allPlannedTestsSort);
     allPlannedTestsLayout->addWidget(allPlannedTestsGoBack);
 
     QWidget *w = new QWidget();
@@ -927,4 +931,67 @@ void MyClient::hideViewAllPlannedTestsWindow()
 {
     allPlannedTestsTable->close();
     allPlannedTestsGoBack->close();
+}
+
+void MyClient::showAllPlannedTestsSort()
+{
+    allPlannedTestsSortNameLabel = new QLabel("Teacher name:", this);
+    allPlannedTestsSortSurnameLabel = new QLabel("Teacher surname:", this);
+    allPlannedTestsSortTestLabel = new QLabel("Test name:", this);
+    allPlannedTestsSortDateLabel = new QLabel("Date:", this);
+    allPlannedTestsSortSubjectLabel = new QLabel("Subject:", this);
+    allPlannedTestsSortName = new QLineEdit();
+    allPlannedTestsSortSurname = new QLineEdit();
+    allPlannedTestsSortTest = new QLineEdit();
+    allPlannedTestsSortDate = new QDateEdit();
+    allPlannedTestsSortSubject = new QLineEdit();
+    allPlannedTestsSortViewPast = new QRadioButton("Прошедшие");
+    allPlannedTestsSortViewFuture= new QRadioButton("Запланированные");
+    allPlannedTestsSortViewAll= new QRadioButton("Все");
+    allPlannedTestsSortSave = new QPushButton("Сохранить ");
+
+    QHBoxLayout *name = new QHBoxLayout();
+    name->addWidget(allPlannedTestsSortNameLabel);
+    name->addWidget(allPlannedTestsSortName);
+
+    QHBoxLayout *surname = new QHBoxLayout();
+    surname->addWidget(allPlannedTestsSortSurnameLabel);
+    surname->addWidget(allPlannedTestsSortSurname);
+
+    QHBoxLayout *test = new QHBoxLayout();
+    test->addWidget(allPlannedTestsSortTestLabel);
+    test->addWidget(allPlannedTestsSortTest);
+
+    QHBoxLayout *date = new QHBoxLayout();
+    date->addWidget(allPlannedTestsSortDateLabel);
+    date->addWidget(allPlannedTestsSortDate);
+
+    QHBoxLayout *subject = new QHBoxLayout();
+    subject->addWidget(allPlannedTestsSortSubjectLabel);
+    subject->addWidget(allPlannedTestsSortSubject);
+
+
+    QHBoxLayout *options = new QHBoxLayout();
+    options->addWidget(allPlannedTestsSortViewPast);
+    options->addWidget(allPlannedTestsSortViewFuture);
+    options->addWidget(allPlannedTestsSortViewAll);
+
+
+    allPlannedTestsSortLayout = new QVBoxLayout();
+    allPlannedTestsSortLayout->addLayout(name);
+    allPlannedTestsSortLayout->addLayout(surname);
+    allPlannedTestsSortLayout->addLayout(test);
+    allPlannedTestsSortLayout->addLayout(date);
+    allPlannedTestsSortLayout->addLayout(subject);
+    allPlannedTestsSortLayout->addLayout(options);
+    allPlannedTestsSortLayout->addWidget(allPlannedTestsSortSave);
+
+    QDialog *d = new QDialog();
+    d->setLayout(allPlannedTestsSortLayout);
+    d->show();
+
+}
+void MyClient::editAllPlannedTestsTable()
+{
+
 }

@@ -23,6 +23,9 @@
 #include <QStandardItemModel>
 #include <QStatusBar>
 #include <QSignalMapper>
+#include <QDateEdit>
+#include <QCheckBox>
+#include <QRadioButton>
 
 class MyClient : public QMainWindow
 {
@@ -122,8 +125,24 @@ private:
     QTableView *allPlannedTestsTable;
     QStandardItemModel *allPlannedTestsModel;
     QPushButton *allPlannedTestsGoBack;
+    QPushButton *allPlannedTestsSort;
     QVBoxLayout *allPlannedTestsLayout;
     QList <QList <QString>> allPlannedTestsList;
+    QLabel *allPlannedTestsSortNameLabel;
+    QLabel *allPlannedTestsSortSurnameLabel;
+    QLabel *allPlannedTestsSortTestLabel;
+    QLabel *allPlannedTestsSortDateLabel;
+    QLabel *allPlannedTestsSortSubjectLabel;
+    QLineEdit *allPlannedTestsSortName;
+    QLineEdit *allPlannedTestsSortSurname;
+    QLineEdit *allPlannedTestsSortTest;
+    QDateEdit *allPlannedTestsSortDate;
+    QLineEdit *allPlannedTestsSortSubject;
+    QRadioButton *allPlannedTestsSortViewPast;
+    QRadioButton *allPlannedTestsSortViewFuture;
+    QRadioButton *allPlannedTestsSortViewAll;
+    QPushButton *allPlannedTestsSortSave;
+    QVBoxLayout *allPlannedTestsSortLayout;
 
 
     QTcpSocket* m_pTcpSocket;
@@ -182,6 +201,9 @@ private slots:
 
     void showAllResultsSort();
     void editAllResultsTable();
+
+    void showAllPlannedTestsSort();
+    void editAllPlannedTestsTable();
 
     void showGroupTeachers();
     void showGroupStudents();
