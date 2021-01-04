@@ -171,6 +171,7 @@ private slots:
     void sendUserToSystem();
 
     void showAllResultsSort();
+    void editAllResultsTable();
 
     void showGroupTeachers();
     void showGroupStudents();

@@ -830,5 +830,38 @@ void MyClient::showAllResultsSort()
     d->setLayout(allResultsSortLayout);
     d->show();
 
-    connect(allResultsSortSave, SIGNAL(clicked()), d, SLOT(close()));
+    connect(allResultsSortSave, &QPushButton::clicked, this,
+            [this, d] () {editAllResultsTable(); d->close();});
+}
+
+void MyClient::editAllResultsTable()
+{
+    QString name = allResultsSortName->text();
+    QString surname = allResultsSortSurname->text();
+    QString subject = allResultsSortSubject->text();
+    QString test = allResultsSortTest->text();
+
+    if(name == "" && surname == "" && subject == "" && test == "")
+    {
+        setViewAllResultsWindow();
+        return;
+    }
+
+    //QList <QString> params = {"Test", "Subject", "Name", "Surname", "Percent"};
+
+    for(int row = 0; row < allResultsModel->rowCount(); ++row)
+    {
+        QString modelName = allResultsModel->index(row,2,QModelIndex()).data().toString();
+        QString modelSurname = allResultsModel->index(row,3,QModelIndex()).data().toString();
+        QString modelSubject = allResultsModel->index(row,1,QModelIndex()).data().toString();
+        QString modelTest = allResultsModel->index(row,0,QModelIndex()).data().toString();
+
+        if ((name != "" && surname != "" && (modelName != name || modelSurname != surname))
+                || (subject != "" && modelSubject != subject) || (test != "" && modelTest != test))
+        {
+            allResultsModel->removeRow(row);
+            row--;
+        }
+    }
+    allResultsTable->setModel(allResultsModel);
 }
