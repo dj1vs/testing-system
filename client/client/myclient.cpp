@@ -1145,6 +1145,7 @@ void MyClient::hideTeacherWindow()
 
 void MyClient::setAddTaskWindow()
 {
+    addTaskAnswerOptions.clear();
     addTaskQuesitionLabel = new QLabel("Вопрос:");
     addTaskAnswerLabel = new QLabel("Answer");
     addTaskAnswerOptionsLabel = new QLabel("Answer options");
@@ -1158,6 +1159,9 @@ void MyClient::setAddTaskWindow()
     connect(addTaskQuit, &QPushButton::clicked, this,
             [this] {hideAddTaskWindow(); setTeacherWindow();});
     connect(addTaskSave, SIGNAL(clicked()), this, SLOT(sendTaskToSystem()));
+
+    connect(addTaskNewOption, &QPushButton::clicked, this,
+            [this] {showAddAnswerOptions();});
 
     addTaskQuesition = new QTextEdit();
     addTaskAnswer = new QTextEdit();
@@ -1227,4 +1231,18 @@ void MyClient::sendTaskToSystem()
         qDebug() << msg;
         slotSendToServer(msg);
     }
+}
+
+void MyClient::showAddAnswerOptions()
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("New answer option:"), QLineEdit::Normal, "", &ok);
+    if (ok && !text.isEmpty())
+    {
+        addTaskAnswerOptions.push_back(text);
+        addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
+        addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
+    }
+
 }

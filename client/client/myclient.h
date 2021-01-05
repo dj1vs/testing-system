@@ -30,6 +30,7 @@
 #include <QListView>
 #include <QStringListModel>
 #include <QTextEdit>
+#include <QInputDialog>
 
 class MyClient : public QMainWindow
 {
@@ -179,6 +180,7 @@ private:
     QLineEdit *addTaskTheme;
     QLineEdit *addTaskSubject;
     QVBoxLayout *addTaskLayout;
+    QList <QString> addTaskAnswerOptions;
 
 
 
@@ -258,6 +260,8 @@ private slots:
     void showTestTasks();
     void showNextTask();
     void showPrevTask();
+
+    void showAddAnswerOptions();
 
     void showGroupTeachers();
     void showGroupStudents();
