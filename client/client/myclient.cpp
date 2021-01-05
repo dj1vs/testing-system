@@ -20,6 +20,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
     connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
     connect(this, SIGNAL(allPlannedTestsCollected()), this, SLOT(setViewAllPlannedTestsWindow()));
+    connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
 
     setAuthorizationWindow();
 }
@@ -280,10 +281,7 @@ void MyClient::solveMsg(QString msg)
         QString status = cutArg(msg, "status");
         //QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
         if(status == "sended")
-        {
-            qDebug() << allPlannedTestsTaskList;
             emit testTasksCollected();
-        }
         else if(status == "started")
             allPlannedTestsTaskList.clear();
         else
@@ -1049,11 +1047,72 @@ void MyClient::editAllPlannedTestsTable()
     }
     allPlannedTestsTable->setModel(allPlannedTestsModel);
 }
-
-void MyClient::setViewAllTestTasksWindow()
+void MyClient::showTestTasks()
 {
+//    QList <QList<QString>> allPlannedTestsTaskList;
+//    quint16 tasksAmount = 0;
+//    quint16 currTask = 0;
+//    QPushButton *allPlannedTestsTaskNext;
+//    QPushButton *allPlannedTestsTaskPrev;
+//    QTextBrowser *allPlannedTestsTaskText;
+//    QListView *allPlannedTestsTaskAnswerOptions;
+
+    if (!allPlannedTestsTaskList.size())
+    {
+        showError("Current test is empty");
+        return;
+    }
+
+    tasksAmount = allPlannedTestsTaskList.size();
+    currTask = 0;
+    allPlannedTestsTaskNext = new QPushButton("next");
+    allPlannedTestsTaskPrev = new QPushButton("prev");
+
+    connect(allPlannedTestsTaskNext, SIGNAL(clicked()), this, SLOT(showNextTask()));
+    connect(allPlannedTestsTaskPrev, SIGNAL(clicked()), this, SLOT(showPrevTask()));
+    allPlannedTestsTaskText = new QTextBrowser();
+    allPlannedTestsTaskAnswer = new QTextBrowser();
+    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[0][1]);
+    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[0][3]);
+    allPlannedTestsTaskAnswerOptionsModel = new QStringListModel();
+    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[0][2].split(';'));
+    allPlannedTestsTaskAnswerOptionsView = new QListView();
+    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
+
+    QHBoxLayout *buttons = new QHBoxLayout();
+    buttons->addWidget(allPlannedTestsTaskPrev);
+    buttons->addWidget(allPlannedTestsTaskNext);
+
+
+    allPlannedTestsTaskLayout = new QVBoxLayout();
+    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskText);
+    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskAnswerOptionsView);
+    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskAnswer);
+    allPlannedTestsTaskLayout->addLayout(buttons);
+
+    QDialog *d = new QDialog(this);
+    d->setLayout(allPlannedTestsTaskLayout);
+    d->show();
 
 }
-void MyClient::hideViewAllTestTasksWindow()
+
+void MyClient::showNextTask()
 {
+    if(currTask+1 >= allPlannedTestsTaskList.size())
+        return;
+    ++currTask;
+    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[currTask][1]);
+    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[currTask][3]);
+    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[currTask][2].split(';'));
+    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
+}
+void MyClient::showPrevTask()
+{
+    if(!currTask)
+        return;
+    --currTask;
+    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[currTask][1]);
+    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[currTask][3]);
+    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[currTask][2].split(';'));
+    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
 }

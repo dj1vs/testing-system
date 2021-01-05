@@ -26,6 +26,9 @@
 #include <QDateEdit>
 #include <QCheckBox>
 #include <QRadioButton>
+#include <QTextBrowser>
+#include <QListView>
+#include <QStringListModel>
 
 class MyClient : public QMainWindow
 {
@@ -125,8 +128,8 @@ private:
     QPushButton *allPlannedTestsGoBack;
     QPushButton *allPlannedTestsSort;
     QVBoxLayout *allPlannedTestsLayout;
+    ////////////////////////////////////////////
     QList <QList <QString>> allPlannedTestsList;
-    QList <QList<QString>> allPlannedTestsTaskList;
     QLabel *allPlannedTestsSortNameLabel;
     QLabel *allPlannedTestsSortSurnameLabel;
     QLabel *allPlannedTestsSortTestLabel;
@@ -142,6 +145,18 @@ private:
     QRadioButton *allPlannedTestsSortViewAll;
     QPushButton *allPlannedTestsSortSave;
     QVBoxLayout *allPlannedTestsSortLayout;
+    ///////////////////////////////////////
+    QList <QList<QString>> allPlannedTestsTaskList;
+    quint16 tasksAmount = 0;
+    quint16 currTask = 0;
+    QPushButton *allPlannedTestsTaskNext;
+    QPushButton *allPlannedTestsTaskPrev;
+    QTextBrowser *allPlannedTestsTaskText;
+    QTextBrowser *allPlannedTestsTaskAnswer;
+    QStringListModel *allPlannedTestsTaskAnswerOptionsModel;
+    QListView *allPlannedTestsTaskAnswerOptionsView;
+    QVBoxLayout *allPlannedTestsTaskLayout;
+
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -189,9 +204,6 @@ private slots:
     void setViewAllPlannedTestsWindow();
     void hideViewAllPlannedTestsWindow();
 
-    void setViewAllTestTasksWindow();
-    void hideViewAllTestTasksWindow();
-
     void solveMsg(QString msg);
 
     void logInToSystem ();
@@ -205,6 +217,10 @@ private slots:
 
     void showAllPlannedTestsSort();
     void editAllPlannedTestsTable();
+
+    void showTestTasks();
+    void showNextTask();
+    void showPrevTask();
 
     void showGroupTeachers();
     void showGroupStudents();
