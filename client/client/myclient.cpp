@@ -594,7 +594,6 @@ void MyClient::setAdminWindow()
     adminViewResults = new QPushButton("View Results", this);
     adminViewGroups = new QPushButton("View Groups", this);
     adminViewPlannedTest = new QPushButton("View Planned Tests", this);
-    adminViewTasks = new QPushButton("View Tasks", this);
 
     connect(adminViewResults, &QPushButton::clicked, this,
             [this] () {hideAdminWindow();
@@ -610,7 +609,6 @@ void MyClient::setAdminWindow()
     adminLayout->addWidget(adminViewResults);
     adminLayout->addWidget(adminViewGroups);
     adminLayout->addWidget(adminViewPlannedTest);
-    adminLayout->addWidget(adminViewTasks);
 
     QWidget *w = new QWidget();
     w->setLayout(adminLayout);
@@ -622,7 +620,6 @@ void MyClient::hideAdminWindow()
     adminViewResults->hide();
     adminViewGroups->hide();
     adminViewPlannedTest->hide();
-    adminViewTasks->hide();
 }
 
 void MyClient::setViewAllResultsWindow()
@@ -1028,4 +1025,10 @@ void MyClient::editAllPlannedTestsTable()
     allPlannedTestsTable->setModel(allPlannedTestsModel);
 }
 
+void MyClient::setViewAllTestTasksWindow()
+{
 
+}
+void MyClient::hideViewAllTestTasksWindow()
+{
+}

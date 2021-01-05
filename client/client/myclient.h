@@ -93,7 +93,6 @@ private:
     QPushButton *adminViewResults;
     QPushButton *adminViewGroups;
     QPushButton *adminViewPlannedTest;
-    QPushButton *adminViewTasks;
     QVBoxLayout *adminLayout;
 
     QTableView *allResultsTable;
@@ -143,7 +142,6 @@ private:
     QPushButton *allPlannedTestsSortSave;
     QVBoxLayout *allPlannedTestsSortLayout;
 
-
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
@@ -189,6 +187,9 @@ private slots:
 
     void setViewAllPlannedTestsWindow();
     void hideViewAllPlannedTestsWindow();
+
+    void setViewAllTestTasksWindow();
+    void hideViewAllTestTasksWindow();
 
     void solveMsg(QString msg);
 
