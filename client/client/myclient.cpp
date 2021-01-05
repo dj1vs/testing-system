@@ -1116,7 +1116,19 @@ void MyClient::showPrevTask()
 
 void MyClient::setTeacherWindow()
 {
-    qDebug() << "Hi!";
+    newTaskButton = new QPushButton("new task");
+    newTestButton = new QPushButton("new test");
+    viewTeacherGroupsButton = new QPushButton("view groups");
+    viewTeacherResultsButton = new QPushButton("view results");
+    teacherWindowLayout = new QVBoxLayout();
+    teacherWindowLayout->addWidget(newTaskButton);
+    teacherWindowLayout->addWidget(newTestButton);
+    teacherWindowLayout->addWidget(viewTeacherGroupsButton);
+    teacherWindowLayout->addWidget(viewTeacherResultsButton);
+
+    QWidget *w = new QWidget();
+    w->setLayout(teacherWindowLayout);
+    setCentralWidget(w);
 }
 void MyClient::hideTeacherWindow()
 {

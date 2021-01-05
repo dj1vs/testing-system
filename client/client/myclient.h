@@ -157,6 +157,12 @@ private:
     QListView *allPlannedTestsTaskAnswerOptionsView;
     QVBoxLayout *allPlannedTestsTaskLayout;
 
+    QPushButton *newTaskButton;
+    QPushButton *newTestButton;
+    QPushButton *viewTeacherGroupsButton;
+    QPushButton *viewTeacherResultsButton;
+    QVBoxLayout *teacherWindowLayout;
+
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
