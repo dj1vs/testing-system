@@ -1150,15 +1150,23 @@ void MyClient::setAddTaskWindow()
     addTaskAnswerOptionsLabel = new QLabel("Answer options");
     addTaskThemeLabel = new QLabel("Theme");
     addTaskSubjectLabel = new QLabel("Subject");
+
     addTaskSave = new QPushButton("save");
     addTaskQuit = new QPushButton("quit");
     addTaskNewOption = new QPushButton("add new answer option");
+
+    connect(addTaskQuit, &QPushButton::clicked, this,
+            [this] {hideAddTaskWindow(); setTeacherWindow();});
+
     addTaskQuesition = new QTextEdit();
     addTaskAnswer = new QTextEdit();
+
     addTaskAnswerOptionsModel = new QStringListModel();
     addTaskAnswerOptionsView = new QListView();
+
     addTaskTheme = new QLineEdit();
     addTaskSubject = new QLineEdit();
+
     addTaskLayout = new QVBoxLayout();
     addTaskLayout->addWidget(addTaskQuesitionLabel);
     addTaskLayout->addWidget(addTaskQuesition);
@@ -1180,5 +1188,17 @@ void MyClient::setAddTaskWindow()
 }
 void MyClient::hideAddTaskWindow()
 {
-
+    addTaskQuesitionLabel->close();
+    addTaskQuesition->close();
+    addTaskAnswerOptionsLabel->close();
+    addTaskAnswerOptionsView->close();
+    addTaskNewOption->close();
+    addTaskAnswerLabel->close();
+    addTaskAnswer->close();
+    addTaskSubjectLabel->close();
+    addTaskSubject->close();
+    addTaskThemeLabel->close();
+    addTaskTheme->close();
+    addTaskSave->close();
+    addTaskQuit->close();
 }
