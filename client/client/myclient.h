@@ -93,7 +93,6 @@ private:
     QPushButton *adminViewResults;
     QPushButton *adminViewGroups;
     QPushButton *adminViewPlannedTest;
-    QPushButton *adminViewGrades;
     QPushButton *adminViewTasks;
     QVBoxLayout *adminLayout;
 

@@ -594,7 +594,6 @@ void MyClient::setAdminWindow()
     adminViewResults = new QPushButton("View Results", this);
     adminViewGroups = new QPushButton("View Groups", this);
     adminViewPlannedTest = new QPushButton("View Planned Tests", this);
-    adminViewGrades = new QPushButton("View Grades", this);
     adminViewTasks = new QPushButton("View Tasks", this);
 
     connect(adminViewResults, &QPushButton::clicked, this,
@@ -611,7 +610,6 @@ void MyClient::setAdminWindow()
     adminLayout->addWidget(adminViewResults);
     adminLayout->addWidget(adminViewGroups);
     adminLayout->addWidget(adminViewPlannedTest);
-    adminLayout->addWidget(adminViewGrades);
     adminLayout->addWidget(adminViewTasks);
 
     QWidget *w = new QWidget();
@@ -624,7 +622,6 @@ void MyClient::hideAdminWindow()
     adminViewResults->hide();
     adminViewGroups->hide();
     adminViewPlannedTest->hide();
-    adminViewGrades->hide();
     adminViewTasks->hide();
 }
 
@@ -999,7 +996,7 @@ void MyClient::editAllPlannedTestsTable()
     QString surname = allPlannedTestsSortSurname->text();
     QString test = allPlannedTestsSortTest->text();
     QDate d = allPlannedTestsSortDate->date();
-    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
+    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-s0" : "-") + QString::number(d.day());
     QString subject = allPlannedTestsSortSubject->text();
     bool isPast = allPlannedTestsSortViewPast->isChecked();
     bool isFuture = allPlannedTestsSortViewFuture->isChecked();
@@ -1030,3 +1027,5 @@ void MyClient::editAllPlannedTestsTable()
     }
     allPlannedTestsTable->setModel(allPlannedTestsModel);
 }
+
+
