@@ -132,6 +132,8 @@ void MyClient::solveMsg(QString msg)
         {
             QString role = cutArg(msg, "role");
             showMsg("Succesfuly logged in!\nRole: " + role);
+            id = cutArg(msg, "id").toInt();
+            qDebug() << id;
             hideAuthorizationWindow();
             if(role == "admin+")
                 setAdminPlusWindow();
@@ -1132,5 +1134,8 @@ void MyClient::setTeacherWindow()
 }
 void MyClient::hideTeacherWindow()
 {
-
+    newTaskButton->close();
+    newTestButton->close();
+    viewTeacherGroupsButton->close();
+    viewTeacherResultsButton->close();
 }

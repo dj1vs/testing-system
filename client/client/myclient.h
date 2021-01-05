@@ -169,6 +169,7 @@ private:
 private:
     const int WINH = 350;
     const int WINW = 700;
+    quint16 id = -1;
 private:
     void showError(QString err);
     void showMsg(QString msg);

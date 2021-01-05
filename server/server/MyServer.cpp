@@ -93,7 +93,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     {
         QString login = cutArg(msg, "login");
         QString pass = cutArg(msg, "pass");
-        QString sqlRequest = "SELECT role FROM users WHERE ";
+        QString sqlRequest = "SELECT role, id FROM users WHERE ";
         sqlRequest += "login = '" + login + "' AND ";
         sqlRequest += "password = '" + pass + "'";
         QSqlQuery query = QSqlQuery(db);
@@ -111,11 +111,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             {
                 while(query.next())
                 {
-                    QSqlRecord record = query.record();
-                    QSqlField field = record.field(0);
-                    QString var = field.value().toString();
                     QString str = "{cmd='authorize';status='0';role='";
-                    str += var + "'}";
+                    str += query.record().field(0).value().toString() + "';";
+                    str += "id='" + query.record().field(1).value().toString()+"';}";
                     sendToClient(pSocket, str);
                 }
             }
