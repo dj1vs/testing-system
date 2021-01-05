@@ -883,9 +883,9 @@ void MyClient::setViewAllPlannedTestsWindow()
     //    QVBoxLayout *allPlannedTestsLayout;
     allPlannedTestsTable = new QTableView(this);
     allPlannedTestsTable->setAttribute(Qt::WA_DeleteOnClose);
-    allPlannedTestsModel = new QStandardItemModel(allPlannedTestsList.size(), allPlannedTestsList[0].size(), this);
-    QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date"};
-    for(int i = 0; i < allPlannedTestsList[0].size(); ++i)
+    allPlannedTestsModel = new QStandardItemModel(allPlannedTestsList.size(), allPlannedTestsList[0].size() + 1, this);
+    QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date", "Tasks"};
+    for(int i = 0; i < allPlannedTestsList[0].size()+1; ++i)
     {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
@@ -901,6 +901,14 @@ void MyClient::setViewAllPlannedTestsWindow()
     }
     allPlannedTestsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     allPlannedTestsTable->setModel(allPlannedTestsModel);
+
+    for(int row = 0; row < allPlannedTestsList.size(); ++row)
+    {
+        QModelIndex index=allPlannedTestsModel->index(row,allPlannedTestsList[0].size(),QModelIndex());
+        QPushButton *button = new QPushButton();
+        button->setAccessibleName(allPlannedTestsModel->index(row,2,QModelIndex()).data().toString());
+        allPlannedTestsTable->setIndexWidget(index, button);
+    }
 
     allPlannedTestsGoBack = new QPushButton("Go back");
     allPlannedTestsSort = new QPushButton("Sort");
