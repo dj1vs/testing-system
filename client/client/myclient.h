@@ -234,14 +234,20 @@ private slots:
 
     void setAddTaskWindow();
     void hideAddTaskWindow();
+    ///////////////////////
 
     void solveMsg(QString msg);
+
+    ////////////////////
 
     void logInToSystem ();
     void sendGroupToSystem();
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();
+    void sendTaskToSystem();
+
+    ///////////////////
 
     void showAllResultsSort();
     void editAllResultsTable();

@@ -1157,6 +1157,7 @@ void MyClient::setAddTaskWindow()
 
     connect(addTaskQuit, &QPushButton::clicked, this,
             [this] {hideAddTaskWindow(); setTeacherWindow();});
+    connect(addTaskSave, SIGNAL(clicked()), this, SLOT(sendTaskToSystem()));
 
     addTaskQuesition = new QTextEdit();
     addTaskAnswer = new QTextEdit();
@@ -1201,4 +1202,29 @@ void MyClient::hideAddTaskWindow()
     addTaskTheme->close();
     addTaskSave->close();
     addTaskQuit->close();
+}
+
+void MyClient::sendTaskToSystem()
+{
+    QString task = addTaskQuesition->toPlainText();
+    QString answer = addTaskAnswer->toPlainText();
+    QList <QString> answerOptions = addTaskAnswerOptionsModel->stringList();
+    QString theme = addTaskTheme->text();
+    QString subject = addTaskSubject->text();
+
+    if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
+    {
+        showError("Заполните все поля.");
+        return;
+    }
+    else
+    {
+        QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
+        msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
+        for(auto &i : answerOptions)
+            msg += i + ';';
+        msg += ';';
+        qDebug() << msg;
+        slotSendToServer(msg);
+    }
 }
