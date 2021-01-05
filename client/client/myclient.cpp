@@ -937,7 +937,7 @@ void MyClient::showAllPlannedTestsSort()
     allPlannedTestsSortNameLabel = new QLabel("Teacher name:", this);
     allPlannedTestsSortSurnameLabel = new QLabel("Teacher surname:", this);
     allPlannedTestsSortTestLabel = new QLabel("Test name:", this);
-    allPlannedTestsSortDateLabel = new QLabel("Date:", this);
+    allPlannedTestsSortDateLabel = new QLabel("Date (dd.MM.yyyy):", this);
     allPlannedTestsSortSubjectLabel = new QLabel("Subject:", this);
     allPlannedTestsSortName = new QLineEdit();
     allPlannedTestsSortSurname = new QLineEdit();
@@ -998,13 +998,14 @@ void MyClient::editAllPlannedTestsTable()
     QString name = allPlannedTestsSortName->text();
     QString surname = allPlannedTestsSortSurname->text();
     QString test = allPlannedTestsSortTest->text();
-    quint16 date = allPlannedTestsSortDate->date().toJulianDay();
+    QDate d = allPlannedTestsSortDate->date();
+    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
     QString subject = allPlannedTestsSortSubject->text();
     bool isPast = allPlannedTestsSortViewPast->isChecked();
     bool isFuture = allPlannedTestsSortViewFuture->isChecked();
     bool isAll = allPlannedTestsSortViewAll->isChecked();
 
-    if(name == "" && surname == "" && subject == "" && test == "" && date == 26713 && !isPast  && !isFuture && !isAll)
+    if(name == "" && surname == "" && subject == "" && test == "" && date == "2000-01-01" && !isPast  && !isFuture && !isAll)
         return;
 
     //QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date"};
@@ -1016,10 +1017,10 @@ void MyClient::editAllPlannedTestsTable()
         QString modelSubject = allPlannedTestsModel->index(row,3,QModelIndex()).data().toString();
         QString modelTest = allPlannedTestsModel->index(row,2,QModelIndex()).data().toString();
         QString modelDate = allPlannedTestsModel->index(row,4,QModelIndex()).data().toString();
-        qDebug() << modelDate << QDate::fromJulianDay(date);
+        qDebug() << modelDate << date;
 
         if ( (name != "" &&  surname != "" && (modelName != name || modelSurname != surname)) || (test != "" && modelTest != test)
-             || (date != 26713 && QDate::fromJulianDay(date) != QDate::fromString(modelDate)) || (subject != "" && subject != modelSubject) ||
+             || (date != "2000-01-01" && date != modelDate) || (subject != "" && subject != modelSubject) ||
              (isPast && QDate::fromString(modelDate) >= QDate::currentDate()) || (isFuture && QDate::fromString(modelDate) < QDate::currentDate()))
         {
             allPlannedTestsModel->removeRow(row);
