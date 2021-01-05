@@ -6,7 +6,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     m_pTcpSocket = new QTcpSocket(this);
     m_pTcpSocket->connectToHost(strHost, nPort);
 
-    connect(m_pTcpSocket, SIGNAL(connected()), SLOT(slotConnected()));
+    connect(m_pTcpSocket, &QTcpSocket::connected, this, [this] {showMsg("Received the connected() signal");});
     connect(m_pTcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this,         SLOT(slotError(QAbstractSocket::SocketError))
@@ -117,11 +117,6 @@ void MyClient::slotSendToServer(QString msg)
     m_pTcpSocket->write(arrBlock);
 }
 
-void MyClient::slotConnected()
-{
-    showMsg("Received the connected() signal");
-}
-
 void MyClient::solveMsg(QString msg)
 {
     if(msg[0] != '{')
@@ -142,6 +137,8 @@ void MyClient::solveMsg(QString msg)
                 setAdminPlusWindow();
             else if(role == "admin")
                 setAdminWindow();
+            else if (role == "teacher")
+                setTeacherWindow();
         }
         else
            showError("Invalid login/password :(");
@@ -1115,4 +1112,13 @@ void MyClient::showPrevTask()
     allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[currTask][3]);
     allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[currTask][2].split(';'));
     allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
+}
+
+void MyClient::setTeacherWindow()
+{
+    qDebug() << "Hi!";
+}
+void MyClient::hideTeacherWindow()
+{
+
 }

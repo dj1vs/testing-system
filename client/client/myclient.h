@@ -171,7 +171,6 @@ private slots:
     void slotReadyRead          (                            );
     void slotError              (QAbstractSocket::SocketError);
     void slotSendToServer       (QString msg                 );
-    void slotConnected          (                            );
 
     void setAuthorizationWindow();
     void hideAuthorizationWindow();
@@ -181,6 +180,10 @@ private slots:
 
     void setAdminWindow();
     void hideAdminWindow();
+
+    void setTeacherWindow();
+    void hideTeacherWindow();
+
 
 
     void setAddGroupWindow();
