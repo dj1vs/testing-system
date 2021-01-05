@@ -126,6 +126,7 @@ private:
     QPushButton *allPlannedTestsSort;
     QVBoxLayout *allPlannedTestsLayout;
     QList <QList <QString>> allPlannedTestsList;
+    QList <QList<QString>> allPlannedTestsTaskList;
     QLabel *allPlannedTestsSortNameLabel;
     QLabel *allPlannedTestsSortSurnameLabel;
     QLabel *allPlannedTestsSortTestLabel;

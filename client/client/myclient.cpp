@@ -907,6 +907,8 @@ void MyClient::setViewAllPlannedTestsWindow()
         QModelIndex index=allPlannedTestsModel->index(row,allPlannedTestsList[0].size(),QModelIndex());
         QPushButton *button = new QPushButton();
         button->setAccessibleName(allPlannedTestsModel->index(row,2,QModelIndex()).data().toString());
+        connect(button, &QPushButton::clicked, this,
+                [this, button] {slotSendToServer("{cmd='view test tasks';testname='" + button->accessibleName() + "';}");});
         allPlannedTestsTable->setIndexWidget(index, button);
     }
 

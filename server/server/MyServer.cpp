@@ -402,6 +402,33 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='view all planned tests';status='sended';}");
         }
     }
+    else if (cmd == "view test tasks")
+    {
+        sendToClient(pSocket, "{cmd='view test tasks';status='started';}");
+        QString req = "SELECT tests.name, tasks.task, tasks.answeroptions, tasks.answer, tasks.theme ";
+        req += "FROM test_by_task INNER JOIN tests ON tests.id = test_by_task.testid ";
+        req += "INNER JOIN tasks ON tasks.id = test_by_task.taskid ";
+        req += "WHERE tests.name = '" + cutArg(msg, "testname") + "';";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            while(query.next())
+            {
+                qDebug() << query.record();
+                QString str = "{cmd='view test tasks';";
+                QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
+                for(int i = 0; i < query.record().count(); ++i)
+                    str += params[i] + "='" + query.record().field(i).value().toString() + "';";
+                str + "}";
+                sendToClient(pSocket, str);
+            }
+            sendToClient(pSocket, "{cmd='view test tasks';status='sended';}");
+        }
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)
