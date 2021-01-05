@@ -29,6 +29,7 @@
 #include <QTextBrowser>
 #include <QListView>
 #include <QStringListModel>
+#include <QTextEdit>
 
 class MyClient : public QMainWindow
 {
@@ -162,6 +163,18 @@ private:
     QPushButton *viewTeacherGroupsButton;
     QPushButton *viewTeacherResultsButton;
     QVBoxLayout *teacherWindowLayout;
+    ///////////////////////////////////
+    QPushButton *addTaskSave;
+    QPushButton *addTaskQuit;
+    QPushButton *addTaskNewOption;
+    QTextEdit *addTaskQuesition;
+    QTextEdit *addTaskAnswer;
+    QStringListModel *addTaskAnswerOptionsModel;
+    QListView *addTaskAnswerOptionsView;
+    QLineEdit *addTaskTheme;
+    QLineEdit *addTaskSubject;
+    QVBoxLayout *addTaskLayout;
+
 
 
     QTcpSocket* m_pTcpSocket;
@@ -213,6 +226,9 @@ private slots:
 
     void setViewAllPlannedTestsWindow();
     void hideViewAllPlannedTestsWindow();
+
+    void setAddTaskWindow();
+    void hideAddTaskWindow();
 
     void solveMsg(QString msg);
 

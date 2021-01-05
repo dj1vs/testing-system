@@ -1122,6 +1122,9 @@ void MyClient::setTeacherWindow()
     newTestButton = new QPushButton("new test");
     viewTeacherGroupsButton = new QPushButton("view groups");
     viewTeacherResultsButton = new QPushButton("view results");
+
+    connect(newTaskButton, &QPushButton::clicked, this,
+            [this] {hideTeacherWindow(); setAddTaskWindow();});
     teacherWindowLayout = new QVBoxLayout();
     teacherWindowLayout->addWidget(newTaskButton);
     teacherWindowLayout->addWidget(newTestButton);
@@ -1138,4 +1141,34 @@ void MyClient::hideTeacherWindow()
     newTestButton->close();
     viewTeacherGroupsButton->close();
     viewTeacherResultsButton->close();
+}
+
+void MyClient::setAddTaskWindow()
+{
+    addTaskSave = new QPushButton("save");
+    addTaskQuit = new QPushButton("quit");
+    addTaskNewOption = new QPushButton("add new answer option");
+    addTaskQuesition = new QTextEdit();
+    addTaskAnswer = new QTextEdit();
+    addTaskAnswerOptionsModel = new QStringListModel();
+    addTaskAnswerOptionsView = new QListView();
+    addTaskTheme = new QLineEdit();
+    addTaskSubject = new QLineEdit();
+    addTaskLayout = new QVBoxLayout();
+    addTaskLayout->addWidget(addTaskQuesition);
+    addTaskLayout->addWidget(addTaskAnswerOptionsView);
+    addTaskLayout->addWidget(addTaskNewOption);
+    addTaskLayout->addWidget(addTaskAnswer);
+    addTaskLayout->addWidget(addTaskSubject);
+    addTaskLayout->addWidget(addTaskTheme);
+    addTaskLayout->addWidget(addTaskSave);
+    addTaskLayout->addWidget(addTaskQuit);
+
+    QWidget *w = new QWidget();
+    w->setLayout(addTaskLayout);
+    setCentralWidget(w);
+}
+void MyClient::hideAddTaskWindow()
+{
+
 }
