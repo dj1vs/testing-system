@@ -420,7 +420,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             {
                 qDebug() << query.record();
                 QString str = "{cmd='view test tasks';";
-                QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
+                QList <QString> params = {"testname", "taskname", "answeroptions","answertext","theme"};
                 for(int i = 0; i < query.record().count(); ++i)
                     str += params[i] + "='" + query.record().field(i).value().toString() + "';";
                 str + "}";

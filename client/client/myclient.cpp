@@ -275,6 +275,21 @@ void MyClient::solveMsg(QString msg)
             allPlannedTestsList.push_back({cutArg(msg, "teachername"), cutArg(msg, "teachersurname"), cutArg(msg, "testname"),
                                           cutArg(msg, "subject"), cutArg(msg, "date")});
     }
+    else if(cmd == "view test tasks")
+    {
+        QString status = cutArg(msg, "status");
+        //QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
+        if(status == "sended")
+        {
+            qDebug() << allPlannedTestsTaskList;
+            emit testTasksCollected();
+        }
+        else if(status == "started")
+            allPlannedTestsTaskList.clear();
+        else
+            allPlannedTestsTaskList.push_back({cutArg(msg, "testname"), cutArg(msg, "taskname"), cutArg(msg, "answeroptions"),
+                                              cutArg(msg, "answertext"), cutArg(msg, "theme")});
+    }
 }
 
 void MyClient::logInToSystem()
