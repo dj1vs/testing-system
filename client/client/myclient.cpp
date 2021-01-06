@@ -1294,9 +1294,9 @@ void MyClient::setAddTestWindow()
 }
 void MyClient::hideAddTestWindow()
 {
-    disconnect(addTestGoRandom, &QPushButton::clicked, 0 ,0);
-    disconnect(addTestGoManual, &QPushButton::clicked, 0 ,0);
-    disconnect(addTestQuit, &QPushButton::clicked, 0 ,0);
+    disconnect(addTestGoRandom);
+    disconnect(addTestGoManual);
+    disconnect(addTestQuit);
     addTestQuit->close();
     addTestGoRandom->close();
     addTestGoManual->close();
@@ -1304,11 +1304,43 @@ void MyClient::hideAddTestWindow()
 
 void MyClient::setAddTestRandomWindow()
 {
+    addTestRandomTheme = new QLineEdit();
+    addTestRandomSubject = new QLineEdit();
 
+    addTestRandomMine = new QRadioButton();
+    addTestRandomAll = new QRadioButton();
+
+    QHBoxLayout *buttons = new QHBoxLayout();
+    buttons->addWidget(addTestRandomMine);
+    buttons->addWidget(addTestRandomAll);
+
+    addTestRandomAmount = new QSpinBox();
+
+    addTestRandomQuit = new QPushButton();
+
+    connect(addTestRandomQuit, &QPushButton::clicked, this,
+            [this] {hideAddTestRandomWindow(); setAddTestWindow();});
+
+    addTestRandomLayout = new QVBoxLayout();
+    addTestRandomLayout->addWidget(addTestRandomTheme);
+    addTestRandomLayout->addWidget(addTestRandomSubject);
+    addTestRandomLayout->addLayout(buttons);
+    addTestRandomLayout->addWidget(addTestRandomAmount);
+    addTestRandomLayout->addWidget(addTestRandomQuit);
+
+    QWidget *w = new QWidget();
+    w->setLayout(addTestRandomLayout);
+    setCentralWidget(w);
 }
 void MyClient::hideAddTestRandomWindow()
 {
-
+    disconnect(addTestRandomQuit);
+    addTestRandomTheme->close();
+    addTestRandomSubject->close();
+    addTestRandomMine->close();
+    addTestRandomAll->close();
+    addTestRandomAmount->close();
+    addTestRandomQuit->close();
 }
 void MyClient::setAddTestManualWindow()
 {

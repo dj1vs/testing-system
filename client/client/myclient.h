@@ -31,6 +31,7 @@
 #include <QStringListModel>
 #include <QTextEdit>
 #include <QInputDialog>
+#include <QSpinBox>
 
 class MyClient : public QMainWindow
 {
@@ -188,6 +189,14 @@ private:
     QPushButton *addTestGoRandom;
     QPushButton *addTestGoManual;
     QVBoxLayout *addTestLayout;
+
+    QLineEdit *addTestRandomTheme;
+    QLineEdit *addTestRandomSubject;
+    QRadioButton *addTestRandomMine;
+    QRadioButton *addTestRandomAll;
+    QSpinBox *addTestRandomAmount;
+    QPushButton *addTestRandomQuit;
+    QVBoxLayout *addTestRandomLayout;
 
 
 
