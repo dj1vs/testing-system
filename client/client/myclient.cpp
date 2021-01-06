@@ -1281,6 +1281,8 @@ void MyClient::setAddTestWindow()
     addTestGoRandom = new QPushButton("random");
     addTestGoManual = new QPushButton("manual");
     connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
+    connect(addTestGoRandom, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestRandomWindow();});
+    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestManualWindow();});
     addTestLayout = new QVBoxLayout();
     addTestLayout->addWidget(addTestGoRandom);
     addTestLayout->addWidget(addTestGoManual);
@@ -1292,8 +1294,27 @@ void MyClient::setAddTestWindow()
 }
 void MyClient::hideAddTestWindow()
 {
+    disconnect(addTestGoRandom, &QPushButton::clicked, 0 ,0);
+    disconnect(addTestGoManual, &QPushButton::clicked, 0 ,0);
     disconnect(addTestQuit, &QPushButton::clicked, 0 ,0);
     addTestQuit->close();
     addTestGoRandom->close();
     addTestGoManual->close();
+}
+
+void MyClient::setAddTestRandomWindow()
+{
+
+}
+void MyClient::hideAddTestRandomWindow()
+{
+
+}
+void MyClient::setAddTestManualWindow()
+{
+
+}
+void MyClient::hideAddTestManualWindow()
+{
+
 }

@@ -247,6 +247,11 @@ private slots:
 
     void setAddTestWindow();
     void hideAddTestWindow();
+
+    void setAddTestRandomWindow();
+    void hideAddTestRandomWindow();
+    void setAddTestManualWindow();
+    void hideAddTestManualWindow();
     ///////////////////////
 
     void solveMsg(QString msg);
