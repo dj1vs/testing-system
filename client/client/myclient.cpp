@@ -1304,27 +1304,38 @@ void MyClient::hideAddTestWindow()
 
 void MyClient::setAddTestRandomWindow()
 {
+    addTestRandomThemeLabel = new QLabel("Theme");
+    addTestRandomSubjectLabel = new QLabel("Subject");
+    addTestRandomAuthorLabel = new QLabel("Author");
+    addTestRandomAmountLabel = new QLabel("Amount(1-999)");
+
     addTestRandomTheme = new QLineEdit();
     addTestRandomSubject = new QLineEdit();
 
-    addTestRandomMine = new QRadioButton();
-    addTestRandomAll = new QRadioButton();
+    addTestRandomMine = new QRadioButton("Mine");
+    addTestRandomAll = new QRadioButton("All");
 
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addWidget(addTestRandomMine);
     buttons->addWidget(addTestRandomAll);
 
     addTestRandomAmount = new QSpinBox();
+    addTestRandomAmount->setMinimum(1);
+    addTestRandomAmount->setMaximum(999);
 
-    addTestRandomQuit = new QPushButton();
+    addTestRandomQuit = new QPushButton("quit");
 
     connect(addTestRandomQuit, &QPushButton::clicked, this,
             [this] {hideAddTestRandomWindow(); setAddTestWindow();});
 
     addTestRandomLayout = new QVBoxLayout();
+    addTestRandomLayout->addWidget(addTestRandomThemeLabel);
     addTestRandomLayout->addWidget(addTestRandomTheme);
+    addTestRandomLayout->addWidget(addTestRandomSubjectLabel);
     addTestRandomLayout->addWidget(addTestRandomSubject);
+    addTestRandomLayout->addWidget(addTestRandomAuthorLabel);
     addTestRandomLayout->addLayout(buttons);
+    addTestRandomLayout->addWidget(addTestRandomAmountLabel);
     addTestRandomLayout->addWidget(addTestRandomAmount);
     addTestRandomLayout->addWidget(addTestRandomQuit);
 

@@ -190,6 +190,10 @@ private:
     QPushButton *addTestGoManual;
     QVBoxLayout *addTestLayout;
 
+    QLabel *addTestRandomThemeLabel;
+    QLabel *addTestRandomSubjectLabel;
+    QLabel *addTestRandomAuthorLabel;
+    QLabel *addTestRandomAmountLabel;
     QLineEdit *addTestRandomTheme;
     QLineEdit *addTestRandomSubject;
     QRadioButton *addTestRandomMine;
