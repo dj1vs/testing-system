@@ -184,6 +184,11 @@ private:
     QList <QString> addTaskAnswerOptions;
 
 
+    QPushButton *addTestQuit;
+    QVBoxLayout *addTestLayout;
+
+
+
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -237,6 +242,9 @@ private slots:
 
     void setAddTaskWindow();
     void hideAddTaskWindow();
+
+    void setAddTestWindow();
+    void hideAddTestWindow();
     ///////////////////////
 
     void solveMsg(QString msg);

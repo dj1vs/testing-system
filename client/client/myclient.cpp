@@ -1138,6 +1138,9 @@ void MyClient::setTeacherWindow()
 
     connect(newTaskButton, &QPushButton::clicked, this,
             [this] {hideTeacherWindow(); setAddTaskWindow();});
+    connect(newTestButton, &QPushButton::clicked, this,
+            [this] {hideTeacherWindow(); setAddTestWindow();});
+
     teacherWindowLayout = new QVBoxLayout();
     teacherWindowLayout->addWidget(newTaskButton);
     teacherWindowLayout->addWidget(newTestButton);
@@ -1271,4 +1274,18 @@ void MyClient::addTaskAnswerOptionsDeleteEmpty()
             addTaskAnswerOptionsModel->removeRow(i);
     }
     addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
+}
+void MyClient::setAddTestWindow()
+{
+    addTestQuit = new QPushButton("quit");
+    connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
+    addTestLayout = new QVBoxLayout();
+    addTestLayout->addWidget(addTestQuit);
+    QWidget *w = new QWidget();
+    w->setLayout(addTestLayout);
+    setCentralWidget(w);
+}
+void MyClient::hideAddTestWindow()
+{
+    addTestQuit->close();
 }
