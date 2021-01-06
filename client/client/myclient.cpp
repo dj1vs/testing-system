@@ -1232,7 +1232,7 @@ void MyClient::sendTaskToSystem()
         msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
         for(auto &i : answerOptions)
             msg += i + ';';
-        msg += ';';
+        msg += "';}";
         qDebug() << msg;
         slotSendToServer(msg);
     }
@@ -1254,7 +1254,7 @@ void MyClient::addTaskAnswerOptionsDeleteEmpty()
 {
     for(int i = 0; i < addTaskAnswerOptionsModel->rowCount(); ++i)
     {
-        if(addTaskAnswerOptionsModel->stringList()[i] == "")
+        if(addTaskAnswerOptionsModel->stringList().at(i) == "")
             addTaskAnswerOptionsModel->removeRow(i);
     }
     addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
