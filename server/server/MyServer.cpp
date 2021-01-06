@@ -427,6 +427,35 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='view test tasks';status='sended';}");
         }
     }
+    else if (cmd == "add task")
+    {
+        quint16 id = cutArg(msg, "id").toInt();
+        QString tasktext = cutArg(msg, "tasktext");
+        QString answer = cutArg(msg, "answer");
+        QString theme = cutArg(msg, "theme");
+        QString subject = cutArg(msg, "subject");
+        QString answerOptions = cutArg(msg, "answerOptions");
+
+        QSqlQuery query = QSqlQuery(db);
+        query.prepare("INSERT INTO tasks (task, answeroptions, answer, theme, subject, teacherid) "\
+                        "VALUES (:task, :answeroptions, :answer, :theme, :subject, :teacherid);");
+        query.bindValue(":task", tasktext);
+        query.bindValue(":answeroptions", answerOptions);
+        query.bindValue(":answer", answer);
+        query.bindValue(":theme", theme);
+        query.bindValue(":subject", subject);
+        query.bindValue(":teacherid", id);
+        qDebug() << query.lastQuery();
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+        {
+            qDebug() << "Wow!";
+            sendToClient(pSocket, "{cmd='add task';status='sended';}");
+        }
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)
