@@ -287,6 +287,19 @@ void MyClient::solveMsg(QString msg)
             allPlannedTestsTaskList.push_back({cutArg(msg, "testname"), cutArg(msg, "taskname"), cutArg(msg, "answeroptions"),
                                               cutArg(msg, "answertext"), cutArg(msg, "theme")});
     }
+    else if(cmd == "add task")
+    {
+        QString status = cutArg(msg, "status");
+        if (status == "sended")
+        {
+            showMsg("task added successfully");
+            addTaskAnswer->clear();
+            addTaskQuesition->clear();
+            addTaskAnswerOptions.clear();
+            addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
+            addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
+        }
+    }
 }
 
 void MyClient::logInToSystem()
