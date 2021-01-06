@@ -1278,14 +1278,22 @@ void MyClient::addTaskAnswerOptionsDeleteEmpty()
 void MyClient::setAddTestWindow()
 {
     addTestQuit = new QPushButton("quit");
+    addTestGoRandom = new QPushButton("random");
+    addTestGoManual = new QPushButton("manual");
     connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
     addTestLayout = new QVBoxLayout();
+    addTestLayout->addWidget(addTestGoRandom);
+    addTestLayout->addWidget(addTestGoManual);
     addTestLayout->addWidget(addTestQuit);
+
     QWidget *w = new QWidget();
     w->setLayout(addTestLayout);
     setCentralWidget(w);
 }
 void MyClient::hideAddTestWindow()
 {
+    disconnect(addTestQuit, &QPushButton::clicked, 0 ,0);
     addTestQuit->close();
+    addTestGoRandom->close();
+    addTestGoManual->close();
 }

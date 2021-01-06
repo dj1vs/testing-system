@@ -185,6 +185,8 @@ private:
 
 
     QPushButton *addTestQuit;
+    QPushButton *addTestGoRandom;
+    QPushButton *addTestGoManual;
     QVBoxLayout *addTestLayout;
 
 
