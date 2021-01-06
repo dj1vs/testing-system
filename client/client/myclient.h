@@ -194,12 +194,15 @@ private:
     QLabel *addTestRandomSubjectLabel;
     QLabel *addTestRandomAuthorLabel;
     QLabel *addTestRandomAmountLabel;
+    QLabel *addTestRandomNameLabel;
     QLineEdit *addTestRandomTheme;
     QLineEdit *addTestRandomSubject;
+    QLineEdit *addTestRandomName;
     QRadioButton *addTestRandomMine;
     QRadioButton *addTestRandomAll;
     QSpinBox *addTestRandomAmount;
     QPushButton *addTestRandomQuit;
+    QPushButton *addTestRandomSave;
     QVBoxLayout *addTestRandomLayout;
 
 
@@ -283,6 +286,9 @@ private slots:
     void showAllResultsSort();
     void editAllResultsTable();
 
+    void showGroupTeachers();
+    void showGroupStudents();
+
     void showAllPlannedTestsSort();
     void editAllPlannedTestsTable();
 
@@ -293,8 +299,6 @@ private slots:
     void showAddAnswerOptions();
     void addTaskAnswerOptionsDeleteEmpty();
 
-    void showGroupTeachers();
-    void showGroupStudents();
     void askGroupTeachers(QString groupName);
     void askGroupStudents(QString groupName);
 signals:
