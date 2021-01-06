@@ -1155,6 +1155,7 @@ void MyClient::setAddTaskWindow()
     addTaskSave = new QPushButton("save");
     addTaskQuit = new QPushButton("quit");
     addTaskNewOption = new QPushButton("add new answer option");
+    addTaskDeleteEmpty = new QPushButton("delete empty");
 
     connect(addTaskQuit, &QPushButton::clicked, this,
             [this] {hideAddTaskWindow(); setTeacherWindow();});
@@ -1162,6 +1163,9 @@ void MyClient::setAddTaskWindow()
 
     connect(addTaskNewOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions();});
+
+    connect(addTaskDeleteEmpty, &QPushButton::clicked, this,
+            [this] {addTaskAnswerOptionsDeleteEmpty();});
 
     addTaskQuesition = new QTextEdit();
     addTaskAnswer = new QTextEdit();
@@ -1177,6 +1181,7 @@ void MyClient::setAddTaskWindow()
     addTaskLayout->addWidget(addTaskQuesition);
     addTaskLayout->addWidget(addTaskAnswerOptionsLabel);
     addTaskLayout->addWidget(addTaskAnswerOptionsView);
+    addTaskLayout->addWidget(addTaskDeleteEmpty);
     addTaskLayout->addWidget(addTaskNewOption);
     addTaskLayout->addWidget(addTaskAnswerLabel);
     addTaskLayout->addWidget(addTaskAnswer);
@@ -1244,5 +1249,13 @@ void MyClient::showAddAnswerOptions()
         addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
         addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
     }
-
+}
+void MyClient::addTaskAnswerOptionsDeleteEmpty()
+{
+    for(int i = 0; i < addTaskAnswerOptionsModel->rowCount(); ++i)
+    {
+        if(addTaskAnswerOptionsModel->stringList()[i] == "")
+            addTaskAnswerOptionsModel->removeRow(i);
+    }
+    addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
 }

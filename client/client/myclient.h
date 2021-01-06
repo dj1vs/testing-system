@@ -173,6 +173,7 @@ private:
     QPushButton *addTaskSave;
     QPushButton *addTaskQuit;
     QPushButton *addTaskNewOption;
+    QPushButton *addTaskDeleteEmpty;
     QTextEdit *addTaskQuesition;
     QTextEdit *addTaskAnswer;
     QStringListModel *addTaskAnswerOptionsModel;
@@ -187,8 +188,8 @@ private:
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
-    const int WINH = 425;
-    const int WINW = 800;
+    const int WINH = 450;
+    const int WINW = 700;
     quint16 id = -1;
 private:
     void showError(QString err);
@@ -262,6 +263,7 @@ private slots:
     void showPrevTask();
 
     void showAddAnswerOptions();
+    void addTaskAnswerOptionsDeleteEmpty();
 
     void showGroupTeachers();
     void showGroupStudents();
