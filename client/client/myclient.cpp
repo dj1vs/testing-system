@@ -300,6 +300,24 @@ void MyClient::solveMsg(QString msg)
             addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
         }
     }
+    else if(cmd == "validate tasks amount")
+    {
+        QString status = cutArg(msg, "status");
+        bool t = (status == "success");
+        if (!t)
+        {
+            quint16 amount = cutArg(msg, "tasksamount").toInt();
+            if(!amount)
+                return;
+            QMessageBox::StandardButton reply;
+            reply = QMessageBox::question(this, "", "There is no enough tasks. Current tasks amount:" + QString::number(amount),
+                                            QMessageBox::Yes|QMessageBox::No);
+            if(reply == QMessageBox::Yes)
+                t = true;
+        }
+        qDebug() << t;
+
+    }
 }
 
 void MyClient::logInToSystem()
@@ -1348,7 +1366,7 @@ void MyClient::setAddTestRandomWindow()
         }
         else
         {
-            QString msg = "{cmd='validatetasksamount';teacherid='" + QString::number(id) + "';";
+            QString msg = "{cmd='validate tasks amount';teacherid='" + QString::number(id) + "';";
             msg += "theme='"  + addTestRandomTheme->text() + "';";
             msg += "subject='" + addTestRandomSubject->text() + "';";
             msg += "testsize='" + QString::number(addTestRandomAmount->value()) + "';";

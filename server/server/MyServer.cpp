@@ -456,7 +456,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='add task';status='sended';}");
         }
     }
-    else if (cmd == "validatetasksamount")
+    else if (cmd == "validate tasks amount")
     {
 //        QString msg = "{cmd='validate tasks amount';";
 //        msg += "theme='"  + addTestRandomTheme->text() + "';";
@@ -483,12 +483,12 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         else {
             if(query.size() < amount.toInt())
             {
-                sendToClient(pSocket, "{cmd='validatetasksamount';status='not enough';amount='" + QString::number(query.size()) + "';}");
+                sendToClient(pSocket, "{cmd='validate tasks amount';status='not enough';tasksamount='" + QString::number(query.size()) + "';}");
                 qDebug() << ":(";
             }
             else
             {
-                sendToClient(pSocket, "{cmd='validatetaskamount';status='success';}");
+                sendToClient(pSocket, "{cmd='validate tasks amount';status='success';}");
                 qDebug() << ":)";
             }
         }
