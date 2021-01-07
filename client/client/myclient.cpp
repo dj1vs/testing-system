@@ -1309,6 +1309,8 @@ void MyClient::setAddTestRandomWindow()
     addTestRandomSubjectLabel = new QLabel("Subject");
     addTestRandomAuthorLabel = new QLabel("Author");
     addTestRandomAmountLabel = new QLabel("Amount(1-999)");
+    addTestRandomDateLabel = new QLabel("date");
+    addTestRandomDate = new QDateEdit();
 
     addTestRandomTheme = new QLineEdit();
     addTestRandomSubject = new QLineEdit();
@@ -1316,6 +1318,10 @@ void MyClient::setAddTestRandomWindow()
 
     addTestRandomMine = new QRadioButton("Mine");
     addTestRandomAll = new QRadioButton("All");
+
+    QHBoxLayout *date = new QHBoxLayout();
+    date->addWidget(addTestRandomDateLabel);
+    date->addWidget(addTestRandomDate);
 
     QHBoxLayout *buttons = new QHBoxLayout();
     buttons->addWidget(addTestRandomMine);
@@ -1364,6 +1370,7 @@ void MyClient::setAddTestRandomWindow()
     addTestRandomLayout->addWidget(addTestRandomSubject);
     addTestRandomLayout->addWidget(addTestRandomAuthorLabel);
     addTestRandomLayout->addLayout(buttons);
+    addTestRandomLayout->addLayout(date);
     addTestRandomLayout->addWidget(addTestRandomAmountLabel);
     addTestRandomLayout->addWidget(addTestRandomAmount);
     addTestRandomLayout->addWidget(addTestRandomSave);

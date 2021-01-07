@@ -195,6 +195,8 @@ private:
     QLabel *addTestRandomAuthorLabel;
     QLabel *addTestRandomAmountLabel;
     QLabel *addTestRandomNameLabel;
+    QLabel *addTestRandomDateLabel;
+    QDateEdit *addTestRandomDate;
     QLineEdit *addTestRandomTheme;
     QLineEdit *addTestRandomSubject;
     QLineEdit *addTestRandomName;
