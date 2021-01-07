@@ -315,8 +315,33 @@ void MyClient::solveMsg(QString msg)
             if(reply == QMessageBox::Yes)
                 t = true;
         }
-        qDebug() << t;
+        if(t)
+        {/*
+            addTestRandomTheme = new QLineEdit();
+            addTestRandomSubject = new QLineEdit();
+            addTestRandomName = new QLineEdit();
 
+            QHBoxLayout *date = new QHBoxLayout();
+            date->addWidget(addTestRandomDateLabel);
+            date->addWidget(addTestRandomDate);
+
+            QHBoxLayout *buttons = new QHBoxLayout();
+            buttons->addWidget(addTestRandomMine);
+            buttons->addWidget(addTestRandomAll);
+
+            addTestRandomAmount = new QSpinBox();*/
+            QDate d = addTestRandomDate->date();
+            QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
+            QString msg = "{cmd='add test';"
+                            "teacherid='" + QString::number(id) + "';"
+                            "theme='" + addTestRandomTheme->text() + "';"
+                            "subject='" + addTestRandomSubject->text() + "';"
+                            "testname='" + addTestRandomName->text() + "';"
+                            "date='" + date + "';"
+                            "author='" + (addTestRandomMine->isChecked() ? "ME" : "ALL") + "';}";
+            qDebug() << msg;
+            slotSendToServer(msg);
+        }
     }
 }
 
@@ -1046,7 +1071,7 @@ void MyClient::editAllPlannedTestsTable()
     QString surname = allPlannedTestsSortSurname->text();
     QString test = allPlannedTestsSortTest->text();
     QDate d = allPlannedTestsSortDate->date();
-    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-s0" : "-") + QString::number(d.day());
+    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
     QString subject = allPlannedTestsSortSubject->text();
     bool isPast = allPlannedTestsSortViewPast->isChecked();
     bool isFuture = allPlannedTestsSortViewFuture->isChecked();
