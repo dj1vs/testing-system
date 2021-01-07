@@ -1348,10 +1348,10 @@ void MyClient::setAddTestRandomWindow()
         }
         else
         {
-            QString msg = "{cmd='validate tasks amount';teacherid='" + QString::number(id) + "';";
+            QString msg = "{cmd='validatetasksamount';teacherid='" + QString::number(id) + "';";
             msg += "theme='"  + addTestRandomTheme->text() + "';";
             msg += "subject='" + addTestRandomSubject->text() + "';";
-            msg += "amount='" + QString::number(addTestRandomAmount->value()) + "';";
+            msg += "testsize='" + QString::number(addTestRandomAmount->value()) + "';";
             msg += "author='" + QString((addTestRandomMine->isChecked() ? "ME" : "ALL")) + "';";
             msg += '}';
             qDebug() << msg;

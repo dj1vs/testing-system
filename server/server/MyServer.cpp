@@ -456,6 +456,45 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, "{cmd='add task';status='sended';}");
         }
     }
+    else if (cmd == "validatetasksamount")
+    {
+//        QString msg = "{cmd='validate tasks amount';";
+//        msg += "theme='"  + addTestRandomTheme->text() + "';";
+//        msg += "subject='" + addTestRandomSubject->text() + "';";
+//        msg += "testsize='" + QString::number(addTestRandomAmount->value()) + "';";
+//        msg += "author='" + QString((addTestRandomMine->isChecked() ? "ME" : "ALL")) + "';";
+//        msg += '}';
+        QString theme = cutArg(msg, "theme");
+        QString subject = cutArg(msg, "subject");
+        QString amount = cutArg(msg, "testsize");
+        QString author = cutArg(msg, "author");
+        QString teacherId = cutArg(msg, "teacherid");
+
+        QString req = "SELECT id FROM tasks WHERE theme = '" + theme + "' AND ";
+        req += "subject = '" + subject + "'";
+        if(author == "ME")
+                req += " AND teacherid=" + teacherId;
+        req += " LIMIT " + amount + ";";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else {
+            if(query.size() < amount.toInt())
+            {
+                sendToClient(pSocket, "{cmd='validatetasksamount';status='not enough';amount='" + QString::number(query.size()) + "';}");
+                qDebug() << ":(";
+            }
+            else
+            {
+                sendToClient(pSocket, "{cmd='validatetaskamount';status='success';}");
+                qDebug() << ":)";
+            }
+        }
+
+
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)
