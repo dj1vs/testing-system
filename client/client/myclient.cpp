@@ -1340,23 +1340,28 @@ void MyClient::setAddTestRandomWindow()
     connect(addTestRandomSave, &QPushButton::clicked, this,
             [this] {
         if (addTestRandomTheme->text() == "" || addTestRandomSubject->text() == "" ||
-                addTestRandomName->text() == "" || (!addTestRandomMine->isChecked() && !addTestRandomAll->isChecked()))
+                addTestRandomName->text() == "" || (!addTestRandomMine->isChecked() && !addTestRandomAll->isChecked())
+                || addTestRandomDate->date() < QDate::currentDate())
         {
             showError("fill all");
             return;
         }
         else
         {
-            QString msg = "cmd='add test';mode='random';";
+            QString msg = "{cmd='add test';mode='random';";
             msg += "theme='"+addTestRandomTheme->text()+"';";
             msg += "subject='" + addTestRandomSubject->text() + "';";
             msg += "name='" + addTestRandomName->text() + "';";
+            QDate d = addTestRandomDate->date();
+            QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
+            msg += "date='" + date + "';";
             msg += "teacher='";
             if(addTestRandomMine->isChecked())
                 msg += QString::number(id);
             else
                 msg += "ALL";
             msg += "';}";
+            qDebug() << msg;
             slotSendToServer(msg);
         }
     });
