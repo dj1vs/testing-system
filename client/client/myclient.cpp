@@ -1348,7 +1348,7 @@ void MyClient::setAddTestRandomWindow()
         }
         else
         {
-            QString msg = "{cmd='validate tasks amount';";
+            QString msg = "{cmd='validate tasks amount';teacherid='" + QString::number(id) + "';";
             msg += "theme='"  + addTestRandomTheme->text() + "';";
             msg += "subject='" + addTestRandomSubject->text() + "';";
             msg += "amount='" + QString::number(addTestRandomAmount->value()) + "';";
