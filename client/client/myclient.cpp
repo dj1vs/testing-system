@@ -1348,16 +1348,17 @@ void MyClient::setAddTestRandomWindow()
         }
         else
         {
-            QString msg = "{cmd='add test';mode='random';";
+            QString msg = "{cmd='add test';mode='random';senderid='" + QString::number(id) +"';";
             msg += "theme='"+addTestRandomTheme->text()+"';";
             msg += "subject='" + addTestRandomSubject->text() + "';";
             msg += "name='" + addTestRandomName->text() + "';";
+            msg += "amount='" + QString::number(addTestRandomAmount->value()) + "';";
             QDate d = addTestRandomDate->date();
             QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
             msg += "date='" + date + "';";
             msg += "teacher='";
             if(addTestRandomMine->isChecked())
-                msg += QString::number(id);
+                msg += "ME";
             else
                 msg += "ALL";
             msg += "';}";
