@@ -1324,12 +1324,36 @@ void MyClient::setAddTestRandomWindow()
     addTestRandomAmount = new QSpinBox();
     addTestRandomAmount->setMinimum(1);
     addTestRandomAmount->setMaximum(999);
+    addTestRandomAmount->setValue(3);
 
     addTestRandomQuit = new QPushButton("quit");
     addTestRandomSave =new QPushButton("save");
 
     connect(addTestRandomQuit, &QPushButton::clicked, this,
             [this] {hideAddTestRandomWindow(); setAddTestWindow();});
+    connect(addTestRandomSave, &QPushButton::clicked, this,
+            [this] {
+        if (addTestRandomTheme->text() == "" || addTestRandomSubject->text() == "" ||
+                addTestRandomName->text() == "" || (!addTestRandomMine->isChecked() && !addTestRandomAll->isChecked()))
+        {
+            showError("fill all");
+            return;
+        }
+        else
+        {
+            QString msg = "cmd='add test';mode='random';";
+            msg += "theme='"+addTestRandomTheme->text()+"';";
+            msg += "subject='" + addTestRandomSubject->text() + "';";
+            msg += "name='" + addTestRandomName->text() + "';";
+            msg += "teacher='";
+            if(addTestRandomMine->isChecked())
+                msg += QString::number(id);
+            else
+                msg += "ALL";
+            msg += "';}";
+            slotSendToServer(msg);
+        }
+    });
 
     addTestRandomLayout = new QVBoxLayout();
     addTestRandomLayout->addWidget(addTestRandomNameLabel);
