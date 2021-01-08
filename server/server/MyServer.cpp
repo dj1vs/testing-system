@@ -495,6 +495,44 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
 
 
     }
+    else if (cmd == "add test")
+    {
+//        QString msg = "{cmd='add test';"
+//                        "amount='" + QString::number(addTestRandomAmount->value()) + "';";
+//                        "teacherid='" + QString::number(id) + "';"
+//                        "theme='" + addTestRandomTheme->text() + "';"
+//                        "subject='" + addTestRandomSubject->text() + "';"
+//                        "testname='" + addTestRandomName->text() + "';"
+//                        "date='" + date + "';"
+//                        "author='" + (addTestRandomMine->isChecked() ? "ME" : "ALL") + "';}";
+        QString amount = cutArg(msg, "amount");
+        QString teacherId = cutArg(msg, "teacherid");
+        QString theme = cutArg(msg, "theme");
+        QString subject = cutArg(msg, "subject");
+        QString testname = cutArg(msg, "testname");
+        QString date = cutArg(msg, "date");
+        QString author = cutArg(msg, "author");
+
+        QSqlQuery query = QSqlQuery(db);
+        query.prepare("INSERT INTO tests (teacherid, name, subject, planneddate)"
+                        "VALUES (:teacherid, :name, :subject, :planneddate)");
+        query.bindValue(":teacherid", teacherId.toInt());
+        query.bindValue(":name", testname);
+        query.bindValue(":subject", subject);
+        query.bindValue(":planneddate", QDate::fromString(date));
+
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else
+
+
+
+
+
+
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)
