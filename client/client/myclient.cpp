@@ -333,6 +333,7 @@ void MyClient::solveMsg(QString msg)
             QDate d = addTestRandomDate->date();
             QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
             QString msg = "{cmd='add test';"
+                            "amount='" + QString::number(addTestRandomAmount->value()) + "';";
                             "teacherid='" + QString::number(id) + "';"
                             "theme='" + addTestRandomTheme->text() + "';"
                             "subject='" + addTestRandomSubject->text() + "';"

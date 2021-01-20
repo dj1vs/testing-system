@@ -526,6 +526,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().databaseText()
             << query.lastError().driverText();
         else
+        {
+
+        }
 
 
 
