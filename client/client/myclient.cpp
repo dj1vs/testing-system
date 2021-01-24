@@ -348,6 +348,16 @@ void MyClient::solveMsg(QString msg)
     {
         showMsg("added!");
     }
+    else if(cmd == "get tasks")
+    {
+        if(cutArg(msg,"status") == "sending")
+        {
+            //QList <QString> args = {"subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
+            taskList.push_back({cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"), cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
+        }
+        else
+            qDebug() << taskList;
+    }
 }
 
 void MyClient::logInToSystem()
@@ -1438,7 +1448,19 @@ void MyClient::hideAddTestRandomWindow()
 }
 void MyClient::setAddTestManualWindow()
 {
+    slotSendToServer("{cmd='get tasks';}");
+//    allTasksTableView = new QTableView(this);
+//    allTasksModel;
+//    addSelectedTaskButton;
 
+//    pickedTasksTableView;
+//    pickedTasksModel;
+//    addTestManualDeleteSelected;
+
+//    sendManualTest;
+//    addTestManualQuit;
+
+//    addTestManualLayout;
 }
 void MyClient::hideAddTestManualWindow()
 {

@@ -207,6 +207,18 @@ private:
     QPushButton *addTestRandomSave;
     QVBoxLayout *addTestRandomLayout;
 
+    QTableView *allTasksTableView;
+    QStandardItemModel *allTasksModel;
+    QList <QList <QString>> taskList;
+    QPushButton *addSelectedTaskButton;
+    QTableView *pickedTasksTableView;
+    QStandardItemModel *pickedTasksModel;
+    QPushButton *addTestManualDeleteSelected;
+    QPushButton *sendManualTest;
+    QPushButton *addTestManualQuit;
+    QVBoxLayout *addTestManualLayout;
+
+
 
 
 

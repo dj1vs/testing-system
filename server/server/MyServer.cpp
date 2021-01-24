@@ -603,10 +603,31 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         qDebug() << ":)";
 
         sendToClient(pSocket, "{cmd='add test';status='yes';}");
-
-
-
-
+    }
+    else if(cmd == "get tasks")
+    {
+        QString req = "SELECT * FROM tasks";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+        {
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+            return;
+        }
+        while(query.next())
+        {
+            QList <QString> args = {"subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
+            QString msg = "{cmd='get tasks';status='sending';";
+            for(int i = 1; i < 7; ++i)
+            {
+                msg+= args[i-1] + "='" + query.record().field(i).value().toString() + "';";
+            }
+            msg += "}";
+            qDebug() << msg;
+            sendToClient(pSocket, msg);
+        }
+        sendToClient(pSocket, "{cmd='get tasks';status='sended';}");
 
     }
 }
