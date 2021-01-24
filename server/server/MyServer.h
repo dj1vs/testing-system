@@ -14,6 +14,7 @@
 #include <QDebug>
 #include <QSqlField>
 #include <QSqlTableModel>
+#include <QRandomGenerator>
 
 class QTcpServer;
 class QTcpSocket;

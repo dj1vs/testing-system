@@ -507,11 +507,18 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
 //                        "author='" + (addTestRandomMine->isChecked() ? "ME" : "ALL") + "';}";
         QString amount = cutArg(msg, "amount");
         QString teacherId = cutArg(msg, "teacherid");
+        qDebug() << msg;
         QString theme = cutArg(msg, "theme");
         QString subject = cutArg(msg, "subject");
         QString testname = cutArg(msg, "testname");
         QString date = cutArg(msg, "date");
         QString author = cutArg(msg, "author");
+
+        QList <quint32> id;
+        QList <quint32> finish;
+
+        quint32 testId;
+
 
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO tests (teacherid, name, subject, planneddate)"
@@ -519,17 +526,83 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         query.bindValue(":teacherid", teacherId.toInt());
         query.bindValue(":name", testname);
         query.bindValue(":subject", subject);
-        query.bindValue(":planneddate", QDate::fromString(date));
+        query.bindValue(":planneddate", date);
 
         if(!query.exec())
+        {
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
+            return;
+        }
+        QString req = "SELECT id FROM tasks WHERE";
+        if(author == "ME")
+            req += " teacherid = " + teacherId + " AND";
+        req += " theme = '" + theme + "' AND subject = '" + subject + "';";
+        if(!query.exec(req))
+        {
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+            return;
+        }
         else
         {
-
+            if(query.size() < amount.toInt())
+            {
+                qDebug() << query.size();
+                return;
+            }
+            while(query.next())
+            {
+                id.push_back(query.record().field(0).value().toInt());
+            }
         }
 
+        if(id.size() == amount.toInt())
+            finish = id;
+        else
+        {
+            for(int i = 0; i < amount.toInt(); ++i)
+            {
+                  quint32 value = QRandomGenerator::global()->generate() % (id.size());
+                  finish.push_back(value);
+                  id.removeAt(value);
+            }
+        }
+
+        if(!query.exec("SELECT COUNT(*) FROM tests"))
+        {
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+            return;
+        }
+        else
+        {
+            while(query.next())
+                testId = query.record().field(0).value().toInt();
+        }
+
+        for(int i = 0; i < finish.size(); ++i)
+        {
+            query.prepare("INSERT INTO test_by_task (taskid, testid)"
+                          "VALUES (:taskid, :testid)");
+            query.bindValue(":testid", testId);
+            qDebug() << finish[i];
+            query.bindValue(":taskid", finish[i]);
+
+            if(!query.exec())
+            {
+                qDebug() << "Can not run database query :("
+                << query.lastError().databaseText()
+                << query.lastError().driverText();
+                return;
+            }
+        }
+        qDebug() << ":)";
+
+        sendToClient(pSocket, "{cmd='add test';status='yes';}");
 
 
 
