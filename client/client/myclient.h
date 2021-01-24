@@ -322,5 +322,7 @@ signals:
     void groupStudentsCollected();
     void allPlannedTestsCollected();
     void testTasksCollected();
+    void getTasks();
+    void allTasksCollected();
 };
 #endif // MYCLIENT_H

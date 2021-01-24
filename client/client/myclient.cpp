@@ -21,6 +21,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
     connect(this, SIGNAL(allPlannedTestsCollected()), this, SLOT(setViewAllPlannedTestsWindow()));
     connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
+    connect(this, SIGNAL(allTasksCollected()), this, SLOT(setAddTestManualWindow()));
 
     setAuthorizationWindow();
 }
@@ -356,7 +357,10 @@ void MyClient::solveMsg(QString msg)
             taskList.push_back({cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"), cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
         }
         else
-            qDebug() << taskList;
+        {
+            showMsg("Task list collected");
+            emit allTasksCollected();
+        }
     }
 }
 
@@ -1340,7 +1344,7 @@ void MyClient::setAddTestWindow()
     addTestGoManual = new QPushButton("manual");
     connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
     connect(addTestGoRandom, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestRandomWindow();});
-    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestManualWindow();});
+    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); slotSendToServer("{cmd='get tasks';}"); emit getTasks();});
     addTestLayout = new QVBoxLayout();
     addTestLayout->addWidget(addTestGoRandom);
     addTestLayout->addWidget(addTestGoManual);
@@ -1448,7 +1452,7 @@ void MyClient::hideAddTestRandomWindow()
 }
 void MyClient::setAddTestManualWindow()
 {
-    slotSendToServer("{cmd='get tasks';}");
+    qDebug() << taskList;
 //    allTasksTableView = new QTableView(this);
 //    allTasksModel;
 //    addSelectedTaskButton;
