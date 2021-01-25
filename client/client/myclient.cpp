@@ -1471,11 +1471,22 @@ void MyClient::setAddTestManualWindow()
     }
     allTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     allTasksTableView->setModel(allTasksModel);
+    allTasksSelect = allTasksTableView->selectionModel();
 
     addSelectedTaskButton = new QPushButton("add selected");
+    connect(addSelectedTaskButton, &QPushButton::clicked, this, [this]
+    {
+        if(allTasksSelect->hasSelection())
+        {
+            for(int i = 0; i < allTasksSelect->selectedRows().size(); ++i)
+            {
+
+            }
+        }
+    });
 
     pickedTasksTableView = new QTableView(this);
-    pickedTasksModel = new QStandardItemModel(taskList.size(), taskList[0].size(), this);
+    pickedTasksModel = new QStandardItemModel(0, taskList[0].size(), this);
     for(int i = 0; i < taskList[0].size(); ++i)
     {
         QByteArray ba = params[i].toLocal8Bit();
