@@ -1344,7 +1344,7 @@ void MyClient::setAddTestWindow()
     addTestGoManual = new QPushButton("manual");
     connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
     connect(addTestGoRandom, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestRandomWindow();});
-    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); slotSendToServer("{cmd='get tasks';}"); emit getTasks();});
+    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); taskList.clear(); slotSendToServer("{cmd='get tasks';}"); emit getTasks();});
     addTestLayout = new QVBoxLayout();
     addTestLayout->addWidget(addTestGoRandom);
     addTestLayout->addWidget(addTestGoManual);
@@ -1451,22 +1451,64 @@ void MyClient::hideAddTestRandomWindow()
     addTestRandomQuit->close();
 }
 void MyClient::setAddTestManualWindow()
-{
-    qDebug() << taskList;
-//    allTasksTableView = new QTableView(this);
-//    allTasksModel;
-//    addSelectedTaskButton;
+{    
+    allTasksTableView = new QTableView(this);
+    allTasksModel = new QStandardItemModel(taskList.size(), taskList[0].size(), this);
+    QList <QString> params = {"Subject", "Task", "Answer Options", "Answer", "Theme", "Teacher Id"};
+    for(int i = 0; i < taskList[0].size(); ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        allTasksModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    for(int row = 0; row < taskList.size(); ++row)
+    {
+        for(int col = 0; col < taskList[0].size(); ++col)
+        {
+            QModelIndex index=allTasksModel->index(row,col,QModelIndex());
+            allTasksModel->setData(index, taskList[row][col]);
+        }
+    }
+    allTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    allTasksTableView->setModel(allTasksModel);
 
-//    pickedTasksTableView;
-//    pickedTasksModel;
-//    addTestManualDeleteSelected;
+    addSelectedTaskButton = new QPushButton("add selected");
 
-//    sendManualTest;
-//    addTestManualQuit;
+    pickedTasksTableView = new QTableView(this);
+    pickedTasksModel = new QStandardItemModel(taskList.size(), taskList[0].size(), this);
+    for(int i = 0; i < taskList[0].size(); ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        pickedTasksModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    pickedTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    pickedTasksTableView->setModel(pickedTasksModel);
 
-//    addTestManualLayout;
+    addTestManualDeleteSelected = new QPushButton("delete selected");
+
+    sendManualTest = new QPushButton("send");
+
+    addTestManualQuit = new QPushButton("quit");
+    connect(addTestManualQuit, &QPushButton::clicked, this, [this] {hideAddTestManualWindow(); setAddTestWindow();});
+
+    addTestManualLayout = new QVBoxLayout();
+    addTestManualLayout->addWidget(allTasksTableView);
+    addTestManualLayout->addWidget(addSelectedTaskButton);
+    addTestManualLayout->addWidget(pickedTasksTableView);
+    addTestManualLayout->addWidget(addTestManualDeleteSelected);
+    addTestManualLayout->addWidget(sendManualTest);
+    addTestManualLayout->addWidget(addTestManualQuit);
+
+    setNewLayout(addTestManualLayout);
 }
 void MyClient::hideAddTestManualWindow()
 {
-
+    disconnect(addTestManualQuit);
+    allTasksTableView->close();
+    addSelectedTaskButton->close();
+    pickedTasksTableView->close();
+    addTestManualDeleteSelected->close();
+    sendManualTest->close();
+    addTestManualQuit->close();
 }

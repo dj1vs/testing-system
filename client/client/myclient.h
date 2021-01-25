@@ -1,4 +1,4 @@
-#ifndef MYCLIENT_H
+﻿#ifndef MYCLIENT_H
 #define MYCLIENT_H
 
 #include <QtGlobal>
@@ -210,6 +210,7 @@ private:
     QTableView *allTasksTableView;
     QStandardItemModel *allTasksModel;
     QList <QList <QString>> taskList;
+    QList <QList <QString>> pickedTasksList;
     QPushButton *addSelectedTaskButton;
     QTableView *pickedTasksTableView;
     QStandardItemModel *pickedTasksModel;
@@ -229,6 +230,8 @@ private:
     const int WINW = 700;
     quint16 id = -1;
 private:
+    void setNewLayout(QVBoxLayout *layout) {QWidget *w = new QWidget(); w->setLayout(layout); this->setCentralWidget(w);};
+
     void showError(QString err);
     void showMsg(QString msg);
     QString cutArg(QString str, QString cmd);
