@@ -32,6 +32,7 @@
 #include <QTextEdit>
 #include <QInputDialog>
 #include <QSpinBox>
+#include <QItemSelectionModel>
 
 class MyClient : public QMainWindow
 {
@@ -209,11 +210,13 @@ private:
 
     QTableView *allTasksTableView;
     QStandardItemModel *allTasksModel;
+    QItemSelectionModel *allTasksSelect;
     QList <QList <QString>> taskList;
     QList <QList <QString>> pickedTasksList;
     QPushButton *addSelectedTaskButton;
     QTableView *pickedTasksTableView;
     QStandardItemModel *pickedTasksModel;
+    QItemSelectionModel *pickedTasksSelect;
     QPushButton *addTestManualDeleteSelected;
     QPushButton *sendManualTest;
     QPushButton *addTestManualQuit;

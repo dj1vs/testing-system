@@ -617,11 +617,11 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         while(query.next())
         {
-            QList <QString> args = {"subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
+            QList <QString> args = {"taskid", "subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
             QString msg = "{cmd='get tasks';status='sending';";
-            for(int i = 1; i < 7; ++i)
+            for(int i = 0; i < 7; ++i)
             {
-                msg+= args[i-1] + "='" + query.record().field(i).value().toString() + "';";
+                msg+= args[i] + "='" + query.record().field(i).value().toString() + "';";
             }
             msg += "}";
             qDebug() << msg;

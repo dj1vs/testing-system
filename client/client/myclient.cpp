@@ -354,7 +354,7 @@ void MyClient::solveMsg(QString msg)
         if(cutArg(msg,"status") == "sending")
         {
             //QList <QString> args = {"subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
-            taskList.push_back({cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"), cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
+            taskList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"), cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
         }
         else
         {
@@ -1454,7 +1454,7 @@ void MyClient::setAddTestManualWindow()
 {    
     allTasksTableView = new QTableView(this);
     allTasksModel = new QStandardItemModel(taskList.size(), taskList[0].size(), this);
-    QList <QString> params = {"Subject", "Task", "Answer Options", "Answer", "Theme", "Teacher Id"};
+    QList <QString> params = {"ID", "Subject", "Task", "Answer Options", "Answer", "Theme", "Teacher Id"};
     for(int i = 0; i < taskList[0].size(); ++i)
     {
         QByteArray ba = params[i].toLocal8Bit();
@@ -1476,15 +1476,24 @@ void MyClient::setAddTestManualWindow()
     addSelectedTaskButton = new QPushButton("add selected");
     connect(addSelectedTaskButton, &QPushButton::clicked, this, [this]
     {
-        if(allTasksSelect->hasSelection())
+        for(int i = 0; i < allTasksSelect->selectedRows().size(); ++i)
         {
-            for(int i = 0; i < allTasksSelect->selectedRows().size(); ++i)
+            pickedTasksList.push_back(taskList[i]);
+        }
+        for(int i = pickedTasksModel->rowCount(); i < pickedTasksList.size(); ++i)
+        {
+            pickedTasksModel->insertRow(i);
+        }
+        for(int row = 0; row < pickedTasksList.size(); ++row)
+        {
+            for(int col = 0; col < pickedTasksList[0].size(); ++col)
             {
-
+                QModelIndex index= pickedTasksModel->index(row,col,QModelIndex());
+                pickedTasksModel->setData(index, pickedTasksList[row][col]);
             }
         }
+        pickedTasksTableView->setModel(pickedTasksModel);
     });
-
     pickedTasksTableView = new QTableView(this);
     pickedTasksModel = new QStandardItemModel(0, taskList[0].size(), this);
     for(int i = 0; i < taskList[0].size(); ++i)
@@ -1495,8 +1504,19 @@ void MyClient::setAddTestManualWindow()
     }
     pickedTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     pickedTasksTableView->setModel(pickedTasksModel);
+    pickedTasksSelect = pickedTasksTableView->selectionModel();
 
     addTestManualDeleteSelected = new QPushButton("delete selected");
+
+    connect(addTestManualDeleteSelected, &QPushButton::clicked, this, [this]
+    {
+        for(int i = 0; i < pickedTasksSelect->selectedRows().size(); ++i)
+        {
+            pickedTasksList.removeAt(i);
+            pickedTasksModel->removeRow(i);
+        }
+        pickedTasksTableView->setModel(pickedTasksModel);
+    });
 
     sendManualTest = new QPushButton("send");
 
