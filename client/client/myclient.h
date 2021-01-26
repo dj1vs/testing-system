@@ -3,6 +3,7 @@
 
 #include "widgets/AuthorizationWidget.h"
 #include "widgets/AdminPlusWidget.h"
+#include "widgets/AdminPlus/AddGroupWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -43,6 +44,7 @@ public:
 private:
     AuthorizationWidget *aw;
     AdminPlusWidget *apw;
+    AddGroupWidget *agw;
 
     QErrorMessage *d;
 
@@ -232,6 +234,8 @@ private slots:
     void slotError              (QAbstractSocket::SocketError);
     void slotSendToServer       (QString msg                 );
 
+    void setAuthorizationWindow();
+
     void setAdminPlusWindow();
 
     void setAdminWindow();
@@ -243,7 +247,6 @@ private slots:
 
 
     void setAddGroupWindow();
-    void hideAddGroupWindow();
 
     void setAddToGroupWindow();
     void hideAddToGroupWindow();
@@ -280,7 +283,6 @@ private slots:
     ////////////////////
 
     void logInToSystem ();
-    void sendGroupToSystem();
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();

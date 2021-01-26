@@ -14,16 +14,14 @@ public:
     explicit AuthorizationWidget(QWidget *parent = nullptr);
     QString getLogin() const {return login->text();};
     QString getPassword() const {return password->text();};
+
+    QPushButton* authorize;
 private:
     QLabel* loginLabel;
     QLabel* passwordLabel;
     QLineEdit* login;
     QLineEdit* password;
-    QPushButton* authorize;
     QVBoxLayout *layout;
-signals:
-    void logInButtonClicked();
-
 };
 
 #endif // AUTHORIZATIONWIDGET_H

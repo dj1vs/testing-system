@@ -9,11 +9,13 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     myclient.cpp \
+    widgets/AdminPlus/AddGroupWidget.cpp \
     widgets/AdminPlusWidget.cpp \
     widgets/AuthorizationWidget.cpp
 
 HEADERS += \
     myclient.h \
+    widgets/AdminPlus/AddGroupWidget.h \
     widgets/AdminPlusWidget.h \
     widgets/AuthorizationWidget.h
 

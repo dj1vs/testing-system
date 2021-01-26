@@ -16,7 +16,6 @@ AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent)
     password->resize(200, 20);
 
     authorize = new QPushButton("&Log in", this);
-    connect(authorize, &QPushButton::clicked, this, [this] {emit logInButtonClicked();});
 
     QHBoxLayout *l1 = new QHBoxLayout();
     l1->addWidget(loginLabel);

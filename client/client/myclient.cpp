@@ -23,14 +23,22 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
     connect(this, SIGNAL(allTasksCollected()), this, SLOT(setAddTestManualWindow()));
 
-    //set authorization window()
-    aw = new AuthorizationWidget(this);
-    connect(aw, SIGNAL(logInButtonClicked()), this, SLOT(logInToSystem()));
-    setCentralWidget(aw);
+    setAuthorizationWindow();
 }
 
 MyClient::~MyClient()
 {
+}
+
+void MyClient::setAuthorizationWindow()
+{
+    aw = new AuthorizationWidget(this);
+    connect(aw->authorize, &QPushButton::clicked, this, [this]
+    {
+        slotSendToServer("{cmd='authorize';login='" + aw->getLogin() + "';"
+                         "pass='" + aw->getPassword() + "';}");
+    });
+    setCentralWidget(aw);
 }
 
 void MyClient::slotReadyRead()
@@ -112,19 +120,8 @@ void MyClient::solveMsg(QString msg)
     else if(cmd == "add group")
     {
         int r = cutArg(msg, "status").toInt();
-        switch(r)
-        {
-            case 0:
-                showMsg("Group added succesfully");
-                addGroupTitle->setText("");
-            break;
-            case 1:
-                showError("No such  teacher");
-            break;
-            case 2:
-                showError("Введённые имя и фамилия не принадлежат учителю");
-            break;
-            }
+        if(!r)
+            showMsg("Group added succesfully");
     }
     else if(cmd == "add to group")
     {
@@ -280,20 +277,7 @@ void MyClient::solveMsg(QString msg)
                 t = true;
         }
         if(t)
-        {/*
-            addTestRandomTheme = new QLineEdit();
-            addTestRandomSubject = new QLineEdit();
-            addTestRandomName = new QLineEdit();
-
-            QHBoxLayout *date = new QHBoxLayout();
-            date->addWidget(addTestRandomDateLabel);
-            date->addWidget(addTestRandomDate);
-
-            QHBoxLayout *buttons = new QHBoxLayout();
-            buttons->addWidget(addTestRandomMine);
-            buttons->addWidget(addTestRandomAll);
-
-            addTestRandomAmount = new QSpinBox();*/
+        {
             QDate d = addTestRandomDate->date();
             QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
             QString msg = "{cmd='add test';"
@@ -309,16 +293,13 @@ void MyClient::solveMsg(QString msg)
         }
     }
     else if(cmd == "add test")
-    {
         showMsg("added!");
-    }
     else if(cmd == "get tasks")
     {
         if(cutArg(msg,"status") == "sending")
-        {
-            //QList <QString> args = {"subject", "tasktext", "answeroptions", "answertext", "theme", "teacherid"};
-            taskList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"), cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
-        }
+            taskList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"),
+            cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"),
+            cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
         else
         {
             showMsg("Task list collected");
@@ -365,49 +346,23 @@ void MyClient::setAdminPlusWindow()
 
 void MyClient::setAddGroupWindow()
 {
-    addGroupTitleLabel = new QLabel("Group title: ", this);
-    addGroupTitle = new QLineEdit(this);
-    sendGroup = new QPushButton("&Add group", this);
-    addGroupGoBack = new QPushButton("&Go back", this);
+    agw = new AddGroupWidget(this);
 
-    connect(sendGroup, &QPushButton::clicked, this,  [this] () {sendGroupToSystem();});
-    connect(addGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddGroupWindow();setAdminPlusWindow();});
+    connect(agw->sendGroup, &QPushButton::clicked, this, [this] {
 
-    QHBoxLayout *fl = new QHBoxLayout();
-    fl->addWidget(addGroupTitleLabel);
-    fl->addWidget(addGroupTitle);
+        QString groupTitle = agw->getGroupTitle();
+        if(groupTitle == "")
+        {
+            showError("Group title is empty");
+            return;
+        }
+        QString req = "{cmd='add group';";
+        req += "groupname='" + groupTitle+"';}";\
+        slotSendToServer(req);
+    });
 
-
-    addGroupLayout = new QVBoxLayout();
-    addGroupLayout->addLayout(fl);
-    addGroupLayout->addWidget(sendGroup);
-    addGroupLayout->addWidget(addGroupGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addGroupLayout);
-    setCentralWidget(w);
-}
-
-void MyClient::sendGroupToSystem()
-{
-    QString groupTitle = addGroupTitle->text();
-    if(groupTitle == "")
-    {
-        showError("Group title is empty");
-        return;
-    }
-    QString req = "{cmd='add group';";
-    req += "groupname='" + groupTitle+"';}";\
-    slotSendToServer(req);
-}
-
-void MyClient::hideAddGroupWindow()
-{
-    addGroupTitleLabel->hide();
-    addGroupTitle->hide();
-    sendGroup->hide();
-    addGroupGoBack->hide();
+    connect(agw->goBack, &QPushButton::clicked, this, [this] {delete agw; setAdminPlusWindow();});
+    setCentralWidget(agw);
 }
 
 void MyClient::setAddToGroupWindow()
