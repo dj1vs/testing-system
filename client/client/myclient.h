@@ -52,16 +52,6 @@ private:
 
     QErrorMessage *d;
 
-    QLabel *appointGroupTeacherNameLabel;
-    QLabel *appointGroupTeacherSurnameLabel;
-    QLabel *appointGroupTitleLabel;
-    QLineEdit *appointGroupTeacherName;
-    QLineEdit *appointGroupTeacherSurname;
-    QLineEdit *appointGroupTitle;
-    QPushButton *sendAppointGroup;
-    QPushButton *appointGroupGoBack;
-    QVBoxLayout *appointGroupLayout;
-
     QLabel *addUserLoginLabel;
     QLabel *addUserPasswordLabel;
     QLabel *addUserNameLabel;
