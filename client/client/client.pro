@@ -11,6 +11,7 @@ SOURCES += \
     myclient.cpp \
     widgets/AdminPlus/AddGroupWidget.cpp \
     widgets/AdminPlus/AddToGroupWidget.cpp \
+    widgets/AdminPlus/AppointGroupWidget.cpp \
     widgets/AdminPlusWidget.cpp \
     widgets/AuthorizationWidget.cpp
 
@@ -18,6 +19,7 @@ HEADERS += \
     myclient.h \
     widgets/AdminPlus/AddGroupWidget.h \
     widgets/AdminPlus/AddToGroupWidget.h \
+    widgets/AdminPlus/AppointGroupWidget.h \
     widgets/AdminPlusWidget.h \
     widgets/AuthorizationWidget.h
 

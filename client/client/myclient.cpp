@@ -13,7 +13,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
            );
     d = new QErrorMessage(this);
 
-    this->setMinimumSize(WINW, WINH);
+    setMinimumSize(WINW, WINH);
 
     connect(this, SIGNAL(groupTeachersCollected()), this, SLOT(showGroupTeachers()));
     connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
@@ -149,7 +149,6 @@ void MyClient::solveMsg(QString msg)
         {
         case 0:
             showMsg("successfully appointed");
-            appointGroupTitle->setText("");
             break;
         case 1:
             showError("Введённые имя и фамилия не принадлежат ни одному учителю");
@@ -385,45 +384,19 @@ void MyClient::setAddToGroupWindow()
 
 void MyClient::setAppointGroupWindow()
 {
-    appointGroupTeacherNameLabel = new QLabel("Teacher name:", this);
-    appointGroupTeacherSurnameLabel = new QLabel("Teacher surname:", this);
-    appointGroupTitleLabel = new QLabel("Group name:", this);
-    appointGroupTeacherName = new QLineEdit();
-    appointGroupTeacherSurname = new QLineEdit();
-    appointGroupTitle = new QLineEdit();
-    sendAppointGroup = new QPushButton("Appoint group", this);
-    appointGroupGoBack = new QPushButton("Go back", this);
+    appgw = new AppointGroupWidget(this);
+    connect(appgw->goBack, &QPushButton::clicked, this,
+            [this] () {delete appgw; setAdminPlusWindow();});
 
-    connect(appointGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAppointGroupWindow();setAdminPlusWindow();});
-    connect(sendAppointGroup, &QPushButton::clicked, this,
-            [this] () {sendAppointGroupToSystem();});
+    connect(appgw->sendAppointGroup, &QPushButton::clicked, this,
+            [this] () {
+        slotSendToServer("{cmd='appoint';"
+        "teachername='" + appgw->getName() + "';"
+        "teachersurname='" + appgw->getSurname() + "';"
+        "groupname='" + appgw->getTitle() + "';}");
+    });
 
-    QFormLayout *f = new QFormLayout();
-    f->addRow(appointGroupTeacherNameLabel, appointGroupTeacherName);
-    f->addRow(appointGroupTeacherSurnameLabel, appointGroupTeacherSurname);
-    f->addRow(appointGroupTitleLabel, appointGroupTitle);
-
-    appointGroupLayout = new QVBoxLayout();
-    appointGroupLayout->addLayout(f);
-    appointGroupLayout->addWidget(sendAppointGroup);
-    appointGroupLayout->addWidget(appointGroupGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(appointGroupLayout);
-    setCentralWidget(w);
-}
-
-void MyClient::hideAppointGroupWindow()
-{
-    appointGroupTeacherNameLabel->hide();
-    appointGroupTeacherSurnameLabel->hide();
-    appointGroupTitleLabel->hide();
-    appointGroupTeacherName->hide();
-    appointGroupTeacherSurname->hide();
-    appointGroupTitle->hide();
-    sendAppointGroup->hide();
-    appointGroupGoBack->hide();
+    setCentralWidget(appgw);
 }
 
 void MyClient::setAddUserWindow()
@@ -480,18 +453,6 @@ void MyClient::hideAddUserWindow()
     addUserSurname->hide();
     addUserButton->hide();
     addUserGoBack->hide();
-}
-
-void MyClient::sendAppointGroupToSystem()
-{
-    QString teacherName = appointGroupTeacherName->text();
-    QString teacherSurname = appointGroupTeacherSurname->text();
-    QString groupName = appointGroupTitle->text();
-    QString msg = "{cmd='appoint';";
-    msg +="teachername='" + teacherName + "';";
-    msg += "teachersurname='" + teacherSurname + "';";
-    msg += "groupname='" + groupName + "';}";
-    slotSendToServer(msg);
 }
 
 void MyClient::sendUserToSystem()

@@ -1,10 +1,11 @@
-﻿#ifndef MYCLIENT_H
+#ifndef MYCLIENT_H
 #define MYCLIENT_H
 
 #include "widgets/AuthorizationWidget.h"
 #include "widgets/AdminPlusWidget.h"
 #include "widgets/AdminPlus/AddGroupWidget.h"
 #include "widgets/AdminPlus/AddToGroupWidget.h"
+#include "widgets/AdminPlus/AppointGroupWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -43,9 +44,11 @@ public:
     ~MyClient();
 private:
     AuthorizationWidget *aw;
+
     AdminPlusWidget *apw;
     AddGroupWidget *agw;
     AddToGroupWidget *atgw;
+    AppointGroupWidget *appgw;
 
     QErrorMessage *d;
 
@@ -230,17 +233,15 @@ private slots:
     void hideTeacherWindow();
 
 
-
+//////////admin plus mode layouts////////////////
     void setAddGroupWindow();
-
     void setAddToGroupWindow();
-
     void setAppointGroupWindow();
-    void hideAppointGroupWindow();
 
     void setAddUserWindow();
     void hideAddUserWindow();
 
+//////////////////
     void setViewAllResultsWindow();
     void hideViewAllResultsWindow();
 
@@ -265,7 +266,6 @@ private slots:
     void solveMsg(QString msg);
 
     ////////////////////
-    void sendAppointGroupToSystem();
     void sendUserToSystem();
     void sendTaskToSystem();
 
