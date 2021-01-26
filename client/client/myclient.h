@@ -2,11 +2,14 @@
 #define MYCLIENT_H
 
 #include "widgets/AuthorizationWidget.h"
-#include "widgets/AdminPlusWidget.h"
+
+#include "widgets/AdminPlus/AdminPlusWidget.h"
 #include "widgets/AdminPlus/AddGroupWidget.h"
 #include "widgets/AdminPlus/AddToGroupWidget.h"
 #include "widgets/AdminPlus/AppointGroupWidget.h"
 #include "widgets/AdminPlus/AddUserWidget.h"
+
+#include "widgets/Admin/AdminWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -45,11 +48,13 @@ public:
 private:
     AuthorizationWidget *aw;
 
-    AdminPlusWidget *apw;
+    AdminPlusWidget *adminPlusW;
     AddGroupWidget *agw;
     AddToGroupWidget *atgw;
     AppointGroupWidget *appgw;
     AddUserWidget *auw;
+
+    AdminWidget *adminW;
 
     QErrorMessage *d;
 

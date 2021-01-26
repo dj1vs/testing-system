@@ -314,13 +314,13 @@ QString MyClient::cutArg(QString str, QString cmd)
 
 void MyClient::setAdminPlusWindow()
 {
-    apw = new AdminPlusWidget(this);
-    connect(apw->addGroup, &QPushButton::clicked, this, [this] {delete apw; setAddGroupWindow();});
-    connect(apw->addToGroup, &QPushButton::clicked, this, [this] {delete apw; setAddToGroupWindow();});
-    connect(apw->appointGroup, &QPushButton::clicked, this, [this] {delete apw; setAppointGroupWindow();});
-    connect(apw->addUser, &QPushButton::clicked, this, [this] {delete apw; setAddUserWindow();});
-    connect(apw->goBack, &QPushButton::clicked, this, [this] {delete apw; setAuthorizationWindow();});
-    setCentralWidget(apw);
+    adminPlusW = new AdminPlusWidget(this);
+    connect(adminPlusW->addGroup, &QPushButton::clicked, this, [this] {delete adminPlusW; setAddGroupWindow();});
+    connect(adminPlusW->addToGroup, &QPushButton::clicked, this, [this] {delete adminPlusW; setAddToGroupWindow();});
+    connect(adminPlusW->appointGroup, &QPushButton::clicked, this, [this] {delete adminPlusW; setAppointGroupWindow();});
+    connect(adminPlusW->addUser, &QPushButton::clicked, this, [this] {delete adminPlusW; setAddUserWindow();});
+    connect(adminPlusW->goBack, &QPushButton::clicked, this, [this] {delete adminPlusW; setAuthorizationWindow();});
+    setCentralWidget(adminPlusW);
 }
 
 void MyClient::setAddGroupWindow()
@@ -412,28 +412,19 @@ void MyClient::setAddUserWindow()
 
 void MyClient::setAdminWindow()
 {
-    adminViewResults = new QPushButton("View Results", this);
-    adminViewGroups = new QPushButton("View Groups", this);
-    adminViewPlannedTest = new QPushButton("View Planned Tests", this);
+    adminW = new AdminWidget();
 
-    connect(adminViewResults, &QPushButton::clicked, this,
-            [this] () {hideAdminWindow();
-                       slotSendToServer("{cmd='view all results';}");});
-    connect(adminViewGroups, &QPushButton::clicked, this,
-            [this] () {hideAdminWindow();
-                       slotSendToServer("{cmd='view all groups';}");});
-    connect(adminViewPlannedTest, &QPushButton::clicked, this,
-            [this] () {hideAdminWindow();
-                       slotSendToServer("{cmd='view all planned tests';}");});
+    connect(adminW->results, &QPushButton::clicked, this,
+            [this] () {slotSendToServer("{cmd='view all results';}");});
+    connect(adminW->groups, &QPushButton::clicked, this,
+            [this] () {slotSendToServer("{cmd='view all groups';}");});
+    connect(adminW->tests, &QPushButton::clicked, this,
+            [this] () {slotSendToServer("{cmd='view all planned tests';}");});
 
-    adminLayout = new QVBoxLayout();
-    adminLayout->addWidget(adminViewResults);
-    adminLayout->addWidget(adminViewGroups);
-    adminLayout->addWidget(adminViewPlannedTest);
+    connect(adminW->goBack, &QPushButton::clicked, this,
+            [this] () {delete adminW; setAuthorizationWindow();});
 
-    QWidget *w = new QWidget();
-    w->setLayout(adminLayout);
-    setCentralWidget(w);
+    setCentralWidget(adminW);
 }
 
 void MyClient::hideAdminWindow()

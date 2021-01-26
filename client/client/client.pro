@@ -9,20 +9,22 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     myclient.cpp \
+    widgets/Admin/AdminWidget.cpp \
     widgets/AdminPlus/AddGroupWidget.cpp \
     widgets/AdminPlus/AddToGroupWidget.cpp \
     widgets/AdminPlus/AddUserWidget.cpp \
+    widgets/AdminPlus/AdminPlusWidget.cpp \
     widgets/AdminPlus/AppointGroupWidget.cpp \
-    widgets/AdminPlusWidget.cpp \
     widgets/AuthorizationWidget.cpp
 
 HEADERS += \
     myclient.h \
+    widgets/Admin/AdminWidget.h \
     widgets/AdminPlus/AddGroupWidget.h \
     widgets/AdminPlus/AddToGroupWidget.h \
     widgets/AdminPlus/AddUserWidget.h \
+    widgets/AdminPlus/AdminPlusWidget.h \
     widgets/AdminPlus/AppointGroupWidget.h \
-    widgets/AdminPlusWidget.h \
     widgets/AuthorizationWidget.h
 
 # Default rules for deployment.
