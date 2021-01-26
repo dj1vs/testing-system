@@ -281,8 +281,6 @@ private slots:
     void solveMsg(QString msg);
 
     ////////////////////
-
-    void logInToSystem ();
     void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();

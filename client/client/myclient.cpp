@@ -308,15 +308,6 @@ void MyClient::solveMsg(QString msg)
     }
 }
 
-void MyClient::logInToSystem()
-{
-    QString login = aw->getLogin();
-    QString password = aw->getPassword();
-    QString str = "{cmd='authorize';login='" + login;
-    str += "';pass='" + password + "';}";
-    slotSendToServer(str);
-}
-
 QString MyClient::cutArg(QString str, QString cmd)
 {
     int pos1 = str.indexOf(cmd) + cmd.size() + 2;
