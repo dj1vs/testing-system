@@ -1,5 +1,5 @@
-#ifndef AUTHORIZATION_H
-#define AUTHORIZATION_H
+#ifndef AUTHORIZATIONWIDGET_H
+#define AUTHORIZATIONWIDGET_H
 
 #include <QWidget>
 #include <QLabel>
@@ -7,11 +7,13 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-class Authorization : public QWidget
+class AuthorizationWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit Authorization(QWidget *parent = nullptr);
+    explicit AuthorizationWidget(QWidget *parent = nullptr);
+    QString getLogin() const {return login->text();};
+    QString getPassword() const {return password->text();};
 private:
     QLabel* loginLabel;
     QLabel* passwordLabel;
@@ -24,4 +26,4 @@ signals:
 
 };
 
-#endif // AUTHORIZATION_H
+#endif // AUTHORIZATIONWIDGET_H

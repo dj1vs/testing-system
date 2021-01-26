@@ -23,7 +23,10 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
     connect(this, SIGNAL(allTasksCollected()), this, SLOT(setAddTestManualWindow()));
 
-    setAuthorizationWindow();
+    //setAuthorizationWindow();
+    aw = new AuthorizationWidget(this);
+    connect(aw, SIGNAL(logInButtonClicked()), this, SLOT(logInToSystem()));
+    setCentralWidget(aw);
 }
 
 MyClient::~MyClient()
@@ -135,7 +138,7 @@ void MyClient::solveMsg(QString msg)
             showMsg("Succesfuly logged in!\nRole: " + role);
             id = cutArg(msg, "id").toInt();
             qDebug() << id;
-            hideAuthorizationWindow();
+            //hideAuthorizationWindow();
             if(role == "admin+")
                 setAdminPlusWindow();
             else if(role == "admin")
@@ -366,13 +369,13 @@ void MyClient::solveMsg(QString msg)
 
 void MyClient::logInToSystem()
 {
-    QString login = authorizeLogin->text();
-    QString password = authorizePassword->text();
+    QString login = aw->getLogin();
+    QString password = aw->getPassword();
     QString str = "{cmd='authorize';login='" + login;
     str += "';pass='" + password + "';}";
     slotSendToServer(str);
-    authorizeLogin->setText("");
-    authorizePassword->setText("");
+    //authorizeLogin->setText("");
+   // authorizePassword->setText("");
 }
 
 QString MyClient::cutArg(QString str, QString cmd)

@@ -1,6 +1,8 @@
 ﻿#ifndef MYCLIENT_H
 #define MYCLIENT_H
 
+#include "widgets/AuthorizationWidget.h"
+
 #include <QtGlobal>
 #include <QMainWindow>
 #include <QLabel>
@@ -42,6 +44,8 @@ public:
     MyClient(const QString& strHost, int nPort, QWidget *parent = nullptr);
     ~MyClient();
 private:
+    AuthorizationWidget *aw;
+
     QErrorMessage *d;
 
     QLabel* authorizeLoginLabel;

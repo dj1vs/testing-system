@@ -9,11 +9,11 @@ CONFIG += c++11
 SOURCES += \
     main.cpp \
     myclient.cpp \
-    widgets/authorization.cpp
+    widgets/AuthorizationWidget.cpp
 
 HEADERS += \
     myclient.h \
-    widgets/authorization.h
+    widgets/AuthorizationWidget.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

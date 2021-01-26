@@ -1,6 +1,6 @@
-#include "authorization.h"
+#include "AuthorizationWidget.h"
 
-Authorization::Authorization(QWidget *parent) : QWidget(parent)
+AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent)
 {
     loginLabel = new QLabel(this);
     loginLabel->setText("Login:");
