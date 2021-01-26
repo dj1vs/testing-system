@@ -6,6 +6,7 @@
 #include "widgets/AdminPlus/AddGroupWidget.h"
 #include "widgets/AdminPlus/AddToGroupWidget.h"
 #include "widgets/AdminPlus/AppointGroupWidget.h"
+#include "widgets/AdminPlus/AddUserWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -16,7 +17,6 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QErrorMessage>
-#include <QComboBox>
 #include <QListView>
 #include <QSlider>
 #include <QTableView>
@@ -49,22 +49,9 @@ private:
     AddGroupWidget *agw;
     AddToGroupWidget *atgw;
     AppointGroupWidget *appgw;
+    AddUserWidget *auw;
 
     QErrorMessage *d;
-
-    QLabel *addUserLoginLabel;
-    QLabel *addUserPasswordLabel;
-    QLabel *addUserNameLabel;
-    QLabel *addUserSurnameLabel;
-    QLabel *addUserRoleLabel;
-    QComboBox *addUserBox;
-    QLineEdit *addUserLogin;
-    QLineEdit *addUserPassword;
-    QLineEdit *addUserName;
-    QLineEdit *addUserSurname;
-    QPushButton *addUserButton;
-    QPushButton *addUserGoBack;
-    QFormLayout *addUserLayout;
 
     QPushButton *adminViewResults;
     QPushButton *adminViewGroups;
@@ -202,10 +189,8 @@ private:
     const int WINW = 700;
     quint16 id = -1;
 private:
-    void setNewLayout(QVBoxLayout *layout) {QWidget *w = new QWidget(); w->setLayout(layout); this->setCentralWidget(w);};
-
-    void showError(QString err);
-    void showMsg(QString msg);
+    void showError(QString err) {d->showMessage(err);};
+    void showMsg(QString msg){statusBar()->showMessage(msg);};
     QString cutArg(QString str, QString cmd);
 private slots:
     void slotReadyRead          (                            );
@@ -227,10 +212,7 @@ private slots:
     void setAddGroupWindow();
     void setAddToGroupWindow();
     void setAppointGroupWindow();
-
     void setAddUserWindow();
-    void hideAddUserWindow();
-
 //////////////////
     void setViewAllResultsWindow();
     void hideViewAllResultsWindow();
@@ -256,7 +238,6 @@ private slots:
     void solveMsg(QString msg);
 
     ////////////////////
-    void sendUserToSystem();
     void sendTaskToSystem();
 
     ///////////////////

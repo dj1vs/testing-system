@@ -312,16 +312,6 @@ QString MyClient::cutArg(QString str, QString cmd)
     return str.mid(pos1, pos2);
 }
 
-void MyClient::showError(QString err)
-{
-    d->showMessage(err);
-}
-
-void MyClient::showMsg(QString msg)
-{
-    this->statusBar()->showMessage(msg);
-}
-
 void MyClient::setAdminPlusWindow()
 {
     apw = new AdminPlusWidget(this);
@@ -401,70 +391,22 @@ void MyClient::setAppointGroupWindow()
 
 void MyClient::setAddUserWindow()
 {
-    addUserLoginLabel = new QLabel("Login:", this);
-    addUserPasswordLabel = new QLabel("Password:", this);
-    addUserNameLabel = new QLabel("Name:", this);
-    addUserSurnameLabel = new QLabel("Surname:", this);
-    addUserRoleLabel = new QLabel("Role:", this);
+    auw = new AddUserWidget(this);
+    connect(auw->goBack, &QPushButton::clicked, this,
+            [this] () {delete auw; setAdminPlusWindow();});
+    connect(auw->addUser, &QPushButton::clicked, this,
+            [this] () {
+        slotSendToServer(
+        "{cmd='add user';"
+        "login='" + auw->getLogin() + "';"
+        "pass='" + auw->getPassword() + "';"
+        "name='" + auw->getName() + "';"
+        "surname='" + auw->getSurname() + "';"
+        "role='" + auw->getRole() + "';"
+        "}");
+    });
 
-    addUserBox = new QComboBox(this);
-    addUserBox->addItem("admin+");
-    addUserBox->addItem("admin");
-    addUserBox->addItem("teacher");
-    addUserBox->addItem("student");
-
-    addUserLogin = new QLineEdit(this);
-    addUserPassword = new QLineEdit(this);
-    addUserName = new QLineEdit(this);
-    addUserSurname = new QLineEdit(this);
-    addUserButton = new QPushButton("Add user", this);
-    addUserGoBack = new QPushButton("Go back", this);
-
-    connect(addUserGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddUserWindow();setAdminPlusWindow();});
-    connect(addUserButton, &QPushButton::clicked, this,
-            [this] () {sendUserToSystem();});
-
-    addUserLayout = new QFormLayout();
-    addUserLayout->addRow(addUserLoginLabel, addUserLogin);
-    addUserLayout->addRow(addUserPasswordLabel, addUserPassword);
-    addUserLayout->addRow(addUserNameLabel, addUserName);
-    addUserLayout->addRow(addUserSurnameLabel, addUserSurname);
-    addUserLayout->addRow(addUserRoleLabel, addUserBox);
-    addUserLayout->addWidget(addUserButton);
-    addUserLayout->addWidget(addUserGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addUserLayout);
-    setCentralWidget(w);
-}
-
-void MyClient::hideAddUserWindow()
-{
-    addUserLoginLabel->hide();
-    addUserPasswordLabel->hide();
-    addUserNameLabel->hide();
-    addUserSurnameLabel->hide();
-    addUserRoleLabel->hide();
-    addUserBox->hide();
-    addUserLogin->hide();
-    addUserPassword->hide();
-    addUserName->hide();
-    addUserSurname->hide();
-    addUserButton->hide();
-    addUserGoBack->hide();
-}
-
-void MyClient::sendUserToSystem()
-{
-    QString msg = "{cmd='add user';";
-    msg += "login='" + addUserLogin->text() + "';";
-    msg += "pass='" + addUserPassword->text() + "';";
-    msg += "name='" + addUserName->text() + "';";
-    msg += "surname='" + addUserSurname->text() + "';";
-    msg += "role='" + addUserBox->itemText(addUserBox->currentIndex()) + "';";
-    msg += "}";
-    slotSendToServer(msg);
+    setCentralWidget(auw);
 }
 
 void MyClient::setAdminWindow()
@@ -1322,7 +1264,7 @@ void MyClient::setAddTestManualWindow()
     addTestManualLayout->addWidget(sendManualTest);
     addTestManualLayout->addWidget(addTestManualQuit);
 
-    setNewLayout(addTestManualLayout);
+    //setNewLayout(addTestManualLayout);
 }
 void MyClient::hideAddTestManualWindow()
 {
