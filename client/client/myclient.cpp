@@ -130,8 +130,6 @@ void MyClient::solveMsg(QString msg)
         {
         case 0:
             showMsg("added to group succesfully");
-            addToGroupName->setText("");
-            addToGroupSurname->setText("");
             break;
         case 1:
             showError("Cant find group with entered name");
@@ -358,52 +356,19 @@ void MyClient::setAddGroupWindow()
 
 void MyClient::setAddToGroupWindow()
 {
-    addToGroupNameLabel = new QLabel("Name:", this);
-    addToGroupSurnameLabel = new QLabel("Surname:", this);
-    addToGroupTitleLabel = new QLabel("Group title:", this);
-    addToGroupName = new QLineEdit(this);
-    addToGroupSurname = new QLineEdit(this);
-    addToGroupTitle = new QLineEdit(this);
-    sendToGroup = new QPushButton("&Add", this);
-    addToGroupGoBack = new QPushButton("&Go back", this);
-
-    connect(sendToGroup, &QPushButton::clicked, this,
+    atgw = new AddToGroupWidget(this);
+    connect(atgw->sendToGroup, &QPushButton::clicked, this,
             [this] () {sendToGroupToSystem();});
-    connect(addToGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddToGroupWindow();setAdminPlusWindow();});
-
-    QFormLayout *fl = new QFormLayout();
-    fl->addRow(addToGroupNameLabel, addToGroupName);
-    fl->addRow(addToGroupSurnameLabel, addToGroupSurname);
-    fl->addRow(addToGroupTitleLabel, addToGroupTitle);
-
-    addToGroupLayout = new QVBoxLayout();
-    addToGroupLayout->addLayout(fl);
-    addToGroupLayout->addWidget(sendToGroup);
-    addToGroupLayout->addWidget(addToGroupGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addToGroupLayout);
-    setCentralWidget(w);
-}
-
-void MyClient::hideAddToGroupWindow()
-{
-    addToGroupNameLabel->hide();
-    addToGroupSurnameLabel->hide();
-    addToGroupTitleLabel->hide();
-    addToGroupName->hide();
-    addToGroupSurname->hide();
-    addToGroupTitle->hide();
-    sendToGroup->hide();
-    addToGroupGoBack->hide();
+    connect(atgw->goBack, &QPushButton::clicked, this,
+            [this] () {delete atgw; setAdminPlusWindow();});
+    setCentralWidget(atgw);
 }
 
 void MyClient::sendToGroupToSystem()
 {
-    QString name = addToGroupName->text();
-    QString surname = addToGroupSurname->text();
-    QString title = addToGroupTitle->text();
+    QString name = atgw->getName();
+    QString surname = atgw->getSurame();
+    QString title = atgw->getTitle();
     if(name == "" || surname == "" || title == "")
     {
         showError("Заполните все поля");

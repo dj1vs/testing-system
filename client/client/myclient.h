@@ -4,6 +4,7 @@
 #include "widgets/AuthorizationWidget.h"
 #include "widgets/AdminPlusWidget.h"
 #include "widgets/AdminPlus/AddGroupWidget.h"
+#include "widgets/AdminPlus/AddToGroupWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -14,7 +15,6 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QErrorMessage>
-#include <QFormLayout>
 #include <QComboBox>
 #include <QListView>
 #include <QSlider>
@@ -45,14 +45,9 @@ private:
     AuthorizationWidget *aw;
     AdminPlusWidget *apw;
     AddGroupWidget *agw;
+    AddToGroupWidget *atgw;
 
     QErrorMessage *d;
-
-    QLabel *addGroupTitleLabel;
-    QLineEdit *addGroupTitle;
-    QPushButton *sendGroup;
-    QPushButton *addGroupGoBack;
-    QVBoxLayout *addGroupLayout;
 
     QLabel *addToGroupNameLabel;
     QLabel *addToGroupSurnameLabel;
@@ -249,7 +244,6 @@ private slots:
     void setAddGroupWindow();
 
     void setAddToGroupWindow();
-    void hideAddToGroupWindow();
 
     void setAppointGroupWindow();
     void hideAppointGroupWindow();
