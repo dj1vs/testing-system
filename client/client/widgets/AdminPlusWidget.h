@@ -13,7 +13,9 @@ public:
     QPushButton *addGroup;
     QPushButton *addToGroup;
     QPushButton *appointGroup;
+    QPushButton *goBack;
     QPushButton *addUser;
+private:
     QVBoxLayout *layout;
 
 signals:

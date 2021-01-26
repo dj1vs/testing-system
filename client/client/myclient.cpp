@@ -319,6 +319,7 @@ void MyClient::setAdminPlusWindow()
     connect(apw->addToGroup, &QPushButton::clicked, this, [this] {delete apw; setAddToGroupWindow();});
     connect(apw->appointGroup, &QPushButton::clicked, this, [this] {delete apw; setAppointGroupWindow();});
     connect(apw->addUser, &QPushButton::clicked, this, [this] {delete apw; setAddUserWindow();});
+    connect(apw->goBack, &QPushButton::clicked, this, [this] {delete apw; setAuthorizationWindow();});
     setCentralWidget(apw);
 }
 
