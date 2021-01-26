@@ -49,16 +49,6 @@ private:
 
     QErrorMessage *d;
 
-    QLabel *addToGroupNameLabel;
-    QLabel *addToGroupSurnameLabel;
-    QLabel *addToGroupTitleLabel;
-    QLineEdit *addToGroupName;
-    QLineEdit *addToGroupSurname;
-    QLineEdit *addToGroupTitle;
-    QPushButton *sendToGroup;
-    QPushButton *addToGroupGoBack;
-    QVBoxLayout *addToGroupLayout;
-
     QLabel *appointGroupTeacherNameLabel;
     QLabel *appointGroupTeacherSurnameLabel;
     QLabel *appointGroupTitleLabel;
@@ -275,7 +265,6 @@ private slots:
     void solveMsg(QString msg);
 
     ////////////////////
-    void sendToGroupToSystem();
     void sendAppointGroupToSystem();
     void sendUserToSystem();
     void sendTaskToSystem();

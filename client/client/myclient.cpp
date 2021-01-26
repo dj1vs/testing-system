@@ -357,31 +357,30 @@ void MyClient::setAddGroupWindow()
 void MyClient::setAddToGroupWindow()
 {
     atgw = new AddToGroupWidget(this);
+
     connect(atgw->sendToGroup, &QPushButton::clicked, this,
-            [this] () {sendToGroupToSystem();});
+            [this] () {
+        QString name = atgw->getName();
+        QString surname = atgw->getSurame();
+        QString title = atgw->getTitle();
+        if(name == "" || surname == "" || title == "")
+        {
+            showError("Заполните все поля");
+            return;
+        }
+        else
+        {
+            QString msg = "{cmd='add to group';";
+            msg += "studentsname='" + name + "';";
+            msg += "studentssurname='" + surname + "';";
+            msg+= "groupname='" + title + "';}";
+            slotSendToServer(msg);
+        }
+    });
+
     connect(atgw->goBack, &QPushButton::clicked, this,
             [this] () {delete atgw; setAdminPlusWindow();});
     setCentralWidget(atgw);
-}
-
-void MyClient::sendToGroupToSystem()
-{
-    QString name = atgw->getName();
-    QString surname = atgw->getSurame();
-    QString title = atgw->getTitle();
-    if(name == "" || surname == "" || title == "")
-    {
-        showError("Заполните все поля");
-        return;
-    }
-    else
-    {
-        QString msg = "{cmd='add to group';";
-        msg += "studentsname='" + name + "';";
-        msg += "studentssurname='" + surname + "';";
-        msg+= "groupname='" + title + "';}";
-        slotSendToServer(msg);
-    }
 }
 
 void MyClient::setAppointGroupWindow()
