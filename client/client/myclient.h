@@ -10,6 +10,7 @@
 #include "widgets/AdminPlus/AddUserWidget.h"
 
 #include "widgets/Admin/AdminWidget.h"
+#include "widgets/Admin/AllReslultsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -22,9 +23,6 @@
 #include <QErrorMessage>
 #include <QListView>
 #include <QSlider>
-#include <QTableView>
-#include <QAbstractTableModel>
-#include <QStandardItemModel>
 #include <QStatusBar>
 #include <QSignalMapper>
 #include <QDateEdit>

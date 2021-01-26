@@ -183,10 +183,10 @@ void MyClient::solveMsg(QString msg)
             allResultsList.clear();
             return;
         }
-        QList <QString> buf = {cutArg(msg, "testname"),
-                    cutArg(msg, "subject"),cutArg(msg, "studentsname"),
-                    cutArg(msg, "studentssurname"),cutArg(msg, "percent"),};
-        allResultsList.push_back(buf);
+        allResultsList.push_back({
+        cutArg(msg, "testname"), cutArg(msg, "subject"),
+        cutArg(msg, "studentsname"), cutArg(msg, "studentssurname"),
+        cutArg(msg, "percent")});
     }
     else if(cmd == "view all groups")
     {
