@@ -2,12 +2,10 @@
 #define MYCLIENT_H
 
 #include "widgets/AuthorizationWidget.h"
+#include "widgets/AdminPlusWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
 #include <QTcpSocket>
 #include <QTime>
 #include <QTimer>
@@ -16,7 +14,6 @@
 #include <QDebug>
 #include <QErrorMessage>
 #include <QFormLayout>
-#include <QVBoxLayout>
 #include <QComboBox>
 #include <QListView>
 #include <QSlider>
@@ -45,14 +42,9 @@ public:
     ~MyClient();
 private:
     AuthorizationWidget *aw;
+    AdminPlusWidget *apw;
 
     QErrorMessage *d;
-
-    QPushButton *addStudentsGroup;
-    QPushButton *addStudentsToGroup;
-    QPushButton *appointGroup;
-    QPushButton *addUser;
-    QVBoxLayout *adminPlusLayout;
 
     QLabel *addGroupTitleLabel;
     QLineEdit *addGroupTitle;
@@ -241,7 +233,6 @@ private slots:
     void slotSendToServer       (QString msg                 );
 
     void setAdminPlusWindow();
-    void hideAdminPlusWindow();
 
     void setAdminWindow();
     void hideAdminWindow();

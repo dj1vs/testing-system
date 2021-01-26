@@ -23,7 +23,7 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
     connect(this, SIGNAL(allTasksCollected()), this, SLOT(setAddTestManualWindow()));
 
-    //setAuthorizationWindow();
+    //set authorization window()
     aw = new AuthorizationWidget(this);
     connect(aw, SIGNAL(logInButtonClicked()), this, SLOT(logInToSystem()));
     setCentralWidget(aw);
@@ -97,8 +97,8 @@ void MyClient::solveMsg(QString msg)
             QString role = cutArg(msg, "role");
             showMsg("Succesfuly logged in!\nRole: " + role);
             id = cutArg(msg, "id").toInt();
+            delete aw;
             qDebug() << id;
-            //hideAuthorizationWindow();
             if(role == "admin+")
                 setAdminPlusWindow();
             else if(role == "admin")
@@ -334,8 +334,6 @@ void MyClient::logInToSystem()
     QString str = "{cmd='authorize';login='" + login;
     str += "';pass='" + password + "';}";
     slotSendToServer(str);
-    //authorizeLogin->setText("");
-   // authorizePassword->setText("");
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -354,46 +352,15 @@ void MyClient::showMsg(QString msg)
 {
     this->statusBar()->showMessage(msg);
 }
+
 void MyClient::setAdminPlusWindow()
 {
-    addStudentsGroup = new QPushButton("&Add group", this);
-    addStudentsToGroup = new QPushButton("&Add to group", this);
-    appointGroup = new QPushButton("&Appoint group", this);
-    addUser = new QPushButton("&Add user", this);
-
-    addStudentsGroup->show();
-    addStudentsToGroup->show();
-    appointGroup->show();
-    addUser->show();
-
-    connect(addStudentsGroup, &QPushButton::clicked, this,
-            [this] () {hideAdminPlusWindow(); setAddGroupWindow();});
-    connect(addStudentsToGroup, &QPushButton::clicked, this,
-            [this] () {hideAdminPlusWindow(); setAddToGroupWindow();});
-
-    connect(appointGroup, &QPushButton::clicked, this,
-            [this] () {hideAdminPlusWindow(); setAppointGroupWindow();});
-    connect(addUser, &QPushButton::clicked, this,
-            [this] () {hideAdminPlusWindow(); setAddUserWindow();});
-
-    adminPlusLayout = new QVBoxLayout();
-    adminPlusLayout->addWidget(addStudentsGroup);
-    adminPlusLayout->addWidget(addStudentsToGroup);
-    adminPlusLayout->addWidget(appointGroup);
-    adminPlusLayout->addWidget(addUser);
-
-    QWidget *w = new QWidget();
-    w->setLayout(adminPlusLayout);
-    setCentralWidget(w);
-}
-
-
-void MyClient::hideAdminPlusWindow()
-{
-    addStudentsGroup->hide();
-    addStudentsToGroup->hide();
-    appointGroup->hide();
-    addUser->hide();
+    apw = new AdminPlusWidget(this);
+    connect(apw->addGroup, &QPushButton::clicked, this, [this] {delete apw; setAddGroupWindow();});
+    connect(apw->addToGroup, &QPushButton::clicked, this, [this] {delete apw; setAddToGroupWindow();});
+    connect(apw->appointGroup, &QPushButton::clicked, this, [this] {delete apw; setAppointGroupWindow();});
+    connect(apw->addUser, &QPushButton::clicked, this, [this] {delete apw; setAddUserWindow();});
+    setCentralWidget(apw);
 }
 
 void MyClient::setAddGroupWindow()
@@ -405,7 +372,7 @@ void MyClient::setAddGroupWindow()
 
     connect(sendGroup, &QPushButton::clicked, this,  [this] () {sendGroupToSystem();});
     connect(addGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddGroupWindow(); setAdminPlusWindow();});
+            [this] () {hideAddGroupWindow();setAdminPlusWindow();});
 
     QHBoxLayout *fl = new QHBoxLayout();
     fl->addWidget(addGroupTitleLabel);
@@ -457,7 +424,7 @@ void MyClient::setAddToGroupWindow()
     connect(sendToGroup, &QPushButton::clicked, this,
             [this] () {sendToGroupToSystem();});
     connect(addToGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddToGroupWindow(); setAdminPlusWindow();});
+            [this] () {hideAddToGroupWindow();setAdminPlusWindow();});
 
     QFormLayout *fl = new QFormLayout();
     fl->addRow(addToGroupNameLabel, addToGroupName);
@@ -518,7 +485,7 @@ void MyClient::setAppointGroupWindow()
     appointGroupGoBack = new QPushButton("Go back", this);
 
     connect(appointGroupGoBack, &QPushButton::clicked, this,
-            [this] () {hideAppointGroupWindow(); setAdminPlusWindow();});
+            [this] () {hideAppointGroupWindow();setAdminPlusWindow();});
     connect(sendAppointGroup, &QPushButton::clicked, this,
             [this] () {sendAppointGroupToSystem();});
 
@@ -571,7 +538,7 @@ void MyClient::setAddUserWindow()
     addUserGoBack = new QPushButton("Go back", this);
 
     connect(addUserGoBack, &QPushButton::clicked, this,
-            [this] () {hideAddUserWindow(); setAdminPlusWindow(); });
+            [this] () {hideAddUserWindow();setAdminPlusWindow();});
     connect(addUserButton, &QPushButton::clicked, this,
             [this] () {sendUserToSystem();});
 
