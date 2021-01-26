@@ -33,46 +33,6 @@ MyClient::~MyClient()
 {
 }
 
-void MyClient::setAuthorizationWindow()
-{
-    authorizeLoginLabel = new QLabel(this);
-    authorizeLoginLabel->setText("Login:");
-    authorizeLoginLabel->setFont(QFont("Arial", 15));
-    authorizeLoginLabel->resize(100, 25);
-
-    authorizePasswordLabel = new QLabel(this);
-    authorizePasswordLabel->setText("Password:");
-    authorizePasswordLabel->setFont(QFont("Arial", 15));
-    authorizePasswordLabel->resize(100, 20);
-
-    authorizeLogin = new QLineEdit(this);
-    authorizeLogin->resize(200, 20);
-    authorizePassword = new QLineEdit(this);
-    authorizePassword->resize(200, 20);
-
-    authorize = new QPushButton("&Log in", this);
-    authorize->setFont(QFont("Arial", 15));
-
-    QHBoxLayout *l1 = new QHBoxLayout();
-    l1->addWidget(authorizeLoginLabel);
-    l1->addWidget(authorizeLogin);
-
-    QHBoxLayout *l2 = new QHBoxLayout();
-    l2->addWidget(authorizePasswordLabel);
-    l2->addWidget(authorizePassword);
-
-    authorizeLayout = new QVBoxLayout();
-    authorizeLayout->addLayout(l1);
-    authorizeLayout->addLayout(l2);
-    authorizeLayout->addWidget(authorize);
-
-    QWidget *w = new QWidget();
-    w->setLayout(authorizeLayout);
-    setCentralWidget(w);
-
-    connect(authorize, &QPushButton::clicked, this, [this] () {logInToSystem();});
-}
-
 void MyClient::slotReadyRead()
 {
     QDataStream in(m_pTcpSocket);
@@ -394,16 +354,6 @@ void MyClient::showMsg(QString msg)
 {
     this->statusBar()->showMessage(msg);
 }
-
-void MyClient::hideAuthorizationWindow()
-{
-    authorizeLoginLabel->hide();
-    authorizePasswordLabel->hide();
-    authorizeLogin->hide();
-    authorizePassword->hide();
-    authorize->hide();
-}
-
 void MyClient::setAdminPlusWindow()
 {
     addStudentsGroup = new QPushButton("&Add group", this);

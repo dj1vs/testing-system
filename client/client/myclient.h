@@ -48,13 +48,6 @@ private:
 
     QErrorMessage *d;
 
-    QLabel* authorizeLoginLabel;
-    QLabel* authorizePasswordLabel;
-    QLineEdit* authorizeLogin;
-    QLineEdit* authorizePassword;
-    QPushButton* authorize;
-    QVBoxLayout *authorizeLayout;
-
     QPushButton *addStudentsGroup;
     QPushButton *addStudentsToGroup;
     QPushButton *appointGroup;
@@ -246,9 +239,6 @@ private slots:
     void slotReadyRead          (                            );
     void slotError              (QAbstractSocket::SocketError);
     void slotSendToServer       (QString msg                 );
-
-    void setAuthorizationWindow();
-    void hideAuthorizationWindow();
 
     void setAdminPlusWindow();
     void hideAdminPlusWindow();
