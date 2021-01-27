@@ -10,7 +10,7 @@
 #include "widgets/AdminPlus/AddUserWidget.h"
 
 #include "widgets/Admin/AdminWidget.h"
-#include "widgets/Admin/AllReslultsWidget.h"
+#include "widgets/Admin/AllResultsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -53,30 +53,10 @@ private:
     AddUserWidget *auw;
 
     AdminWidget *adminW;
+    AllResultsWidget *arw;
+    QList <QList <QString>> allResultsList;
 
     QErrorMessage *d;
-
-    QPushButton *adminViewResults;
-    QPushButton *adminViewGroups;
-    QPushButton *adminViewPlannedTest;
-    QVBoxLayout *adminLayout;
-
-    QTableView *allResultsTable;
-    QStandardItemModel *allResultsModel;
-    QPushButton *allResultsGoBack;
-    QPushButton *sortAllResults;
-    QVBoxLayout *viewAllResultsLayout;
-    QList <QList<QString>> allResultsList;
-    QLabel *allResultsSortNameLabel;
-    QLabel *allResultsSortSurnameLabel;
-    QLabel *allResultsSortSubjectLabel;
-    QLabel *allResultsSortTestLabel;
-    QLineEdit *allResultsSortName;
-    QLineEdit *allResultsSortSurname;
-    QLineEdit *allResultsSortSubject;
-    QLineEdit *allResultsSortTest;
-    QPushButton *allResultsSortSave;
-    QVBoxLayout *allResultsSortLayout;
 
     QTableView *allGroupsTable;
     QStandardItemModel *allGroupsModel;
@@ -205,7 +185,6 @@ private slots:
     void setAdminPlusWindow();
 
     void setAdminWindow();
-    void hideAdminWindow();
 
     void setTeacherWindow();
     void hideTeacherWindow();
@@ -217,8 +196,6 @@ private slots:
     void setAppointGroupWindow();
     void setAddUserWindow();
 //////////////////
-    void setViewAllResultsWindow();
-    void hideViewAllResultsWindow();
 
     void setViewAllGroupsWindow();
     void hideViewAllGroupsWindow();
@@ -244,10 +221,6 @@ private slots:
     void sendTaskToSystem();
 
     ///////////////////
-
-    void showAllResultsSort();
-    void editAllResultsTable();
-
     void showGroupTeachers();
     void showGroupStudents();
 

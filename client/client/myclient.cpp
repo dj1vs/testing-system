@@ -175,7 +175,10 @@ void MyClient::solveMsg(QString msg)
     {
         if(cutArg(msg, "status") == "sended")
         {
-            emit allResultsCollected();
+            delete adminW;
+            arw = new AllResultsWidget(this, allResultsList);
+            connect(arw->goBack, &QPushButton::clicked, this, [this] {delete arw; setAdminWindow();});
+            setCentralWidget(arw);
             return;
         }
         else if(cutArg(msg, "status") == "started")
@@ -412,10 +415,11 @@ void MyClient::setAddUserWindow()
 
 void MyClient::setAdminWindow()
 {
-    adminW = new AdminWidget();
+    adminW = new AdminWidget(this);
 
     connect(adminW->results, &QPushButton::clicked, this,
-            [this] () {slotSendToServer("{cmd='view all results';}");});
+            [this] () {slotSendToServer("{cmd='view all results';}");
+    });
     connect(adminW->groups, &QPushButton::clicked, this,
             [this] () {slotSendToServer("{cmd='view all groups';}");});
     connect(adminW->tests, &QPushButton::clicked, this,
@@ -425,63 +429,6 @@ void MyClient::setAdminWindow()
             [this] () {delete adminW; setAuthorizationWindow();});
 
     setCentralWidget(adminW);
-}
-
-void MyClient::hideAdminWindow()
-{
-    adminViewResults->hide();
-    adminViewGroups->hide();
-    adminViewPlannedTest->hide();
-}
-
-void MyClient::setViewAllResultsWindow()
-{
-    allResultsGoBack = new QPushButton("Go Back", this);
-    sortAllResults = new QPushButton("Редактировать параметры сортировки", this);
-
-    connect(allResultsGoBack, &QPushButton::clicked, this,
-            [this] () {hideViewAllResultsWindow(); setAdminWindow();});
-    connect(sortAllResults, &QPushButton::clicked, this,
-            [this] () {showAllResultsSort();});
-
-    allResultsTable = new QTableView();
-    allResultsModel = new QStandardItemModel(allResultsList.size(), 5, this);
-
-    QList <QString> params = {"Test", "Subject", "Name", "Surname", "Percent"};
-
-    for(int i = 0; i < 5; ++i)
-    {
-        QByteArray ba = params[i].toLocal8Bit();
-        const char* c_str = ba.data();
-        allResultsModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
-    }
-
-    for(int row = 0; row < allResultsList.size(); ++row)
-    {
-        for(int col = 0; col < 5; ++col)
-        {
-            QModelIndex index=allResultsModel->index(row,col,QModelIndex());
-            allResultsModel->setData(index, allResultsList[row][col]);
-        }
-    }
-
-    allResultsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    allResultsTable->setModel(allResultsModel);
-
-    viewAllResultsLayout = new QVBoxLayout();
-    viewAllResultsLayout->addWidget(allResultsTable);
-    viewAllResultsLayout->addWidget(sortAllResults);
-    viewAllResultsLayout->addWidget(allResultsGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(viewAllResultsLayout);
-    setCentralWidget(w);
-}
-
-void MyClient::hideViewAllResultsWindow()
-{
-    allResultsTable->hide();
-    allResultsGoBack->hide();
 }
 
 void MyClient::setViewAllGroupsWindow()
@@ -611,80 +558,6 @@ void MyClient::showGroupStudents()
     v->addWidget(table);
     d->setLayout(v);
     d->show();
-}
-
-void MyClient::showAllResultsSort()
-{
-    allResultsSortNameLabel = new QLabel("Name:", this);
-    allResultsSortSurnameLabel = new QLabel("Surname:", this);
-    allResultsSortSubjectLabel = new QLabel("Subject:", this);
-    allResultsSortTestLabel = new QLabel("Test:", this);
-
-    allResultsSortName = new QLineEdit(this);
-    allResultsSortSurname = new QLineEdit(this);
-    allResultsSortSubject = new QLineEdit(this);
-    allResultsSortTest = new QLineEdit(this);
-
-    allResultsSortSave = new QPushButton("Save", this);
-
-    QHBoxLayout *name = new QHBoxLayout();
-    name->addWidget(allResultsSortNameLabel);
-    name->addWidget(allResultsSortName);
-    QHBoxLayout *surname = new QHBoxLayout();
-    surname->addWidget(allResultsSortSurnameLabel);
-    surname->addWidget(allResultsSortSurname);
-    QHBoxLayout *subject = new QHBoxLayout();
-    subject->addWidget(allResultsSortSubjectLabel);
-    subject->addWidget(allResultsSortSubject);
-    QHBoxLayout *test = new QHBoxLayout();
-    test->addWidget(allResultsSortTestLabel);
-    test->addWidget(allResultsSortTest);
-
-    allResultsSortLayout = new QVBoxLayout();
-    allResultsSortLayout->addLayout(name);
-    allResultsSortLayout->addLayout(surname);
-    allResultsSortLayout->addLayout(subject);
-    allResultsSortLayout->addLayout(test);
-    allResultsSortLayout->addWidget(allResultsSortSave);
-
-    QDialog *d = new QDialog(this);
-    d->setLayout(allResultsSortLayout);
-    d->show();
-
-    connect(allResultsSortSave, &QPushButton::clicked, this,
-            [this, d] () {editAllResultsTable(); d->close();});
-}
-
-void MyClient::editAllResultsTable()
-{
-    QString name = allResultsSortName->text();
-    QString surname = allResultsSortSurname->text();
-    QString subject = allResultsSortSubject->text();
-    QString test = allResultsSortTest->text();
-
-    if(name == "" && surname == "" && subject == "" && test == "")
-    {
-        setViewAllResultsWindow();
-        return;
-    }
-
-    //QList <QString> params = {"Test", "Subject", "Name", "Surname", "Percent"};
-
-    for(int row = 0; row < allResultsModel->rowCount(); ++row)
-    {
-        QString modelName = allResultsModel->index(row,2,QModelIndex()).data().toString();
-        QString modelSurname = allResultsModel->index(row,3,QModelIndex()).data().toString();
-        QString modelSubject = allResultsModel->index(row,1,QModelIndex()).data().toString();
-        QString modelTest = allResultsModel->index(row,0,QModelIndex()).data().toString();
-
-        if ((name != "" && surname != "" && (modelName != name || modelSurname != surname))
-                || (subject != "" && modelSubject != subject) || (test != "" && modelTest != test))
-        {
-            allResultsModel->removeRow(row);
-            row--;
-        }
-    }
-    allResultsTable->setModel(allResultsModel);
 }
 
 void MyClient::setViewAllPlannedTestsWindow()

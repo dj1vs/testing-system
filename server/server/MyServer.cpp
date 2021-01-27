@@ -308,6 +308,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
                 for(int i = 0; i < 5; ++i)
                     processMsg += params[i] + "='" + query.record().field(i).value().toString() + "';";
                 processMsg += '}';
+                qDebug() << processMsg;
                 sendToClient(pSocket, processMsg);
             }
             sendToClient(pSocket, "{cmd='view all results';status='sended';}");
