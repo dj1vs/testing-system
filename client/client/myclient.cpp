@@ -14,8 +14,8 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     d = new QErrorMessage(this);
 
     setMinimumSize(WINW, WINH);
-
-    connect(this, SIGNAL(groupStudentsCollected()), this, SLOT(showGroupStudents()));
+    connect(this, &MyClient::groupTeachersCollected, this, [this] {allGroupsW->showGroupTeachers(groupTeachers);groupTeachers.clear();});
+    connect(this, &MyClient::groupStudentsCollected, this, [this] {allGroupsW->showGroupStudents(groupStudents);groupStudents.clear();});
     connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
     connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
     connect(this, SIGNAL(allPlannedTestsCollected()), this, SLOT(setViewAllPlannedTestsWindow()));
@@ -418,24 +418,56 @@ void MyClient::setAdminWindow()
 
 void MyClient::setViewAllGroupsWindow()
 {
-    allGroupsW = new AllGroupsWidget(this, allGroupsList);
+    QTableView *table = new QTableView();
+    QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
 
-    for(int i = 0; i < allGroupsW->list1.size(); ++i)
+    QList <QString> params = {"Name", "Teachers", "Students"};
+
+    for(int i = 0; i < 3; ++i)
     {
-        connect(allGroupsW->list1[i], &QPushButton::clicked, this, [this, i]
-        {slotSendToServer("{cmd='view group teachers';groupname='" + allGroupsW->list1[i]->accessibleName() + "';}");});
-        connect(allGroupsW->list2[i], &QPushButton::clicked, this, [this, i]
-        {slotSendToServer("{cmd='view group students';groupname='" + allGroupsW->list2[i]->accessibleName() + "';}");});
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    connect(allGroupsW->goBack, &QPushButton::clicked, this, [this]
-    {
-    delete allGroupsW;
-    groupStudents.clear(); groupTeachers.clear();
-    allGroupsList.clear();
-    setAdminWindow();});
-    connect(this, &MyClient::groupTeachersCollected, this, [this] {allGroupsW->showGroupTeachers(groupTeachers);});
-    connect(this, &MyClient::groupStudentsCollected, this, [this] {allGroupsW->showGroupStudents(groupStudents);});
 
+    for(int row = 0; row < allGroupsList.size(); ++row)
+    {
+        QModelIndex index=model->index(row,0,QModelIndex());
+        model->setData(index, allGroupsList[row]);
+    }
+
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setModel(model);
+
+    for(int row = 0; row < allGroupsList.size(); ++row)
+    {
+        QModelIndex index1=model->index(row,1,QModelIndex());
+        QString str = model->index(row,0,QModelIndex()).data().toString();
+        QPushButton *button1 = new QPushButton(this);
+        button1->setAccessibleName(str);
+        connect(button1, &QPushButton::clicked, this,
+                [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}");});
+
+        table->setIndexWidget(index1, button1);
+
+        QModelIndex index2=model->index(row,2,QModelIndex());
+        QPushButton *button2 = new QPushButton(this);
+        button2->setAccessibleName(str);
+
+        connect(button2, &QPushButton::clicked, this,
+                [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}");});
+
+
+        table->setIndexWidget(index2, button2);
+    }
+
+    allGroupsW = new AllGroupsWidget(this, table, model);
+    connect(allGroupsW->goBack, &QPushButton::clicked, this, [this]
+       {
+       delete allGroupsW;
+       groupStudents.clear(); groupTeachers.clear();
+       allGroupsList.clear();
+       setAdminWindow();});
     setCentralWidget(allGroupsW);
 }
 

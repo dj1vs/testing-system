@@ -14,7 +14,7 @@ class AllGroupsWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit AllGroupsWidget(QWidget *parent = nullptr, QList <QString> l = {});
+    explicit AllGroupsWidget(QWidget *parent = nullptr, QTableView *t = nullptr, QStandardItemModel *m = nullptr);
 public:
     QPushButton *goBack;
     QStandardItemModel *model;
@@ -24,9 +24,6 @@ private:
     QTableView *table;
     QVBoxLayout *layout;
     QList <QString> list;
-private:
-    bool isTeachersOpened;
-    bool isStudentsOpened;
 public slots:
     void showGroupTeachers(QList <QList <QString>> groupTeachers);
     void showGroupStudents(QList <QList <QString>> groupStudents);
