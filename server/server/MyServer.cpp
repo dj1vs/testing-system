@@ -308,7 +308,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
                 for(int i = 0; i < 5; ++i)
                     processMsg += params[i] + "='" + query.record().field(i).value().toString() + "';";
                 processMsg += '}';
-                qDebug() << processMsg;
                 sendToClient(pSocket, processMsg);
             }
             sendToClient(pSocket, "{cmd='view all results';status='sended';}");
@@ -316,7 +315,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "view all groups")
     {
-        sendToClient(pSocket, "{cmd='view all groups';status='started';}");
         QString req = "SELECT name FROM groups";
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(req))
@@ -335,7 +333,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "view group teachers")
     {
-        sendToClient(pSocket, "{cmd='view group teachers';status='started';}");
         QString req = "SELECT users.name, users.surname FROM groups ";
         req += "INNER JOIN users ON groups.teacherid = users.id WHERE groups.name = '" + cutArg(msg, "groupname") + "';";
         QSqlQuery query = QSqlQuery(db);
@@ -356,7 +353,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "view group students")
     {
-        sendToClient(pSocket, "{cmd='view group students';status='started';}");
         QString req = "SELECT users.name, users.surname FROM group_by_user ";
         req += "INNER JOIN users ON group_by_user.userid = users.id ";
         req += "INNER JOIN groups ON group_by_user.groupid = groups.id ";
@@ -379,7 +375,6 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "view all planned tests")
     {
-        sendToClient(pSocket, "{cmd='view all planned tests';status='started';}");
         QString req = "SELECT users.name, users.surname, tests.name, tests.subject, tests.planneddate ";
         req += "FROM tests INNER JOIN users ON tests.teacherid = users.id;";
         QSqlQuery query = QSqlQuery(db);

@@ -11,6 +11,7 @@
 
 #include "widgets/Admin/AdminWidget.h"
 #include "widgets/Admin/AllResultsWidget.h"
+#include "widgets/Admin/AllGroupsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -54,17 +55,13 @@ private:
 
     AdminWidget *adminW;
     AllResultsWidget *arw;
-    QList <QList <QString>> allResultsList;
+    QList <QList <QString>> allResultsList= {};
+    AllGroupsWidget *allGroupsW;
+    QList <QString> allGroupsList = {};
+    QList <QList<QString>> groupStudents= {};
+    QList <QList <QString>> groupTeachers= {};
 
     QErrorMessage *d;
-
-    QTableView *allGroupsTable;
-    QStandardItemModel *allGroupsModel;
-    QPushButton *allGroupsGoBack;
-    QVBoxLayout *viewAllGroupsLayout;
-    QList <QString> allGroupsList;
-    QList <QList<QString>> groupStudents;
-    QList <QList <QString>> groupTeachers;
 
     QTableView *allPlannedTestsTable;
     QStandardItemModel *allPlannedTestsModel;
@@ -188,17 +185,8 @@ private slots:
 
     void setTeacherWindow();
     void hideTeacherWindow();
-
-
-//////////admin plus mode layouts////////////////
-    void setAddGroupWindow();
-    void setAddToGroupWindow();
-    void setAppointGroupWindow();
-    void setAddUserWindow();
-//////////////////
-
+///////////////////////////////////
     void setViewAllGroupsWindow();
-    void hideViewAllGroupsWindow();
 
     void setViewAllPlannedTestsWindow();
     void hideViewAllPlannedTestsWindow();
@@ -221,9 +209,6 @@ private slots:
     void sendTaskToSystem();
 
     ///////////////////
-    void showGroupTeachers();
-    void showGroupStudents();
-
     void showAllPlannedTestsSort();
     void editAllPlannedTestsTable();
 
@@ -233,9 +218,6 @@ private slots:
 
     void showAddAnswerOptions();
     void addTaskAnswerOptionsDeleteEmpty();
-
-    void askGroupTeachers(QString groupName);
-    void askGroupStudents(QString groupName);
 signals:
     void allResultsCollected();
     void allGroupsCollected();

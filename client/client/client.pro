@@ -10,6 +10,7 @@ SOURCES += \
     main.cpp \
     myclient.cpp \
     widgets/Admin/AdminWidget.cpp \
+    widgets/Admin/AllGroupsWidget.cpp \
     widgets/Admin/AllResultsWidget.cpp \
     widgets/AdminPlus/AddGroupWidget.cpp \
     widgets/AdminPlus/AddToGroupWidget.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 HEADERS += \
     myclient.h \
     widgets/Admin/AdminWidget.h \
+    widgets/Admin/AllGroupsWidget.h \
     widgets/Admin/AllResultsWidget.h \
     widgets/AdminPlus/AddGroupWidget.h \
     widgets/AdminPlus/AddToGroupWidget.h \
