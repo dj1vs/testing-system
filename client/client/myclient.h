@@ -13,9 +13,12 @@
 #include "widgets/Admin/AllResultsWidget.h"
 #include "widgets/Admin/AllGroupsWidget.h"
 #include "widgets/Admin/AllTestsWidget.h"
-#include "widgets/Teacher/AddTaskWidget.h"
 
+#include "widgets/Teacher/AddTaskWidget.h"
 #include "widgets/Teacher/TeacherWidget.h"
+#include "widgets/Teacher/AddTestWidget.h"
+#include "widgets/Teacher/TeacherGroupsWidget.h"
+#include "widgets/Teacher/TeacherResultsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -64,46 +67,9 @@ private:
 
     TeacherWidget *teacherW;
     AddTaskWidget *addTaskW;
-
-    QPushButton *addTestQuit;
-    QPushButton *addTestGoRandom;
-    QPushButton *addTestGoManual;
-    QVBoxLayout *addTestLayout;
-
-    QLabel *addTestRandomThemeLabel;
-    QLabel *addTestRandomSubjectLabel;
-    QLabel *addTestRandomAuthorLabel;
-    QLabel *addTestRandomAmountLabel;
-    QLabel *addTestRandomNameLabel;
-    QLabel *addTestRandomDateLabel;
-    QDateEdit *addTestRandomDate;
-    QLineEdit *addTestRandomTheme;
-    QLineEdit *addTestRandomSubject;
-    QLineEdit *addTestRandomName;
-    QRadioButton *addTestRandomMine;
-    QRadioButton *addTestRandomAll;
-    QSpinBox *addTestRandomAmount;
-    QPushButton *addTestRandomQuit;
-    QPushButton *addTestRandomSave;
-    QVBoxLayout *addTestRandomLayout;
-
-    QTableView *allTasksTableView;
-    QStandardItemModel *allTasksModel;
-    QItemSelectionModel *allTasksSelect;
-    QList <QList <QString>> taskList;
-    QList <QList <QString>> pickedTasksList;
-    QPushButton *addSelectedTaskButton;
-    QTableView *pickedTasksTableView;
-    QStandardItemModel *pickedTasksModel;
-    QItemSelectionModel *pickedTasksSelect;
-    QPushButton *addTestManualDeleteSelected;
-    QPushButton *sendManualTest;
-    QPushButton *addTestManualQuit;
-    QVBoxLayout *addTestManualLayout;
-
-
-
-
+    AddTestWidget *addTestW;
+    TeacherGroupsWidget *teacherGroupsW;
+    TeacherResultsWidget *teacherResultsW;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -121,23 +87,9 @@ private slots:
     void slotSendToServer       (QString msg                 );
 
     void setAuthorizationWindow();
-
     void setAdminPlusWindow();
-
     void setAdminWindow();
-
     void setTeacherWindow();
-///////////////////////////////////
-    void setAddTaskWindow();
-
-    void setAddTestWindow();
-    void hideAddTestWindow();
-
-    void setAddTestRandomWindow();
-    void hideAddTestRandomWindow();
-    void setAddTestManualWindow();
-    void hideAddTestManualWindow();
-    ///////////////////////
 
     void solveMsg(QString msg);
 };

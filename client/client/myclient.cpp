@@ -303,48 +303,12 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "validate tasks amount")
     {
-        QString status = cutArg(msg, "status");
-        bool t = (status == "success");
-        if (!t)
-        {
-            quint16 amount = cutArg(msg, "tasksamount").toInt();
-            if(!amount)
-                return;
-            QMessageBox::StandardButton reply;
-            reply = QMessageBox::question(this, "", "There is no enough tasks. Current tasks amount:" + QString::number(amount),
-                                            QMessageBox::Yes|QMessageBox::No);
-            if(reply == QMessageBox::Yes)
-                t = true;
-        }
-        if(t)
-        {
-            QDate d = addTestRandomDate->date();
-            QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
-            QString msg = "{cmd='add test';"
-                            "amount='" + QString::number(addTestRandomAmount->value()) + "';"
-                            "teacherid='" + QString::number(id) + "';"
-                            "theme='" + addTestRandomTheme->text() + "';"
-                            "subject='" + addTestRandomSubject->text() + "';"
-                            "testname='" + addTestRandomName->text() + "';"
-                            "date='" + date + "';"
-                            "author='" + (addTestRandomMine->isChecked() ? "ME" : "ALL") + "';}";
-            qDebug() << msg;
-            slotSendToServer(msg);
-        }
+
     }
     else if(cmd == "add test")
         showMsg("added!");
     else if(cmd == "get tasks")
     {
-        if(cutArg(msg,"status") == "sending")
-            taskList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"),
-            cutArg(msg, "tasktext"), cutArg(msg, "answeroptions"),
-            cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
-        else
-        {
-            showMsg("Task list collected");
-            setAddTestManualWindow();
-        }
     }
 }
 
@@ -470,245 +434,43 @@ void MyClient::setTeacherWindow()
 {
     teacherW = new TeacherWidget(this);
     connect(teacherW->newTaskButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; setAddTaskWindow();});
+            [this] {
+        delete teacherW;
+        addTaskW = new AddTaskWidget(this);
+        connect(addTaskW->addTaskQuit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
+        connect(addTaskW->addTaskSave, &QPushButton::clicked, this, [this]
+        {   QString task = addTaskW->getTask();
+            QString answer = addTaskW->getAnswer();
+            QList <QString> answerOptions = addTaskW->getAnswerOptions();
+            QString theme = addTaskW->getTheme();
+            QString subject = addTaskW->getSubject();
+
+            if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
+            {
+                showError("Заполните все поля.");
+                return;
+            }
+            else
+            {
+                QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
+                msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
+                for(auto &i : answerOptions)
+                    msg += i + ';';
+                msg += "';}";
+                slotSendToServer(msg);
+            }});
+        setCentralWidget(addTaskW);});
+
     connect(teacherW->newTestButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; setAddTestWindow();});
+            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+
+    connect(teacherW->viewGroupsButton, &QPushButton::clicked, this,
+            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+
+    connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
+            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);
 }
 
-void MyClient::setAddTaskWindow()
-{
-    addTaskW = new AddTaskWidget(this);
-    connect(addTaskW->addTaskQuit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
-    connect(addTaskW->addTaskSave, &QPushButton::clicked, this, [this]
-    {   QString task = addTaskW->getTask();
-        QString answer = addTaskW->getAnswer();
-        QList <QString> answerOptions = addTaskW->getAnswerOptions();
-        QString theme = addTaskW->getTheme();
-        QString subject = addTaskW->getSubject();
-
-        if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
-        {
-            showError("Заполните все поля.");
-            return;
-        }
-        else
-        {
-            QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
-            msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
-            for(auto &i : answerOptions)
-                msg += i + ';';
-            msg += "';}";
-            slotSendToServer(msg);
-        }});
-    setCentralWidget(addTaskW);
-}
-
-
-void MyClient::setAddTestWindow()
-{
-    addTestQuit = new QPushButton("quit");
-    addTestGoRandom = new QPushButton("random");
-    addTestGoManual = new QPushButton("manual");
-    connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
-    connect(addTestGoRandom, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestRandomWindow();});
-    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); taskList.clear(); slotSendToServer("{cmd='get tasks';}");});
-    addTestLayout = new QVBoxLayout();
-    addTestLayout->addWidget(addTestGoRandom);
-    addTestLayout->addWidget(addTestGoManual);
-    addTestLayout->addWidget(addTestQuit);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addTestLayout);
-    setCentralWidget(w);
-}
-void MyClient::hideAddTestWindow()
-{
-    disconnect(addTestGoRandom);
-    disconnect(addTestGoManual);
-    disconnect(addTestQuit);
-    addTestQuit->close();
-    addTestGoRandom->close();
-    addTestGoManual->close();
-}
-
-void MyClient::setAddTestRandomWindow()
-{
-    addTestRandomNameLabel = new QLabel("name");
-    addTestRandomThemeLabel = new QLabel("Theme");
-    addTestRandomSubjectLabel = new QLabel("Subject");
-    addTestRandomAuthorLabel = new QLabel("Author");
-    addTestRandomAmountLabel = new QLabel("Amount(1-999)");
-    addTestRandomDateLabel = new QLabel("date");
-    addTestRandomDate = new QDateEdit();
-
-    addTestRandomTheme = new QLineEdit();
-    addTestRandomSubject = new QLineEdit();
-    addTestRandomName = new QLineEdit();
-
-    addTestRandomMine = new QRadioButton("Mine");
-    addTestRandomAll = new QRadioButton("All");
-
-    QHBoxLayout *date = new QHBoxLayout();
-    date->addWidget(addTestRandomDateLabel);
-    date->addWidget(addTestRandomDate);
-
-    QHBoxLayout *buttons = new QHBoxLayout();
-    buttons->addWidget(addTestRandomMine);
-    buttons->addWidget(addTestRandomAll);
-
-    addTestRandomAmount = new QSpinBox();
-    addTestRandomAmount->setMinimum(1);
-    addTestRandomAmount->setMaximum(999);
-    addTestRandomAmount->setValue(3);
-
-    addTestRandomQuit = new QPushButton("quit");
-    addTestRandomSave =new QPushButton("save");
-
-    connect(addTestRandomQuit, &QPushButton::clicked, this,
-            [this] {hideAddTestRandomWindow(); setAddTestWindow();});
-    connect(addTestRandomSave, &QPushButton::clicked, this,
-            [this] {
-        if (addTestRandomTheme->text() == "" || addTestRandomSubject->text() == "" ||
-                addTestRandomName->text() == "" || (!addTestRandomMine->isChecked() && !addTestRandomAll->isChecked())
-                || addTestRandomDate->date() < QDate::currentDate())
-        {
-            showError("fill all");
-            return;
-        }
-        else
-        {
-            QString msg = "{cmd='validate tasks amount';teacherid='" + QString::number(id) + "';";
-            msg += "theme='"  + addTestRandomTheme->text() + "';";
-            msg += "subject='" + addTestRandomSubject->text() + "';";
-            msg += "testsize='" + QString::number(addTestRandomAmount->value()) + "';";
-            msg += "author='" + QString((addTestRandomMine->isChecked() ? "ME" : "ALL")) + "';";
-            msg += '}';
-            qDebug() << msg;
-            slotSendToServer(msg);
-        }
-    });
-
-    addTestRandomLayout = new QVBoxLayout();
-    addTestRandomLayout->addWidget(addTestRandomNameLabel);
-    addTestRandomLayout->addWidget(addTestRandomName);
-    addTestRandomLayout->addWidget(addTestRandomThemeLabel);
-    addTestRandomLayout->addWidget(addTestRandomTheme);
-    addTestRandomLayout->addWidget(addTestRandomSubjectLabel);
-    addTestRandomLayout->addWidget(addTestRandomSubject);
-    addTestRandomLayout->addWidget(addTestRandomAuthorLabel);
-    addTestRandomLayout->addLayout(buttons);
-    addTestRandomLayout->addLayout(date);
-    addTestRandomLayout->addWidget(addTestRandomAmountLabel);
-    addTestRandomLayout->addWidget(addTestRandomAmount);
-    addTestRandomLayout->addWidget(addTestRandomSave);
-    addTestRandomLayout->addWidget(addTestRandomQuit);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addTestRandomLayout);
-    setCentralWidget(w);
-}
-void MyClient::hideAddTestRandomWindow()
-{
-    disconnect(addTestRandomQuit);
-    addTestRandomTheme->close();
-    addTestRandomSubject->close();
-    addTestRandomMine->close();
-    addTestRandomAll->close();
-    addTestRandomAmount->close();
-    addTestRandomQuit->close();
-}
-void MyClient::setAddTestManualWindow()
-{    
-    allTasksTableView = new QTableView(this);
-    allTasksModel = new QStandardItemModel(taskList.size(), taskList[0].size(), this);
-    QList <QString> params = {"ID", "Subject", "Task", "Answer Options", "Answer", "Theme", "Teacher Id"};
-    for(int i = 0; i < taskList[0].size(); ++i)
-    {
-        QByteArray ba = params[i].toLocal8Bit();
-        const char* c_str = ba.data();
-        allTasksModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
-    }
-    for(int row = 0; row < taskList.size(); ++row)
-    {
-        for(int col = 0; col < taskList[0].size(); ++col)
-        {
-            QModelIndex index=allTasksModel->index(row,col,QModelIndex());
-            allTasksModel->setData(index, taskList[row][col]);
-        }
-    }
-    allTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    allTasksTableView->setModel(allTasksModel);
-    allTasksSelect = allTasksTableView->selectionModel();
-
-    addSelectedTaskButton = new QPushButton("add selected");
-    connect(addSelectedTaskButton, &QPushButton::clicked, this, [this]
-    {
-        for(int i = 0; i < allTasksSelect->selectedRows().size(); ++i)
-        {
-            pickedTasksList.push_back(taskList[i]);
-        }
-        for(int i = pickedTasksModel->rowCount(); i < pickedTasksList.size(); ++i)
-        {
-            pickedTasksModel->insertRow(i);
-        }
-        for(int row = 0; row < pickedTasksList.size(); ++row)
-        {
-            for(int col = 0; col < pickedTasksList[0].size(); ++col)
-            {
-                QModelIndex index= pickedTasksModel->index(row,col,QModelIndex());
-                pickedTasksModel->setData(index, pickedTasksList[row][col]);
-            }
-        }
-        pickedTasksTableView->setModel(pickedTasksModel);
-    });
-    pickedTasksTableView = new QTableView(this);
-    pickedTasksModel = new QStandardItemModel(0, taskList[0].size(), this);
-    for(int i = 0; i < taskList[0].size(); ++i)
-    {
-        QByteArray ba = params[i].toLocal8Bit();
-        const char* c_str = ba.data();
-        pickedTasksModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
-    }
-    pickedTasksTableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    pickedTasksTableView->setModel(pickedTasksModel);
-    pickedTasksSelect = pickedTasksTableView->selectionModel();
-
-    addTestManualDeleteSelected = new QPushButton("delete selected");
-
-    connect(addTestManualDeleteSelected, &QPushButton::clicked, this, [this]
-    {
-        for(int i = 0; i < pickedTasksSelect->selectedRows().size(); ++i)
-        {
-            pickedTasksList.removeAt(i);
-            pickedTasksModel->removeRow(i);
-        }
-        pickedTasksTableView->setModel(pickedTasksModel);
-    });
-
-    sendManualTest = new QPushButton("send");
-
-    addTestManualQuit = new QPushButton("quit");
-    connect(addTestManualQuit, &QPushButton::clicked, this, [this] {hideAddTestManualWindow(); setAddTestWindow();});
-
-    addTestManualLayout = new QVBoxLayout();
-    addTestManualLayout->addWidget(allTasksTableView);
-    addTestManualLayout->addWidget(addSelectedTaskButton);
-    addTestManualLayout->addWidget(pickedTasksTableView);
-    addTestManualLayout->addWidget(addTestManualDeleteSelected);
-    addTestManualLayout->addWidget(sendManualTest);
-    addTestManualLayout->addWidget(addTestManualQuit);
-
-    //setNewLayout(addTestManualLayout);
-}
-void MyClient::hideAddTestManualWindow()
-{
-    disconnect(addTestManualQuit);
-    allTasksTableView->close();
-    addSelectedTaskButton->close();
-    pickedTasksTableView->close();
-    addTestManualDeleteSelected->close();
-    sendManualTest->close();
-    addTestManualQuit->close();
-}
