@@ -19,6 +19,7 @@ SOURCES += \
     widgets/AdminPlus/AdminPlusWidget.cpp \
     widgets/AdminPlus/AppointGroupWidget.cpp \
     widgets/AuthorizationWidget.cpp \
+    widgets/Teacher/AddTaskWidget.cpp \
     widgets/Teacher/TeacherWidget.cpp
 
 HEADERS += \
@@ -33,6 +34,7 @@ HEADERS += \
     widgets/AdminPlus/AdminPlusWidget.h \
     widgets/AdminPlus/AppointGroupWidget.h \
     widgets/AuthorizationWidget.h \
+    widgets/Teacher/AddTaskWidget.h \
     widgets/Teacher/TeacherWidget.h
 
 # Default rules for deployment.

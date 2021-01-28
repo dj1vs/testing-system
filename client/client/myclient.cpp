@@ -299,14 +299,7 @@ void MyClient::solveMsg(QString msg)
     {
         QString status = cutArg(msg, "status");
         if (status == "sended")
-        {
             showMsg("task added successfully");
-            addTaskAnswer->clear();
-            addTaskQuesition->clear();
-            addTaskAnswerOptions.clear();
-            addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
-            addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
-        }
     }
     else if(cmd == "validate tasks amount")
     {
@@ -486,120 +479,33 @@ void MyClient::setTeacherWindow()
 
 void MyClient::setAddTaskWindow()
 {
-    addTaskAnswerOptions.clear();
-    addTaskQuesitionLabel = new QLabel("Вопрос:");
-    addTaskAnswerLabel = new QLabel("Answer");
-    addTaskAnswerOptionsLabel = new QLabel("Answer options");
-    addTaskThemeLabel = new QLabel("Theme");
-    addTaskSubjectLabel = new QLabel("Subject");
+    addTaskW = new AddTaskWidget(this);
+    connect(addTaskW->addTaskQuit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
+    connect(addTaskW->addTaskSave, &QPushButton::clicked, this, [this]
+    {   QString task = addTaskW->getTask();
+        QString answer = addTaskW->getAnswer();
+        QList <QString> answerOptions = addTaskW->getAnswerOptions();
+        QString theme = addTaskW->getTheme();
+        QString subject = addTaskW->getSubject();
 
-    addTaskSave = new QPushButton("save");
-    addTaskQuit = new QPushButton("quit");
-    addTaskNewOption = new QPushButton("add new answer option");
-    addTaskDeleteEmpty = new QPushButton("delete empty");
-
-    connect(addTaskQuit, &QPushButton::clicked, this,
-            [this] {hideAddTaskWindow(); setTeacherWindow();});
-    connect(addTaskSave, SIGNAL(clicked()), this, SLOT(sendTaskToSystem()));
-
-    connect(addTaskNewOption, &QPushButton::clicked, this,
-            [this] {showAddAnswerOptions();});
-
-    connect(addTaskDeleteEmpty, &QPushButton::clicked, this,
-            [this] {addTaskAnswerOptionsDeleteEmpty();});
-
-    addTaskQuesition = new QTextEdit();
-    addTaskAnswer = new QTextEdit();
-
-    addTaskAnswerOptionsModel = new QStringListModel();
-    addTaskAnswerOptionsView = new QListView();
-
-    addTaskTheme = new QLineEdit();
-    addTaskSubject = new QLineEdit();
-
-    addTaskLayout = new QVBoxLayout();
-    addTaskLayout->addWidget(addTaskQuesitionLabel);
-    addTaskLayout->addWidget(addTaskQuesition);
-    addTaskLayout->addWidget(addTaskAnswerOptionsLabel);
-    addTaskLayout->addWidget(addTaskAnswerOptionsView);
-    addTaskLayout->addWidget(addTaskDeleteEmpty);
-    addTaskLayout->addWidget(addTaskNewOption);
-    addTaskLayout->addWidget(addTaskAnswerLabel);
-    addTaskLayout->addWidget(addTaskAnswer);
-    addTaskLayout->addWidget(addTaskSubjectLabel);
-    addTaskLayout->addWidget(addTaskSubject);
-    addTaskLayout->addWidget(addTaskThemeLabel);
-    addTaskLayout->addWidget(addTaskTheme);
-    addTaskLayout->addWidget(addTaskSave);
-    addTaskLayout->addWidget(addTaskQuit);
-
-    QWidget *w = new QWidget();
-    w->setLayout(addTaskLayout);
-    setCentralWidget(w);
-}
-void MyClient::hideAddTaskWindow()
-{
-    addTaskQuesitionLabel->close();
-    addTaskQuesition->close();
-    addTaskAnswerOptionsLabel->close();
-    addTaskAnswerOptionsView->close();
-    addTaskNewOption->close();
-    addTaskAnswerLabel->close();
-    addTaskAnswer->close();
-    addTaskSubjectLabel->close();
-    addTaskSubject->close();
-    addTaskThemeLabel->close();
-    addTaskTheme->close();
-    addTaskSave->close();
-    addTaskQuit->close();
+        if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
+        {
+            showError("Заполните все поля.");
+            return;
+        }
+        else
+        {
+            QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
+            msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
+            for(auto &i : answerOptions)
+                msg += i + ';';
+            msg += "';}";
+            slotSendToServer(msg);
+        }});
+    setCentralWidget(addTaskW);
 }
 
-void MyClient::sendTaskToSystem()
-{
-    QString task = addTaskQuesition->toPlainText();
-    QString answer = addTaskAnswer->toPlainText();
-    QList <QString> answerOptions = addTaskAnswerOptionsModel->stringList();
-    QString theme = addTaskTheme->text();
-    QString subject = addTaskSubject->text();
 
-    if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
-    {
-        showError("Заполните все поля.");
-        return;
-    }
-    else
-    {
-        QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
-        msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
-        for(auto &i : answerOptions)
-            msg += i + ';';
-        msg += "';}";
-        qDebug() << msg;
-        slotSendToServer(msg);
-    }
-}
-
-void MyClient::showAddAnswerOptions()
-{
-    bool ok;
-    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                         tr("New answer option:"), QLineEdit::Normal, "", &ok);
-    if (ok && !text.isEmpty())
-    {
-        addTaskAnswerOptions.push_back(text);
-        addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
-        addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
-    }
-}
-void MyClient::addTaskAnswerOptionsDeleteEmpty()
-{
-    for(int i = 0; i < addTaskAnswerOptionsModel->rowCount(); ++i)
-    {
-        if(addTaskAnswerOptionsModel->stringList().at(i) == "")
-            addTaskAnswerOptionsModel->removeRow(i);
-    }
-    addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
-}
 void MyClient::setAddTestWindow()
 {
     addTestQuit = new QPushButton("quit");

@@ -13,6 +13,7 @@
 #include "widgets/Admin/AllResultsWidget.h"
 #include "widgets/Admin/AllGroupsWidget.h"
 #include "widgets/Admin/AllTestsWidget.h"
+#include "widgets/Teacher/AddTaskWidget.h"
 
 #include "widgets/Teacher/TeacherWidget.h"
 
@@ -62,32 +63,7 @@ private:
     QList <QList <QString>> allPlannedTestsList;
 
     TeacherWidget *teacherW;
-
-
-    QPushButton *newTaskButton;
-    QPushButton *newTestButton;
-    QPushButton *viewTeacherGroupsButton;
-    QPushButton *viewTeacherResultsButton;
-    QVBoxLayout *teacherWindowLayout;
-    ///////////////////////////////////
-    QLabel *addTaskQuesitionLabel;
-    QLabel *addTaskAnswerLabel;
-    QLabel *addTaskAnswerOptionsLabel;
-    QLabel *addTaskThemeLabel;
-    QLabel *addTaskSubjectLabel;
-    QPushButton *addTaskSave;
-    QPushButton *addTaskQuit;
-    QPushButton *addTaskNewOption;
-    QPushButton *addTaskDeleteEmpty;
-    QTextEdit *addTaskQuesition;
-    QTextEdit *addTaskAnswer;
-    QStringListModel *addTaskAnswerOptionsModel;
-    QListView *addTaskAnswerOptionsView;
-    QLineEdit *addTaskTheme;
-    QLineEdit *addTaskSubject;
-    QVBoxLayout *addTaskLayout;
-    QList <QString> addTaskAnswerOptions;
-
+    AddTaskWidget *addTaskW;
 
     QPushButton *addTestQuit;
     QPushButton *addTestGoRandom;
@@ -153,7 +129,6 @@ private slots:
     void setTeacherWindow();
 ///////////////////////////////////
     void setAddTaskWindow();
-    void hideAddTaskWindow();
 
     void setAddTestWindow();
     void hideAddTestWindow();
@@ -165,11 +140,5 @@ private slots:
     ///////////////////////
 
     void solveMsg(QString msg);
-
-    ////////////////////
-    void sendTaskToSystem();
-
-    void showAddAnswerOptions();
-    void addTaskAnswerOptionsDeleteEmpty();
 };
 #endif // MYCLIENT_H
