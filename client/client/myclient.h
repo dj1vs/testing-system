@@ -14,6 +14,8 @@
 #include "widgets/Admin/AllGroupsWidget.h"
 #include "widgets/Admin/AllTestsWidget.h"
 
+#include "widgets/Teacher/TeacherWidget.h"
+
 #include <QtGlobal>
 #include <QMainWindow>
 #include <QTcpSocket>
@@ -22,17 +24,11 @@
 #include <QTcpServer>
 #include <QMessageBox>
 #include <QDebug>
-#include <QErrorMessage>
-#include <QListView>
 #include <QSlider>
 #include <QStatusBar>
 #include <QSignalMapper>
-#include <QDateEdit>
 #include <QCheckBox>
-#include <QRadioButton>
 #include <QTextBrowser>
-#include <QListView>
-#include <QStringListModel>
 #include <QTextEdit>
 #include <QInputDialog>
 #include <QSpinBox>
@@ -64,6 +60,8 @@ private:
     AllTestsWidget *atw;
     QList <QList<QString>> allPlannedTestsTaskList;
     QList <QList <QString>> allPlannedTestsList;
+
+    TeacherWidget *teacherW;
 
 
     QPushButton *newTaskButton;
@@ -153,10 +151,7 @@ private slots:
     void setAdminWindow();
 
     void setTeacherWindow();
-    void hideTeacherWindow();
 ///////////////////////////////////
-    void setViewAllGroupsWindow();
-
     void setAddTaskWindow();
     void hideAddTaskWindow();
 

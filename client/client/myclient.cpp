@@ -97,7 +97,6 @@ void MyClient::solveMsg(QString msg)
             showMsg("Succesfuly logged in!\nRole: " + role);
             id = cutArg(msg, "id").toInt();
             delete aw;
-            qDebug() << id;
             if(role == "admin+")
                 setAdminPlusWindow();
             else if(role == "admin")
@@ -186,7 +185,57 @@ void MyClient::solveMsg(QString msg)
     {
         if(cutArg(msg, "status") == "sended")
         {
-            setViewAllGroupsWindow();
+            QTableView *table = new QTableView();
+            QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
+
+            QList <QString> params = {"Name", "Teachers", "Students"};
+
+            for(int i = 0; i < 3; ++i)
+            {
+                QByteArray ba = params[i].toLocal8Bit();
+                const char* c_str = ba.data();
+                model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+            }
+
+            for(int row = 0; row < allGroupsList.size(); ++row)
+            {
+                QModelIndex index=model->index(row,0,QModelIndex());
+                model->setData(index, allGroupsList[row]);
+            }
+
+            table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+            table->setModel(model);
+
+            for(int row = 0; row < allGroupsList.size(); ++row)
+            {
+                QModelIndex index1=model->index(row,1,QModelIndex());
+                QString str = model->index(row,0,QModelIndex()).data().toString();
+                QPushButton *button1 = new QPushButton(this);
+                button1->setAccessibleName(str);
+                connect(button1, &QPushButton::clicked, this,
+                        [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}");});
+
+                table->setIndexWidget(index1, button1);
+
+                QModelIndex index2=model->index(row,2,QModelIndex());
+                QPushButton *button2 = new QPushButton(this);
+                button2->setAccessibleName(str);
+
+                connect(button2, &QPushButton::clicked, this,
+                        [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}");});
+
+
+                table->setIndexWidget(index2, button2);
+            }
+
+            allGroupsW = new AllGroupsWidget(this, table, model);
+            connect(allGroupsW->goBack, &QPushButton::clicked, this, [this]
+               {
+               delete allGroupsW;
+               groupStudents.clear(); groupTeachers.clear();
+               allGroupsList.clear();
+               setAdminWindow();});
+            setCentralWidget(allGroupsW);
             return;
         }
         allGroupsList.push_back(cutArg(msg, "name"));
@@ -424,89 +473,15 @@ void MyClient::setAdminWindow()
     setCentralWidget(adminW);
 }
 
-void MyClient::setViewAllGroupsWindow()
-{
-    QTableView *table = new QTableView();
-    QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
-
-    QList <QString> params = {"Name", "Teachers", "Students"};
-
-    for(int i = 0; i < 3; ++i)
-    {
-        QByteArray ba = params[i].toLocal8Bit();
-        const char* c_str = ba.data();
-        model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
-    }
-
-    for(int row = 0; row < allGroupsList.size(); ++row)
-    {
-        QModelIndex index=model->index(row,0,QModelIndex());
-        model->setData(index, allGroupsList[row]);
-    }
-
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    table->setModel(model);
-
-    for(int row = 0; row < allGroupsList.size(); ++row)
-    {
-        QModelIndex index1=model->index(row,1,QModelIndex());
-        QString str = model->index(row,0,QModelIndex()).data().toString();
-        QPushButton *button1 = new QPushButton(this);
-        button1->setAccessibleName(str);
-        connect(button1, &QPushButton::clicked, this,
-                [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}");});
-
-        table->setIndexWidget(index1, button1);
-
-        QModelIndex index2=model->index(row,2,QModelIndex());
-        QPushButton *button2 = new QPushButton(this);
-        button2->setAccessibleName(str);
-
-        connect(button2, &QPushButton::clicked, this,
-                [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}");});
-
-
-        table->setIndexWidget(index2, button2);
-    }
-
-    allGroupsW = new AllGroupsWidget(this, table, model);
-    connect(allGroupsW->goBack, &QPushButton::clicked, this, [this]
-       {
-       delete allGroupsW;
-       groupStudents.clear(); groupTeachers.clear();
-       allGroupsList.clear();
-       setAdminWindow();});
-    setCentralWidget(allGroupsW);
-}
-
 void MyClient::setTeacherWindow()
 {
-    newTaskButton = new QPushButton("new task");
-    newTestButton = new QPushButton("new test");
-    viewTeacherGroupsButton = new QPushButton("view groups");
-    viewTeacherResultsButton = new QPushButton("view results");
-
-    connect(newTaskButton, &QPushButton::clicked, this,
-            [this] {hideTeacherWindow(); setAddTaskWindow();});
-    connect(newTestButton, &QPushButton::clicked, this,
-            [this] {hideTeacherWindow(); setAddTestWindow();});
-
-    teacherWindowLayout = new QVBoxLayout();
-    teacherWindowLayout->addWidget(newTaskButton);
-    teacherWindowLayout->addWidget(newTestButton);
-    teacherWindowLayout->addWidget(viewTeacherGroupsButton);
-    teacherWindowLayout->addWidget(viewTeacherResultsButton);
-
-    QWidget *w = new QWidget();
-    w->setLayout(teacherWindowLayout);
-    setCentralWidget(w);
-}
-void MyClient::hideTeacherWindow()
-{
-    newTaskButton->close();
-    newTestButton->close();
-    viewTeacherGroupsButton->close();
-    viewTeacherResultsButton->close();
+    teacherW = new TeacherWidget(this);
+    connect(teacherW->newTaskButton, &QPushButton::clicked, this,
+            [this] {delete teacherW; setAddTaskWindow();});
+    connect(teacherW->newTestButton, &QPushButton::clicked, this,
+            [this] {delete teacherW; setAddTestWindow();});
+    connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
+    setCentralWidget(teacherW);
 }
 
 void MyClient::setAddTaskWindow()

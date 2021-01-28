@@ -18,7 +18,8 @@ SOURCES += \
     widgets/AdminPlus/AddUserWidget.cpp \
     widgets/AdminPlus/AdminPlusWidget.cpp \
     widgets/AdminPlus/AppointGroupWidget.cpp \
-    widgets/AuthorizationWidget.cpp
+    widgets/AuthorizationWidget.cpp \
+    widgets/Teacher/TeacherWidget.cpp
 
 HEADERS += \
     myclient.h \
@@ -31,7 +32,8 @@ HEADERS += \
     widgets/AdminPlus/AddUserWidget.h \
     widgets/AdminPlus/AdminPlusWidget.h \
     widgets/AdminPlus/AppointGroupWidget.h \
-    widgets/AuthorizationWidget.h
+    widgets/AuthorizationWidget.h \
+    widgets/Teacher/TeacherWidget.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
