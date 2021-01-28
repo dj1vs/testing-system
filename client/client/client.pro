@@ -12,6 +12,7 @@ SOURCES += \
     widgets/Admin/AdminWidget.cpp \
     widgets/Admin/AllGroupsWidget.cpp \
     widgets/Admin/AllResultsWidget.cpp \
+    widgets/Admin/AllTestsWidget.cpp \
     widgets/AdminPlus/AddGroupWidget.cpp \
     widgets/AdminPlus/AddToGroupWidget.cpp \
     widgets/AdminPlus/AddUserWidget.cpp \
@@ -24,6 +25,7 @@ HEADERS += \
     widgets/Admin/AdminWidget.h \
     widgets/Admin/AllGroupsWidget.h \
     widgets/Admin/AllResultsWidget.h \
+    widgets/Admin/AllTestsWidget.h \
     widgets/AdminPlus/AddGroupWidget.h \
     widgets/AdminPlus/AddToGroupWidget.h \
     widgets/AdminPlus/AddUserWidget.h \

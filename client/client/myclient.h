@@ -12,6 +12,7 @@
 #include "widgets/Admin/AdminWidget.h"
 #include "widgets/Admin/AllResultsWidget.h"
 #include "widgets/Admin/AllGroupsWidget.h"
+#include "widgets/Admin/AllTestsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -55,47 +56,15 @@ private:
 
     AdminWidget *adminW;
     AllResultsWidget *arw;
-    QList <QList <QString>> allResultsList= {};
+    QList <QList <QString>> allResultsList;
     AllGroupsWidget *allGroupsW;
-    QList <QString> allGroupsList = {};
-    QList <QList<QString>> groupStudents= {};
-    QList <QList <QString>> groupTeachers= {};
-
-    QErrorMessage *d;
-
-    QTableView *allPlannedTestsTable;
-    QStandardItemModel *allPlannedTestsModel;
-    QPushButton *allPlannedTestsGoBack;
-    QPushButton *allPlannedTestsSort;
-    QVBoxLayout *allPlannedTestsLayout;
-    ////////////////////////////////////////////
-    QList <QList <QString>> allPlannedTestsList;
-    QLabel *allPlannedTestsSortNameLabel;
-    QLabel *allPlannedTestsSortSurnameLabel;
-    QLabel *allPlannedTestsSortTestLabel;
-    QLabel *allPlannedTestsSortDateLabel;
-    QLabel *allPlannedTestsSortSubjectLabel;
-    QLineEdit *allPlannedTestsSortName;
-    QLineEdit *allPlannedTestsSortSurname;
-    QLineEdit *allPlannedTestsSortTest;
-    QDateEdit *allPlannedTestsSortDate;
-    QLineEdit *allPlannedTestsSortSubject;
-    QRadioButton *allPlannedTestsSortViewPast;
-    QRadioButton *allPlannedTestsSortViewFuture;
-    QRadioButton *allPlannedTestsSortViewAll;
-    QPushButton *allPlannedTestsSortSave;
-    QVBoxLayout *allPlannedTestsSortLayout;
-    ///////////////////////////////////////
+    QList <QString> allGroupsList;
+    QList <QList<QString>> groupStudents;
+    QList <QList <QString>> groupTeachers;
+    AllTestsWidget *atw;
     QList <QList<QString>> allPlannedTestsTaskList;
-    quint16 tasksAmount = 0;
-    quint16 currTask = 0;
-    QPushButton *allPlannedTestsTaskNext;
-    QPushButton *allPlannedTestsTaskPrev;
-    QTextBrowser *allPlannedTestsTaskText;
-    QTextBrowser *allPlannedTestsTaskAnswer;
-    QStringListModel *allPlannedTestsTaskAnswerOptionsModel;
-    QListView *allPlannedTestsTaskAnswerOptionsView;
-    QVBoxLayout *allPlannedTestsTaskLayout;
+    QList <QList <QString>> allPlannedTestsList;
+
 
     QPushButton *newTaskButton;
     QPushButton *newTestButton;
@@ -169,7 +138,7 @@ private:
     const int WINW = 700;
     quint16 id = -1;
 private:
-    void showError(QString err) {d->showMessage(err);};
+    void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
     void showMsg(QString msg){statusBar()->showMessage(msg);};
     QString cutArg(QString str, QString cmd);
 private slots:
@@ -188,9 +157,6 @@ private slots:
 ///////////////////////////////////
     void setViewAllGroupsWindow();
 
-    void setViewAllPlannedTestsWindow();
-    void hideViewAllPlannedTestsWindow();
-
     void setAddTaskWindow();
     void hideAddTaskWindow();
 
@@ -208,24 +174,7 @@ private slots:
     ////////////////////
     void sendTaskToSystem();
 
-    ///////////////////
-    void showAllPlannedTestsSort();
-    void editAllPlannedTestsTable();
-
-    void showTestTasks();
-    void showNextTask();
-    void showPrevTask();
-
     void showAddAnswerOptions();
     void addTaskAnswerOptionsDeleteEmpty();
-signals:
-    void allResultsCollected();
-    void allGroupsCollected();
-    void groupTeachersCollected();
-    void groupStudentsCollected();
-    void allPlannedTestsCollected();
-    void testTasksCollected();
-    void getTasks();
-    void allTasksCollected();
 };
 #endif // MYCLIENT_H

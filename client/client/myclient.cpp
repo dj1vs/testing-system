@@ -11,16 +11,8 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this,         SLOT(slotError(QAbstractSocket::SocketError))
            );
-    d = new QErrorMessage(this);
 
     setMinimumSize(WINW, WINH);
-    connect(this, &MyClient::groupTeachersCollected, this, [this] {allGroupsW->showGroupTeachers(groupTeachers);groupTeachers.clear();});
-    connect(this, &MyClient::groupStudentsCollected, this, [this] {allGroupsW->showGroupStudents(groupStudents);groupStudents.clear();});
-    connect(this, SIGNAL(allResultsCollected()), this, SLOT(setViewAllResultsWindow()));
-    connect(this, SIGNAL(allGroupsCollected()), this, SLOT(setViewAllGroupsWindow()));
-    connect(this, SIGNAL(allPlannedTestsCollected()), this, SLOT(setViewAllPlannedTestsWindow()));
-    connect(this, SIGNAL(testTasksCollected()), this, SLOT(showTestTasks()));
-    connect(this, SIGNAL(allTasksCollected()), this, SLOT(setAddTestManualWindow()));
 
     setAuthorizationWindow();
 }
@@ -194,7 +186,7 @@ void MyClient::solveMsg(QString msg)
     {
         if(cutArg(msg, "status") == "sended")
         {
-            emit allGroupsCollected();
+            setViewAllGroupsWindow();
             return;
         }
         allGroupsList.push_back(cutArg(msg, "name"));
@@ -203,7 +195,10 @@ void MyClient::solveMsg(QString msg)
     {
         QString status = cutArg(msg, "status");
         if(status == "sended")
-            emit groupTeachersCollected();
+        {
+            allGroupsW->showGroupTeachers(groupTeachers);
+            groupTeachers.clear();
+        }
         else
             groupTeachers.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
     }
@@ -211,7 +206,10 @@ void MyClient::solveMsg(QString msg)
     {
         QString status = cutArg(msg, "status");
         if(status == "sended")
-            emit groupStudentsCollected();
+        {
+            allGroupsW->showGroupStudents(groupStudents);
+            groupStudents.clear();
+        }
         else
             groupStudents.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
     }
@@ -219,7 +217,17 @@ void MyClient::solveMsg(QString msg)
     {
         QString status = cutArg(msg, "status");
         if (status == "sended")
-            emit allPlannedTestsCollected();
+        {
+            atw = new AllTestsWidget(this, allPlannedTestsList);
+            connect(atw->goBack, &QPushButton::clicked, this,
+                    [this] {delete atw; setAdminWindow();});
+            for(int i = 0; i < atw->buttons.size(); ++i)
+            {
+                connect(atw->buttons[i], &QPushButton::clicked, this, [this, i]
+                {slotSendToServer("{cmd='view test tasks';testname='" + atw->buttons[i]->accessibleName() + "';}");});
+            }
+            setCentralWidget(atw);
+        }
         else if (status == "started")
             allPlannedTestsList.clear();
         else
@@ -231,7 +239,7 @@ void MyClient::solveMsg(QString msg)
         QString status = cutArg(msg, "status");
         //QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
         if(status == "sended")
-            emit testTasksCollected();
+           atw->showTestTasks(allPlannedTestsTaskList);
         else if(status == "started")
             allPlannedTestsTaskList.clear();
         else
@@ -293,7 +301,7 @@ void MyClient::solveMsg(QString msg)
         else
         {
             showMsg("Task list collected");
-            emit allTasksCollected();
+            setAddTestManualWindow();
         }
     }
 }
@@ -471,235 +479,6 @@ void MyClient::setViewAllGroupsWindow()
     setCentralWidget(allGroupsW);
 }
 
-void MyClient::setViewAllPlannedTestsWindow()
-{
-    //    QTableView *allPlannedTestsTable;
-    //    QStandardItemModel *allPlannedTestsModel;
-    //    QPushButton *allPlannedTestsGoBack;
-    //    QVBoxLayout *allPlannedTestsLayout;
-    allPlannedTestsTable = new QTableView(this);
-    allPlannedTestsTable->setAttribute(Qt::WA_DeleteOnClose);
-    allPlannedTestsModel = new QStandardItemModel(allPlannedTestsList.size(), allPlannedTestsList[0].size() + 1, this);
-    QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date", "Tasks"};
-    for(int i = 0; i < allPlannedTestsList[0].size()+1; ++i)
-    {
-        QByteArray ba = params[i].toLocal8Bit();
-        const char* c_str = ba.data();
-        allPlannedTestsModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
-    }
-    for(int row = 0; row < allPlannedTestsList.size(); ++row)
-    {
-        for(int col = 0; col < allPlannedTestsList[0].size(); ++col)
-        {
-            QModelIndex index=allPlannedTestsModel->index(row,col,QModelIndex());
-            allPlannedTestsModel->setData(index, allPlannedTestsList[row][col]);
-        }
-    }
-    allPlannedTestsTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    allPlannedTestsTable->setModel(allPlannedTestsModel);
-
-    for(int row = 0; row < allPlannedTestsList.size(); ++row)
-    {
-        QModelIndex index=allPlannedTestsModel->index(row,allPlannedTestsList[0].size(),QModelIndex());
-        QPushButton *button = new QPushButton();
-        button->setAccessibleName(allPlannedTestsModel->index(row,2,QModelIndex()).data().toString());
-        connect(button, &QPushButton::clicked, this,
-                [this, button] {slotSendToServer("{cmd='view test tasks';testname='" + button->accessibleName() + "';}");});
-        allPlannedTestsTable->setIndexWidget(index, button);
-    }
-
-    allPlannedTestsGoBack = new QPushButton("Go back");
-    allPlannedTestsSort = new QPushButton("Sort");
-    allPlannedTestsGoBack->setAttribute(Qt::WA_DeleteOnClose);
-
-    connect(allPlannedTestsGoBack, &QPushButton::clicked, this,
-            [this] {hideViewAllPlannedTestsWindow(); setAdminWindow();});
-
-    connect(allPlannedTestsSort, SIGNAL(clicked()), this, SLOT(showAllPlannedTestsSort()));
-    allPlannedTestsLayout = new QVBoxLayout();
-    allPlannedTestsLayout->addWidget(allPlannedTestsTable);
-    allPlannedTestsLayout->addWidget(allPlannedTestsSort);
-    allPlannedTestsLayout->addWidget(allPlannedTestsGoBack);
-
-    QWidget *w = new QWidget();
-    w->setLayout(allPlannedTestsLayout);
-    setCentralWidget(w);
-
-}
-void MyClient::hideViewAllPlannedTestsWindow()
-{
-    allPlannedTestsTable->close();
-    allPlannedTestsGoBack->close();
-}
-
-void MyClient::showAllPlannedTestsSort()
-{
-    allPlannedTestsSortNameLabel = new QLabel("Teacher name:", this);
-    allPlannedTestsSortSurnameLabel = new QLabel("Teacher surname:", this);
-    allPlannedTestsSortTestLabel = new QLabel("Test name:", this);
-    allPlannedTestsSortDateLabel = new QLabel("Date (dd.MM.yyyy):", this);
-    allPlannedTestsSortSubjectLabel = new QLabel("Subject:", this);
-    allPlannedTestsSortName = new QLineEdit();
-    allPlannedTestsSortSurname = new QLineEdit();
-    allPlannedTestsSortTest = new QLineEdit();
-    allPlannedTestsSortDate = new QDateEdit();
-    allPlannedTestsSortSubject = new QLineEdit();
-    allPlannedTestsSortViewPast = new QRadioButton("Прошедшие");
-    allPlannedTestsSortViewFuture= new QRadioButton("Запланированные");
-    allPlannedTestsSortViewAll= new QRadioButton("Все");
-    allPlannedTestsSortSave = new QPushButton("Сохранить ");
-
-    QHBoxLayout *name = new QHBoxLayout();
-    name->addWidget(allPlannedTestsSortNameLabel);
-    name->addWidget(allPlannedTestsSortName);
-
-    QHBoxLayout *surname = new QHBoxLayout();
-    surname->addWidget(allPlannedTestsSortSurnameLabel);
-    surname->addWidget(allPlannedTestsSortSurname);
-
-    QHBoxLayout *test = new QHBoxLayout();
-    test->addWidget(allPlannedTestsSortTestLabel);
-    test->addWidget(allPlannedTestsSortTest);
-
-    QHBoxLayout *date = new QHBoxLayout();
-    date->addWidget(allPlannedTestsSortDateLabel);
-    date->addWidget(allPlannedTestsSortDate);
-
-    QHBoxLayout *subject = new QHBoxLayout();
-    subject->addWidget(allPlannedTestsSortSubjectLabel);
-    subject->addWidget(allPlannedTestsSortSubject);
-
-
-    QHBoxLayout *options = new QHBoxLayout();
-    options->addWidget(allPlannedTestsSortViewPast);
-    options->addWidget(allPlannedTestsSortViewFuture);
-    options->addWidget(allPlannedTestsSortViewAll);
-
-
-    allPlannedTestsSortLayout = new QVBoxLayout();
-    allPlannedTestsSortLayout->addLayout(name);
-    allPlannedTestsSortLayout->addLayout(surname);
-    allPlannedTestsSortLayout->addLayout(test);
-    allPlannedTestsSortLayout->addLayout(date);
-    allPlannedTestsSortLayout->addLayout(subject);
-    allPlannedTestsSortLayout->addLayout(options);
-    allPlannedTestsSortLayout->addWidget(allPlannedTestsSortSave);
-
-    QDialog *d = new QDialog();
-    connect(allPlannedTestsSortSave, &QPushButton::clicked, this, [this, d] {editAllPlannedTestsTable(); d->close();});
-
-    d->setLayout(allPlannedTestsSortLayout);
-    d->show();
-
-}
-void MyClient::editAllPlannedTestsTable()
-{
-    setViewAllPlannedTestsWindow();
-    QString name = allPlannedTestsSortName->text();
-    QString surname = allPlannedTestsSortSurname->text();
-    QString test = allPlannedTestsSortTest->text();
-    QDate d = allPlannedTestsSortDate->date();
-    QString date = QString::number(d.year()) + (d.month() < 10 ? "-0" : "-") + QString::number(d.month()) + (d.day() < 10 ? "-0" : "-") + QString::number(d.day());
-    QString subject = allPlannedTestsSortSubject->text();
-    bool isPast = allPlannedTestsSortViewPast->isChecked();
-    bool isFuture = allPlannedTestsSortViewFuture->isChecked();
-    bool isAll = allPlannedTestsSortViewAll->isChecked();
-
-    if(name == "" && surname == "" && subject == "" && test == "" && date == "2000-01-01" && !isPast  && !isFuture && !isAll)
-        return;
-
-    //QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date"};
-
-    for(int row = 0; row < allPlannedTestsModel->rowCount(); ++row)
-    {
-        QString modelName = allPlannedTestsModel->index(row,0,QModelIndex()).data().toString();
-        QString modelSurname = allPlannedTestsModel->index(row,1,QModelIndex()).data().toString();
-        QString modelSubject = allPlannedTestsModel->index(row,3,QModelIndex()).data().toString();
-        QString modelTest = allPlannedTestsModel->index(row,2,QModelIndex()).data().toString();
-        QString modelDate = allPlannedTestsModel->index(row,4,QModelIndex()).data().toString();
-        qDebug() << modelDate << date;
-
-        if ( (name != "" &&  surname != "" && (modelName != name || modelSurname != surname)) || (test != "" && modelTest != test)
-             || (date != "2000-01-01" && date != modelDate) || (subject != "" && subject != modelSubject) ||
-             (isPast && QDate::fromString(modelDate) >= QDate::currentDate()) || (isFuture && QDate::fromString(modelDate) < QDate::currentDate()))
-        {
-            allPlannedTestsModel->removeRow(row);
-            row--;
-        }
-
-    }
-    allPlannedTestsTable->setModel(allPlannedTestsModel);
-}
-void MyClient::showTestTasks()
-{
-//    QList <QList<QString>> allPlannedTestsTaskList;
-//    quint16 tasksAmount = 0;
-//    quint16 currTask = 0;
-//    QPushButton *allPlannedTestsTaskNext;
-//    QPushButton *allPlannedTestsTaskPrev;
-//    QTextBrowser *allPlannedTestsTaskText;
-//    QListView *allPlannedTestsTaskAnswerOptions;
-
-    if (!allPlannedTestsTaskList.size())
-    {
-        showError("Current test is empty");
-        return;
-    }
-
-    tasksAmount = allPlannedTestsTaskList.size();
-    currTask = 0;
-    allPlannedTestsTaskNext = new QPushButton("next");
-    allPlannedTestsTaskPrev = new QPushButton("prev");
-
-    connect(allPlannedTestsTaskNext, SIGNAL(clicked()), this, SLOT(showNextTask()));
-    connect(allPlannedTestsTaskPrev, SIGNAL(clicked()), this, SLOT(showPrevTask()));
-    allPlannedTestsTaskText = new QTextBrowser();
-    allPlannedTestsTaskAnswer = new QTextBrowser();
-    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[0][1]);
-    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[0][3]);
-    allPlannedTestsTaskAnswerOptionsModel = new QStringListModel();
-    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[0][2].split(';'));
-    allPlannedTestsTaskAnswerOptionsView = new QListView();
-    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
-
-    QHBoxLayout *buttons = new QHBoxLayout();
-    buttons->addWidget(allPlannedTestsTaskPrev);
-    buttons->addWidget(allPlannedTestsTaskNext);
-
-
-    allPlannedTestsTaskLayout = new QVBoxLayout();
-    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskText);
-    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskAnswerOptionsView);
-    allPlannedTestsTaskLayout->addWidget(allPlannedTestsTaskAnswer);
-    allPlannedTestsTaskLayout->addLayout(buttons);
-
-    QDialog *d = new QDialog(this);
-    d->setLayout(allPlannedTestsTaskLayout);
-    d->show();
-
-}
-
-void MyClient::showNextTask()
-{
-    if(currTask+1 >= allPlannedTestsTaskList.size())
-        return;
-    ++currTask;
-    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[currTask][1]);
-    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[currTask][3]);
-    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[currTask][2].split(';'));
-    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
-}
-void MyClient::showPrevTask()
-{
-    if(!currTask)
-        return;
-    --currTask;
-    allPlannedTestsTaskText->setText(allPlannedTestsTaskList[currTask][1]);
-    allPlannedTestsTaskAnswer->setText(allPlannedTestsTaskList[currTask][3]);
-    allPlannedTestsTaskAnswerOptionsModel->setStringList(allPlannedTestsTaskList[currTask][2].split(';'));
-    allPlannedTestsTaskAnswerOptionsView->setModel(allPlannedTestsTaskAnswerOptionsModel);
-}
-
 void MyClient::setTeacherWindow()
 {
     newTaskButton = new QPushButton("new task");
@@ -853,7 +632,7 @@ void MyClient::setAddTestWindow()
     addTestGoManual = new QPushButton("manual");
     connect(addTestQuit, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setTeacherWindow();});
     connect(addTestGoRandom, &QPushButton::clicked, this, [this] {hideAddTestWindow(); setAddTestRandomWindow();});
-    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); taskList.clear(); slotSendToServer("{cmd='get tasks';}"); emit getTasks();});
+    connect(addTestGoManual, &QPushButton::clicked, this, [this] {hideAddTestWindow(); taskList.clear(); slotSendToServer("{cmd='get tasks';}");});
     addTestLayout = new QVBoxLayout();
     addTestLayout->addWidget(addTestGoRandom);
     addTestLayout->addWidget(addTestGoManual);
