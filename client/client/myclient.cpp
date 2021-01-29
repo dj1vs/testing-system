@@ -286,7 +286,6 @@ void MyClient::solveMsg(QString msg)
     else if(cmd == "view test tasks")
     {
         QString status = cutArg(msg, "status");
-        //QList <QString> params = {"testname", "task", "answeroptions","answer","theme"};
         if(status == "sended")
            atw->showTestTasks(allPlannedTestsTaskList);
         else if(status == "started")
@@ -301,15 +300,8 @@ void MyClient::solveMsg(QString msg)
         if (status == "sended")
             showMsg("task added successfully");
     }
-    else if(cmd == "validate tasks amount")
-    {
-
-    }
     else if(cmd == "add test")
         showMsg("added!");
-    else if(cmd == "get tasks")
-    {
-    }
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -437,8 +429,8 @@ void MyClient::setTeacherWindow()
             [this] {
         delete teacherW;
         addTaskW = new AddTaskWidget(this);
-        connect(addTaskW->addTaskQuit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
-        connect(addTaskW->addTaskSave, &QPushButton::clicked, this, [this]
+        connect(addTaskW->quit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
+        connect(addTaskW->save, &QPushButton::clicked, this, [this]
         {   QString task = addTaskW->getTask();
             QString answer = addTaskW->getAnswer();
             QList <QString> answerOptions = addTaskW->getAnswerOptions();
@@ -467,21 +459,13 @@ void MyClient::setTeacherWindow()
         addTestW = new AddTestWidget(this);
         connect(addTestW, &AddTestWidget::finished, this, [this]
         {
-            QDate date = addTestW->getDate();
-            int day = date.day();
-            int month = date.month();
-            int year = date.year();
-            QString dateString = (day < 10 ? "0" : "") + QString::number(day) + "-" +
-            (month < 10 ? "0" : "") + QString::number(month) + "-" + QString::number(year);
-            slotSendToServer("{cmd='add test';testname='" + addTestW->getName() + "';"
-                             "subject='" + addTestW->getSubject() + "';"
-                             "planneddate='" + dateString + "';"
-                             "teacherid='" + QString::number(id) + "';}");
             if(addTestW->getState() == RANDOM)
-                slotSendToServer("{cmd='add tasks to test';cmdmode='random';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
-                                 "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
-                                 "subject='" + addTestW->getSubject() + "';"
-                                 "theme='" + (addTestW->getTheme() == "" ? "ALL" : addTestW->getTheme()) + "';}");
+                slotSendToServer ("{cmd='add test';cmdmode='random';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
+                                  "testname='" + addTestW->getName() + "';"
+                                  "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
+                                  "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFromat(addTestW->getDate(), "DD-MM-YYYY") + "';"
+                                  "teacherid='" + QString::number(id) + "';}"
+                                  "theme='" + (addTestW->getTheme() == "" ? "ALL" : addTestW->getTheme()) + "';}");
 
         });
         setCentralWidget(addTestW);

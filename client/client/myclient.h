@@ -1,6 +1,8 @@
 #ifndef MYCLIENT_H
 #define MYCLIENT_H
 
+#include "lib/DateConverter.h"
+
 #include "widgets/AuthorizationWidget.h"
 
 #include "widgets/AdminPlus/AdminPlusWidget.h"

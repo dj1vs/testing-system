@@ -2,51 +2,49 @@
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent)
 {
-    addTaskQuesitionLabel = new QLabel("Вопрос:");
-    addTaskAnswerLabel = new QLabel("Answer");
-    addTaskAnswerOptionsLabel = new QLabel("Answer options");
-    addTaskThemeLabel = new QLabel("Theme");
-    addTaskSubjectLabel = new QLabel("Subject");
+    quesitionLabel = new QLabel("Вопрос:");
+    answerLabel = new QLabel("Answer");
+    answerOptionsLabel = new QLabel("Answer options");
+    themeLabel = new QLabel("Theme");
+    subjectLabel = new QLabel("Subject");
 
-    addTaskSave = new QPushButton("save");
-    addTaskQuit = new QPushButton("quit");
-    addTaskNewOption = new QPushButton("add new answer option");
-    addTaskDeleteEmpty = new QPushButton("delete empty");
+    save = new QPushButton("save");
+    quit = new QPushButton("quit");
+    newOption = new QPushButton("add new answer option");
+    deleteEmpty = new QPushButton("delete empty");
 
-//    connect(addTaskSave, SIGNAL(clicked()), this, SLOT(sendTaskToSystem()));
-
-    connect(addTaskNewOption, &QPushButton::clicked, this,
+    connect(newOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions();});
 
-    connect(addTaskDeleteEmpty, &QPushButton::clicked, this,
+    connect(deleteEmpty, &QPushButton::clicked, this,
             [this] {addTaskAnswerOptionsDeleteEmpty();});
 
-    addTaskQuesition = new QTextEdit();
-    addTaskAnswer = new QTextEdit();
+    quesition = new QTextEdit();
+    answer = new QTextEdit();
 
-    addTaskAnswerOptionsModel = new QStringListModel();
-    addTaskAnswerOptionsView = new QListView();
+    answerOptionsModel = new QStringListModel();
+    answerOptionsView = new QListView();
 
-    addTaskTheme = new QLineEdit();
-    addTaskSubject = new QLineEdit();
+    theme = new QLineEdit();
+    subject = new QLineEdit();
 
-    addTaskLayout = new QVBoxLayout();
-    addTaskLayout->addWidget(addTaskQuesitionLabel);
-    addTaskLayout->addWidget(addTaskQuesition);
-    addTaskLayout->addWidget(addTaskAnswerOptionsLabel);
-    addTaskLayout->addWidget(addTaskAnswerOptionsView);
-    addTaskLayout->addWidget(addTaskDeleteEmpty);
-    addTaskLayout->addWidget(addTaskNewOption);
-    addTaskLayout->addWidget(addTaskAnswerLabel);
-    addTaskLayout->addWidget(addTaskAnswer);
-    addTaskLayout->addWidget(addTaskSubjectLabel);
-    addTaskLayout->addWidget(addTaskSubject);
-    addTaskLayout->addWidget(addTaskThemeLabel);
-    addTaskLayout->addWidget(addTaskTheme);
-    addTaskLayout->addWidget(addTaskSave);
-    addTaskLayout->addWidget(addTaskQuit);
+    layout = new QVBoxLayout();
+    layout->addWidget(quesitionLabel);
+    layout->addWidget(quesition);
+    layout->addWidget(answerOptionsLabel);
+    layout->addWidget(answerOptionsView);
+    layout->addWidget(deleteEmpty);
+    layout->addWidget(newOption);
+    layout->addWidget(answerLabel);
+    layout->addWidget(answer);
+    layout->addWidget(subjectLabel);
+    layout->addWidget(subject);
+    layout->addWidget(themeLabel);
+    layout->addWidget(theme);
+    layout->addWidget(save);
+    layout->addWidget(quit);
 
-    setLayout(addTaskLayout);
+    setLayout(layout);
 }
 
 void AddTaskWidget::showAddAnswerOptions()
@@ -56,17 +54,17 @@ void AddTaskWidget::showAddAnswerOptions()
                                          tr("New answer option:"), QLineEdit::Normal, "", &ok);
     if (ok && !text.isEmpty())
     {
-        addTaskAnswerOptions.push_back(text);
-        addTaskAnswerOptionsModel->setStringList(addTaskAnswerOptions);
-        addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
+        answerOptions.push_back(text);
+        answerOptionsModel->setStringList(answerOptions);
+        answerOptionsView->setModel(answerOptionsModel);
     }
 }
 void AddTaskWidget::addTaskAnswerOptionsDeleteEmpty()
 {
-    for(int i = 0; i < addTaskAnswerOptionsModel->rowCount(); ++i)
+    for(int i = 0; i < answerOptionsModel->rowCount(); ++i)
     {
-        if(addTaskAnswerOptionsModel->stringList().at(i) == "")
-            addTaskAnswerOptionsModel->removeRow(i);
+        if(answerOptionsModel->stringList().at(i) == "")
+            answerOptionsModel->removeRow(i);
     }
-    addTaskAnswerOptionsView->setModel(addTaskAnswerOptionsModel);
+    answerOptionsView->setModel(answerOptionsModel);
 }

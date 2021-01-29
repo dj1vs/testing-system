@@ -24,9 +24,11 @@ SOURCES += \
     widgets/Teacher/AddTestWidget.cpp \
     widgets/Teacher/TeacherGroupsWidget.cpp \
     widgets/Teacher/TeacherResultsWidget.cpp \
-    widgets/Teacher/TeacherWidget.cpp
+    widgets/Teacher/TeacherWidget.cpp \
+    widgets/custom/EditListBox.cpp
 
 HEADERS += \
+    lib/DateConverter.h \
     myclient.h \
     widgets/Admin/AdminWidget.h \
     widgets/Admin/AllGroupsWidget.h \
@@ -42,7 +44,8 @@ HEADERS += \
     widgets/Teacher/AddTestWidget.h \
     widgets/Teacher/TeacherGroupsWidget.h \
     widgets/Teacher/TeacherResultsWidget.h \
-    widgets/Teacher/TeacherWidget.h
+    widgets/Teacher/TeacherWidget.h \
+    widgets/custom/EditListBox.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

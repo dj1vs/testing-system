@@ -15,36 +15,35 @@ class AddTaskWidget : public QWidget
     Q_OBJECT
 public:
     explicit AddTaskWidget(QWidget *parent = nullptr);
-    QString getTask() const {return addTaskQuesition->toPlainText();};
-    QString getAnswer() const {return addTaskAnswer->toPlainText();};
-    QList <QString> getAnswerOptions() const {return addTaskAnswerOptionsModel->stringList();};
-    QString getTheme() const {return addTaskTheme->text();};
-    QString getSubject() const {return addTaskSubject->text();};
+    QString getTask() const {return quesition->toPlainText();};
+    QString getAnswer() const {return answer->toPlainText();};
+    QList <QString> getAnswerOptions() const {return answerOptionsModel->stringList();};
+    QString getTheme() const {return theme->text();};
+    QString getSubject() const {return subject->text();};
 
 public:
-    QPushButton *addTaskSave;
-    QPushButton *addTaskQuit;
+    QPushButton *save;
+    QPushButton *quit;
 private:
     QPushButton *newTaskButton;
     QPushButton *newTestButton;
     QPushButton *viewTeacherGroupsButton;
     QPushButton *viewTeacherResultsButton;
-    QVBoxLayout *teacherWindowLayout;
-    QLabel *addTaskQuesitionLabel;
-    QLabel *addTaskAnswerLabel;
-    QLabel *addTaskAnswerOptionsLabel;
-    QLabel *addTaskThemeLabel;
-    QLabel *addTaskSubjectLabel;
-    QPushButton *addTaskNewOption;
-    QPushButton *addTaskDeleteEmpty;
-    QTextEdit *addTaskQuesition;
-    QTextEdit *addTaskAnswer;
-    QStringListModel *addTaskAnswerOptionsModel;
-    QListView *addTaskAnswerOptionsView;
-    QLineEdit *addTaskTheme;
-    QLineEdit *addTaskSubject;
-    QVBoxLayout *addTaskLayout;
-    QList <QString> addTaskAnswerOptions;
+    QLabel *quesitionLabel;
+    QLabel *answerLabel;
+    QLabel *answerOptionsLabel;
+    QLabel *themeLabel;
+    QLabel *subjectLabel;
+    QPushButton *newOption;
+    QPushButton *deleteEmpty;
+    QTextEdit *quesition;
+    QTextEdit *answer;
+    QStringListModel *answerOptionsModel;
+    QListView *answerOptionsView;
+    QLineEdit *theme;
+    QLineEdit *subject;
+    QVBoxLayout *layout;
+    QList <QString> answerOptions;
 private:
     void showAddAnswerOptions();
     void addTaskAnswerOptionsDeleteEmpty();

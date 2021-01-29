@@ -11,14 +11,26 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
     }
     nameEdit = new QLineEdit(this);
     subjectEdit = new QLineEdit(this);
-  //  isManualCheck = new QCheckBox("Add task manual?", this);
+    isManualCheck = new QCheckBox("Add task manual?", this);
     createButton = new QPushButton("Create test", this);
     dateEdit = new QCalendarWidget(this);
     dateEdit->setMinimumDate(QDate::currentDate());
     connect(createButton, &QPushButton::clicked, this, [this]
     {
         if(checkStart())
-            setParamsRandom();
+        {
+            if(!isManualCheck->isChecked())
+            {
+                state = RANDOM;
+                setParamsRandom();
+            }
+            else
+            {
+                EditListBox *d = new EditListBox("hi!", {"k", "l"});
+                d->show();
+
+            }
+        }
     });
 
     QVBoxLayout *textLayout = new QVBoxLayout();
@@ -26,7 +38,7 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
     textLayout->addWidget(nameEdit);
     textLayout->addWidget(labels[1]);
     textLayout->addWidget(subjectEdit);
- //   textLayout->addWidget(isManualCheck);
+    textLayout->addWidget(isManualCheck);
 
     QVBoxLayout *dateLayout = new QVBoxLayout();
     dateLayout->addWidget(labels[2]);

@@ -14,6 +14,7 @@
 #include <QSpinBox>
 #include <QDialogButtonBox>
 #include <QDebug>
+#include "../custom/EditListBox.h"
 
 typedef enum {RANDOM, MANUAL} STATE;
 
@@ -37,7 +38,7 @@ private:
     const QList <QString> labelNames = {"Test name", "Subject", "Date"};
     QLineEdit *nameEdit;
     QLineEdit *subjectEdit;
-   // QCheckBox *isManualCheck;
+    QCheckBox *isManualCheck;
     QCalendarWidget *dateEdit;
     QVBoxLayout *layout;
 
@@ -48,6 +49,11 @@ private:
     QSpinBox *randomAmountBox;
     QDialogButtonBox *randomButtonBox;
     QVBoxLayout *randomLayout;
+
+    EditListBox *test;
+
+
+
 private:
     bool checkStart();
     void setParamsRandom();
