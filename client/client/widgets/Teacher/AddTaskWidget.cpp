@@ -2,7 +2,6 @@
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent)
 {
-    addTaskAnswerOptions.clear();
     addTaskQuesitionLabel = new QLabel("Вопрос:");
     addTaskAnswerLabel = new QLabel("Answer");
     addTaskAnswerOptionsLabel = new QLabel("Answer options");

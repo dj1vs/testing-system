@@ -462,13 +462,36 @@ void MyClient::setTeacherWindow()
         setCentralWidget(addTaskW);});
 
     connect(teacherW->newTestButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+            [this] {
+        delete teacherW;
+        addTestW = new AddTestWidget(this);
+        connect(addTestW, &AddTestWidget::finished, this, [this]
+        {
+            QDate date = addTestW->getDate();
+            int day = date.day();
+            int month = date.month();
+            int year = date.year();
+            QString dateString = (day < 10 ? "0" : "") + QString::number(day) + "-" +
+            (month < 10 ? "0" : "") + QString::number(month) + "-" + QString::number(year);
+            slotSendToServer("{cmd='add test';testname='" + addTestW->getName() + "';"
+                             "subject='" + addTestW->getSubject() + "';"
+                             "planneddate='" + dateString + "';"
+                             "teacherid='" + QString::number(id) + "';}");
+            if(addTestW->getState() == RANDOM)
+                slotSendToServer("{cmd='add tasks to test';cmdmode='random';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
+                                 "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
+                                 "subject='" + addTestW->getSubject() + "';"
+                                 "theme='" + (addTestW->getTheme() == "" ? "ALL" : addTestW->getTheme()) + "';}");
+
+        });
+        setCentralWidget(addTestW);
+    });
 
     connect(teacherW->viewGroupsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+            [this] {delete teacherW; teacherGroupsW = new TeacherGroupsWidget(this); setCentralWidget(teacherGroupsW);});
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; addTestW = new AddTestWidget(this); setCentralWidget(addTestW);});
+            [this] {delete teacherW; teacherResultsW = new TeacherResultsWidget(this); setCentralWidget(teacherResultsW);});
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);
