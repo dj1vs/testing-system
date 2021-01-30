@@ -70,6 +70,8 @@ private:
     TeacherWidget *teacherW;
     AddTaskWidget *addTaskW;
     AddTestWidget *addTestW;
+    QList <QList <QString>> allTasksList;
+    int testid = 0;
     TeacherGroupsWidget *teacherGroupsW;
     TeacherResultsWidget *teacherResultsW;
 

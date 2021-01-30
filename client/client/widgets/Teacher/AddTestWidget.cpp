@@ -27,7 +27,7 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
             else
             {
                 state = MANUAL;
-                setManual();
+                emit setUpManual();
             }
         }
     });
@@ -93,11 +93,6 @@ bool AddTestWidget::checkStart()
 
 void AddTestWidget::setManual()
 {
-    setManualTaskList({{"1", "2", "3", "4", "5", "6", "2"},
-                      {"q", "w", "e", "r", "t", "y", "2"},
-                      {"a", "s", "d", "f", "g", "h", "3"},
-                      {"1", "2", "3", "4", "5", "6", "2"}});
-
     for(auto &i : manualTaskList)
     {
         manualSubjects.insert(i[1]);
@@ -238,7 +233,6 @@ void AddTestWidget::setManual()
                    continue;
                for(auto &i : manualTaskList)
                {
-                   qDebug() << userID << i[6] << manualAllModel->data(manualAllModel->index(row,0,QModelIndex())).toString();
                    if(i[0] == manualAllModel->data(manualAllModel->index(row,0,QModelIndex())).toString())
                    {
                        if(i[6].toInt() != userID)

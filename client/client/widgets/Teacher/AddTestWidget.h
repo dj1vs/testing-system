@@ -41,6 +41,14 @@ public:
     QString getTheme() const {return randomThemeEdit->text();};
     int getTasksAmount() const {return randomAmountBox->value();};
     QString getTasksAuthor() const {return randomShowMy->isChecked() ? "ME" : "ALL";};
+    QList <QString> getPickedTasks() const {
+        QList <QString> res;
+        for(int i = 0; i < manualPickedModel->rowCount(); ++i)
+            res.append(manualAllModel->data(manualAllModel->index(i,0,QModelIndex())).toString());
+        return res;
+    };
+
+    void setManual();
 public:
     STATE state;
     QPushButton *createButton;
@@ -84,7 +92,7 @@ private:
     QDialogButtonBox *manualButtonBox;
     QVBoxLayout *manualLayout;
 
-    int userID = 2;
+    int userID = 1;
 
 
 
@@ -92,9 +100,9 @@ private:
 private:
     bool checkStart();
     void setParamsRandom();
-    void setManual();
 signals:
     void finished();
+    void setUpManual();
 
 };
 

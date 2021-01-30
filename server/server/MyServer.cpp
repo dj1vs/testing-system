@@ -449,13 +449,31 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         else
             sendToClient(pSocket, "{cmd='add task';status='sended';}");
     }
+    else if (cmd == "get all tasks")
+    {
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec("SELECT * FROM tasks"))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+        {
+            QString msg = "{cmd='get all tasks';status='sending'";
+            QList <QString> params = {"taskid", "subject", "tasktext", "answeroptions", "answertext", "theme","teacherid"};
+            for(int i = 0; i < 7; ++i)
+                msg += params[i] + "='" + query.record().field(i).value().toString() + "';";
+            msg += "}";
+            sendToClient(pSocket, msg);
+        }
+        sendToClient(pSocket, "{cmd='get all tasks';status='sended';}");
+
+    }
     else if(cmd == "add test")
     {
         QString testName = cutArg(msg, "testname");
         QString subject = cutArg(msg, "subject");
         QString plannedDate = cutArg(msg, "planneddate");
         QString teacherid = cutArg(msg, "teacherid");
-        QString mode = cutArg(msg, "cmdmode");
 
         int testId = 1;
         QSqlQuery query = QSqlQuery(db);
@@ -476,62 +494,96 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().driverText();
         else if(query.next())
             testId = query.record().field(0).value().toInt();
-        if (mode == "random")
+        QString amount = cutArg(msg, "amount");
+        QString theme = cutArg(msg, "theme");
+        QString taskAuthor = cutArg(msg, "taskauthor");
+
+        QList <int> taskId;
+
+        QString req = "SELECT id FROM tasks WHERE subject = '" + subject + "'";
+        if(theme != "ALL")
+            req += " AND theme = '" + theme + "'";
+        if(taskAuthor != "ALL")
+            req += "AND teacherid='" + taskAuthor +"'";
+        req += ';';
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
         {
-            QString amount = cutArg(msg, "amount");
-            QString theme = cutArg(msg, "theme");
-            QString taskAuthor = cutArg(msg, "taskauthor");
-            QString subject = cutArg(msg, "subject");
-
-            QList <int> taskId;
-
-            QString req = "SELECT id FROM tasks WHERE subject = '" + subject + "'";
-            if(theme != "ALL")
-                req += " AND theme = '" + theme + "'";
-            if(taskAuthor != "ALL")
-                req += "AND teacherid='" + taskAuthor +"'";
-            req += ';';
-            QSqlQuery query = QSqlQuery(db);
-            if(!query.exec(req))
-                qDebug() << "Can not run database query :("
-                << query.lastError().databaseText()
-                << query.lastError().driverText();
-            else while(query.next())
-            {
-                taskId.push_back(query.record().field(0).value().toInt());
-            }
-            for(int i = 0; i < taskId.size(); ++i)
-                std::swap(taskId[i], taskId[QRandomGenerator::global()->generate() % taskId.size()]);
-            if(taskId.size() <= amount.toInt())
-            {
-                for(auto &i: taskId)
-                {
-                    query.prepare("INSERT INTO test_by_task (testid, taskid) "
-                                  "VALUES (:testid, :taskid)");
-                    query.bindValue(":testid", testId);
-                    query.bindValue(":taskid", i);
-                    if(!query.exec())
-                        qDebug() << "Can not run database query :("
-                        << query.lastError().databaseText()
-                        << query.lastError().driverText();
-                }
-            }
-            else
-            {
-                for(int i = 0; i < amount.toInt(); ++i)
-                {
-                    query.prepare("INSERT INTO test_by_task (testid, taskid) "
-                                  "VALUES (:testid, :taskid)");
-                    query.bindValue(":testid", testId);
-                    query.bindValue(":taskid", taskId[i]);
-                    if(!query.exec())
-                        qDebug() << "Can not run database query :("
-                        << query.lastError().databaseText()
-                        << query.lastError().driverText();
-                }
-            }
-            sendToClient(pSocket, "{cmd='add test';status='sended';}");
+            taskId.push_back(query.record().field(0).value().toInt());
         }
+        for(int i = 0; i < taskId.size(); ++i)
+            std::swap(taskId[i], taskId[QRandomGenerator::global()->generate() % taskId.size()]);
+        if(taskId.size() <= amount.toInt())
+        {
+            for(auto &i: taskId)
+            {
+                query.prepare("INSERT INTO test_by_task (testid, taskid) "
+                              "VALUES (:testid, :taskid)");
+                query.bindValue(":testid", testId);
+                query.bindValue(":taskid", i);
+                if(!query.exec())
+                    qDebug() << "Can not run database query :("
+                    << query.lastError().databaseText()
+                    << query.lastError().driverText();
+            }
+        }
+        else
+        {
+            for(int i = 0; i < amount.toInt(); ++i)
+            {
+                query.prepare("INSERT INTO test_by_task (testid, taskid) "
+                              "VALUES (:testid, :taskid)");
+                query.bindValue(":testid", testId);
+                query.bindValue(":taskid", taskId[i]);
+                if(!query.exec())
+                    qDebug() << "Can not run database query :("
+                    << query.lastError().databaseText()
+                    << query.lastError().driverText();
+            }
+        }
+        sendToClient(pSocket, "{cmd='add test';status='sended';}");
+    }
+    else if(cmd == "add separated test")
+    {
+        QString testName = cutArg(msg, "testname");
+        QString subject = cutArg(msg, "subject");
+        QString plannedDate = cutArg(msg, "planneddate");
+        QString teacherid = cutArg(msg, "teacherid");
+        QSqlQuery query = QSqlQuery(db);
+        query.prepare("INSERT INTO tests (name, subject, planneddate, teacherid) "
+                                        "VALUES (:name, :subject, :planneddate, :teacherid);");
+        query.bindValue(":name", testName);
+        query.bindValue(":subject", subject);
+        query.bindValue(":planneddate", plannedDate);
+        query.bindValue(":teacherid", teacherid);
+
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        if(!query.exec("SELECT COUNT(*) FROM tests"))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if(query.next())
+            sendToClient(pSocket, "{cmd='add separated test';testid='" + query.record().field(0).value().toString() + "';}");
+
+    }
+    else if(cmd == "appoint task to test")
+    {
+        QString testId = cutArg(msg, "testid");
+        QString taskId = cutArg(msg, "taskid");
+        QSqlQuery query = QSqlQuery(db);
+        query.prepare("INSERT INTO test_by_task (testid, taskid) VALUES (:testid, :taskid);");
+        query.bindValue(":testid", testId);
+        query.bindValue(":taskid", taskId);
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
     }
 }
 

@@ -302,6 +302,28 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "add test")
         showMsg("added!");
+    else if(cmd == "get all tasks")
+    {
+        qDebug() << cutArg(msg, "status");
+        if(cutArg(msg, "status") == "sending")
+            allTasksList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions")
+                                   , cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
+        else
+        {
+            addTestW->setUserID(id);
+            addTestW->setManualTaskList(allTasksList);
+            addTestW->setManual();
+        }
+    }
+    else if(cmd == "add separated test")
+    {
+        QString testId = cutArg(msg, "testid");
+        QList <QString> list = addTestW->getPickedTasks();
+        showMsg(QString::number(list.size()));
+        for(auto &i : list)
+            slotSendToServer("{cmd='appoint task to test';taskid='" + i + "';testid='" + testId + "';}");
+        showMsg("sended!");
+    }
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -460,14 +482,26 @@ void MyClient::setTeacherWindow()
         connect(addTestW, &AddTestWidget::finished, this, [this]
         {
             if(addTestW->getState() == RANDOM)
-                slotSendToServer ("{cmd='add test';cmdmode='random';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
+                slotSendToServer ("{cmd='add test';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
                                   "testname='" + addTestW->getName() + "';"
                                   "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
                                   "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFromat(addTestW->getDate(), "DD-MM-YYYY") + "';"
-                                  "teacherid='" + QString::number(id) + "';}"
+                                  "teacherid='" + QString::number(id) + "';"
                                   "theme='" + (addTestW->getTheme() == "" ? "ALL" : addTestW->getTheme()) + "';}");
+            else
+                slotSendToServer("{cmd='add separated test';"
+                                 "testname='" + addTestW->getName() + "';"
+                                 "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFromat(addTestW->getDate(), "DD-MM-YYYY") + "';"
+                                 "teacherid='" + QString::number(id) + "';}");
 
         });
+
+        connect(addTestW, &AddTestWidget::setUpManual, this, [this]
+        {
+           slotSendToServer("{cmd='get all tasks';}");
+        });
+
+
         setCentralWidget(addTestW);
     });
 
