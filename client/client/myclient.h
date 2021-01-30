@@ -74,7 +74,7 @@ private:
     quint16 m_nNextBlockSize;
 private:
     const int WINH = 450;
-    const int WINW = 700;
+    const int WINW = 800;
     quint16 id = -1;
 private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
