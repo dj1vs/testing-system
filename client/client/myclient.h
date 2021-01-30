@@ -28,17 +28,9 @@
 #include <QTime>
 #include <QTimer>
 #include <QTcpServer>
-#include <QMessageBox>
 #include <QDebug>
-#include <QSlider>
 #include <QStatusBar>
-#include <QSignalMapper>
 #include <QCheckBox>
-#include <QTextBrowser>
-#include <QTextEdit>
-#include <QInputDialog>
-#include <QSpinBox>
-#include <QItemSelectionModel>
 
 class MyClient : public QMainWindow
 {
@@ -69,10 +61,13 @@ private:
 
     TeacherWidget *teacherW;
     AddTaskWidget *addTaskW;
+
     AddTestWidget *addTestW;
     QList <QList <QString>> allTasksList;
     int testid = 0;
+
     TeacherGroupsWidget *teacherGroupsW;
+    QList <QString> teacherGroups;
     TeacherResultsWidget *teacherResultsW;
 
     QTcpSocket* m_pTcpSocket;

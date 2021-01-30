@@ -585,6 +585,22 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().databaseText()
             << query.lastError().driverText();
     }
+    else if(cmd == "get teacher groups")
+    {
+        QString teacherid = cutArg(msg, "teacherid");
+        QString req = "SELECT name FROM groups WHERE teacherid='" + teacherid + "';";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+        {
+            qDebug() << "{cmd='get teacher groups';status='sending';groupname='" + query.record().field(0).value().toString() + "';}";
+            sendToClient(pSocket, "{cmd='get teacher groups';status='sending';groupname='" + query.record().field(0).value().toString() + "';}");
+        }
+        sendToClient(pSocket, "{cmd='get teacher groups';status='sended';}");
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)

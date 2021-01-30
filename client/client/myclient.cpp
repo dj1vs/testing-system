@@ -256,7 +256,10 @@ void MyClient::solveMsg(QString msg)
         QString status = cutArg(msg, "status");
         if(status == "sended")
         {
-            allGroupsW->showGroupStudents(groupStudents);
+            if(teacherGroupsW != nullptr)
+                teacherGroupsW->showGroupStudents(groupStudents);
+            else
+                allGroupsW->showGroupStudents(groupStudents);
             groupStudents.clear();
         }
         else
@@ -323,6 +326,22 @@ void MyClient::solveMsg(QString msg)
         for(auto &i : list)
             slotSendToServer("{cmd='appoint task to test';taskid='" + i + "';testid='" + testId + "';}");
         showMsg("sended!");
+    }
+    else if(cmd == "get teacher groups")
+    {
+        if(cutArg(msg, "status") == "sending")
+            teacherGroups.push_back(cutArg(msg, "groupname"));
+        else
+        {
+            qDebug() << 1 << Qt::endl << 1 << Qt::endl << 1 << Qt::endl << 1 <<Qt::endl<< 1 <<Qt::endl<< 1;
+            teacherGroupsW = new TeacherGroupsWidget(this, teacherGroups);
+            connect(teacherGroupsW->goBack, &QPushButton::clicked, this, [this] {delete teacherGroupsW; setTeacherWindow();});
+            for(int i = 0; i < teacherGroupsW->tableButtons.size(); ++i)
+                connect(teacherGroupsW->tableButtons[i], &QPushButton::clicked, this, [this, i] {slotSendToServer("{cmd='view group students';groupname='" +
+                                                                                                                  teacherGroupsW->tableButtons[i]->accessibleName() + "';}");});
+            setCentralWidget(teacherGroupsW);
+            teacherGroups.clear();
+        }
     }
 }
 
@@ -506,7 +525,7 @@ void MyClient::setTeacherWindow()
     });
 
     connect(teacherW->viewGroupsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; teacherGroupsW = new TeacherGroupsWidget(this); setCentralWidget(teacherGroupsW);});
+            [this] {delete teacherW; slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}");});
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
             [this] {delete teacherW; teacherResultsW = new TeacherResultsWidget(this); setCentralWidget(teacherResultsW);});
