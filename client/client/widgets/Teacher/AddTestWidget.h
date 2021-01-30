@@ -14,7 +14,9 @@
 #include <QSpinBox>
 #include <QDialogButtonBox>
 #include <QDebug>
-#include "../custom/EditListBox.h"
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
 
 typedef enum {RANDOM, MANUAL} STATE;
 
@@ -23,6 +25,10 @@ class AddTestWidget : public QWidget
     Q_OBJECT
 public:
     explicit AddTestWidget(QWidget *parent = nullptr);
+
+    void setManualTaskList (QList <QList <QString>> l) {manualTaskList = l;};
+
+
     QString getName() const {return nameEdit->text();};
     QString getSubject() const {return subjectEdit->text();};
     QDate getDate() const {return dateEdit->selectedDate();};
@@ -50,13 +56,26 @@ private:
     QDialogButtonBox *randomButtonBox;
     QVBoxLayout *randomLayout;
 
-    EditListBox *test;
+    QLabel *manualAllLabel;
+    QLabel *manualPickedLabel;
+    QTableView *manualAll;
+    QStandardItemModel *manualAllModel;
+    QStandardItemModel *manualPickedModel;
+    QTableView *manualPicked;
+    QList <QList <QString>> manualTaskList;
+    QList <QPushButton *> manualButtons;
+    const QList <QString> manualButtonsTexts =
+    {"Sort", "Pick","Delete","Move Up","Move Down"};
+    QDialogButtonBox *manualButtonBox;
+    QVBoxLayout *manualLayout;
+
 
 
 
 private:
     bool checkStart();
     void setParamsRandom();
+    void setManual();
 signals:
     void finished();
 
