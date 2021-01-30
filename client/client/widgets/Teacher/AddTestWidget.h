@@ -17,6 +17,10 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QItemSelectionModel>
+#include <QGroupBox>
+#include <QComboBox>
+#include <QFormLayout>
+#include <QGridLayout>
 
 typedef enum {RANDOM, MANUAL} STATE;
 
@@ -27,6 +31,7 @@ public:
     explicit AddTestWidget(QWidget *parent = nullptr);
 
     void setManualTaskList (QList <QList <QString>> l) {manualTaskList = l;};
+    void setUserID(int id) {userID = id;};
 
 
     QString getName() const {return nameEdit->text();};
@@ -62,12 +67,24 @@ private:
     QStandardItemModel *manualAllModel;
     QStandardItemModel *manualPickedModel;
     QTableView *manualPicked;
+
+    QLineEdit *manualSortTask;
+    QComboBox *manualSortSubject;
+    QComboBox *manualSortTheme;
+    QCheckBox *manualSortMine;
+
+    QSet <QString> manualSubjects;
+    QSet <QString> manualThemes;
     QList <QList <QString>> manualTaskList;
-    QList <QPushButton *> manualButtons;
-    const QList <QString> manualButtonsTexts =
-    {"Sort", "Pick","Delete","Move Up","Move Down"};
+    QPushButton *manualSort;
+    QPushButton *manualDelete;
+    QPushButton *manualPick;
+    QPushButton *manualUp;
+    QPushButton *manualDown;
     QDialogButtonBox *manualButtonBox;
     QVBoxLayout *manualLayout;
+
+    int userID = 2;
 
 
 

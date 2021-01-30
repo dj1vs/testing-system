@@ -93,7 +93,31 @@ bool AddTestWidget::checkStart()
 
 void AddTestWidget::setManual()
 {
-    setManualTaskList({{"1", "2", "3", "4", "5", "6", "7"}});
+    setManualTaskList({{"1", "2", "3", "4", "5", "6", "2"},
+                      {"q", "w", "e", "r", "t", "y", "2"},
+                      {"a", "s", "d", "f", "g", "h", "3"},
+                      {"1", "2", "3", "4", "5", "6", "2"}});
+
+    for(auto &i : manualTaskList)
+    {
+        manualSubjects.insert(i[1]);
+        manualThemes.insert(i[5]);
+    }
+
+    manualSortTask = new QLineEdit();
+    manualSortSubject = new QComboBox();
+    manualSortSubject->addItem("");
+    for(auto &i : manualSubjects)
+        manualSortSubject->addItem(i);
+    manualSortSubject->setCurrentIndex(0);
+    manualSortTheme = new QComboBox();
+    manualSortTheme->addItem("");
+    for(auto &i : manualThemes)
+        manualSortTheme->addItem(i);
+    manualSortTheme->setCurrentIndex(0);
+    manualSortMine = new QCheckBox("Only mine");
+
+
     manualAllLabel = new QLabel("all");
     manualPickedLabel = new QLabel("picked");
     manualAll = new QTableView();
@@ -128,16 +152,16 @@ void AddTestWidget::setManual()
         manualPickedModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
 
-    for(int i = 0; i < 5; ++i)
-    {
-        QPushButton *buf = new QPushButton(manualButtonsTexts[i]);
-        manualButtons.push_back(buf);
-    }
-
+    manualSort = new QPushButton("Sort");
+    manualDelete = new QPushButton("Delete");
+    manualPick = new QPushButton("Pick");
+    manualUp = new QPushButton("Up");
+    manualDown = new QPushButton("Down");
 //    const QList <QString> manualButtonsTexts =
 //    {"Sort", "Pick","Delete","Move Up","Move Down"};
 
-    connect(manualButtons[1], &QPushButton::clicked, this, [this]
+
+    connect(manualPick, &QPushButton::clicked, this, [this]
     {
         if (manualAll->selectionModel()->hasSelection())
         {
@@ -149,7 +173,7 @@ void AddTestWidget::setManual()
         }
     });
 
-    connect(manualButtons[2], &QPushButton::clicked, this, [this] {
+    connect(manualDelete, &QPushButton::clicked, this, [this] {
        if(manualPicked->selectionModel()->hasSelection())
        {
            int row = manualPicked->selectionModel()->currentIndex().row();
@@ -157,7 +181,7 @@ void AddTestWidget::setManual()
        }
     });
 
-    connect(manualButtons[3], &QPushButton::clicked, this, [this]
+    connect(manualUp, &QPushButton::clicked, this, [this]
     {
         if(manualPicked->selectionModel()->hasSelection())
         {
@@ -169,40 +193,124 @@ void AddTestWidget::setManual()
             }
         }
     });
+    connect(manualDown, &QPushButton::clicked, this, [this]
+    {
+        if(manualPicked->selectionModel()->hasSelection())
+        {
+            int row = manualPicked->selectionModel()->currentIndex().row();
+            if(row < manualPickedModel->rowCount()-1)
+            {
+                QList <QStandardItem *> list = manualPickedModel->takeRow(row);
+                manualPickedModel->insertRow(row+1, list);
+            }
+        }
+    });
+
+//        QList <QString> params = {"ID", "Subject", "Task", "Answer options", "Answer", "Theme"};
+
+    connect(manualSort, &QPushButton::clicked, this, [this]
+    {
+       if(manualSortSubject->currentText() == "" && manualSortTheme->currentText() == "" &&
+       !manualSortMine->isChecked() && manualSortTask->text() == "")
+       {
+           manualAllModel->setRowCount(manualTaskList.size());
+           for(int row = 0; row < manualTaskList.size(); ++row)
+           {
+               for(int col = 0; col < 6; ++col)
+               {
+                   QModelIndex index=manualAllModel->index(row,col,QModelIndex());
+                   manualAllModel->setData(index, manualTaskList[row][col]);
+               }
+           }
+       }
+       else
+       {
+           for(int row = 0; row < manualAllModel->rowCount(); ++row)
+           {
+               if((manualSortSubject->currentText() != "" && manualAllModel->data(manualAllModel->index(row,1,QModelIndex())).toString() != manualSortSubject->currentText())
+                || (manualSortTheme->currentText() != "" && manualAllModel->data(manualAllModel->index(row,5,QModelIndex())).toString() != manualSortTheme->currentText())
+                || (manualSortTask->text() != "" && manualAllModel->data(manualAllModel->index(row,2,QModelIndex())).toString() != manualSortTask->text()))
+               {
+                   manualAllModel->removeRow(row);
+                   row--;
+               }
+               if(!manualSortMine->isChecked())
+                   continue;
+               for(auto &i : manualTaskList)
+               {
+                   qDebug() << userID << i[6] << manualAllModel->data(manualAllModel->index(row,0,QModelIndex())).toString();
+                   if(i[0] == manualAllModel->data(manualAllModel->index(row,0,QModelIndex())).toString())
+                   {
+                       if(i[6].toInt() != userID)
+                       {
+                           manualAllModel->removeRow(row);
+                           row--;
+                       }
+                       break;
+                   }
+               }
+           }
+       }
+    });
 
     manualButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                            | QDialogButtonBox::Cancel);
 
-    manualLayout = new QVBoxLayout();
-    QVBoxLayout *allButtons = new QVBoxLayout();
-    allButtons->addWidget(manualButtons[0]);
-    allButtons->addWidget(manualButtons[1]);
+    QFormLayout *sortLayout = new QFormLayout();
+    sortLayout->addRow(tr("task text"),manualSortTask);
+    sortLayout->addRow(tr("subject"),manualSortSubject);
+    sortLayout->addRow(tr("theme"),manualSortTheme);
+    sortLayout->addWidget(manualSortMine);
+    sortLayout->addWidget(manualSort);
+
+    QGroupBox *sortBox = new QGroupBox();
+    sortBox->setLayout(sortLayout);
+    sortBox->setMaximumWidth(200);
+    sortBox->setMaximumHeight(300);
+
+
+    QVBoxLayout *trLayout = new QVBoxLayout();
+    trLayout->addWidget(manualPick);
+    trLayout->addWidget(sortBox);
+
     QVBoxLayout *allTable = new QVBoxLayout();
     allTable->addWidget(manualAllLabel);
     allTable->addWidget(manualAll);
     QHBoxLayout *allLayout = new QHBoxLayout();
     allLayout->addLayout(allTable);
-    allLayout->addLayout(allButtons);
+    allLayout->addLayout(trLayout);
+    QGroupBox *allBox = new QGroupBox();
+    allBox->setLayout(allLayout);
 
     QVBoxLayout *pickedButtons = new QVBoxLayout();
-    allButtons->addWidget(manualButtons[2]);
-    allButtons->addWidget(manualButtons[3]);
-    allButtons->addWidget(manualButtons[4]);
-    QVBoxLayout *pickedTable = new QVBoxLayout();
-    allTable->addWidget(manualPickedLabel);
-    allTable->addWidget(manualPicked);
-    QHBoxLayout *pickedLayout = new QHBoxLayout();
-    allLayout->addLayout(pickedTable);
-    allLayout->addLayout(pickedButtons);
+    pickedButtons->addWidget(manualDelete);
+    pickedButtons->addWidget(manualUp);
+    pickedButtons->addWidget(manualDown);
 
-    manualLayout->addLayout(allLayout);
+    QVBoxLayout *pickedTable = new QVBoxLayout();
+    pickedTable->addWidget(manualPickedLabel);
+    pickedTable->addWidget(manualPicked);
+
+    QHBoxLayout *pickedLayout = new QHBoxLayout();
+    pickedLayout->addLayout(pickedTable);
+    pickedLayout->addLayout(pickedButtons);
+
+    manualLayout = new QVBoxLayout();
+    manualLayout->addWidget(allBox);
     manualLayout->addLayout(pickedLayout);
     manualLayout->addWidget(manualButtonBox);
 
     QDialog *d = new QDialog();
+    d->setMinimumWidth(1000);
     connect(manualButtonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(manualButtonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
     d->setLayout(manualLayout);
     if(d->exec() == QDialog::Accepted)
         emit finished();
 }
+
+
+
+
+
+
