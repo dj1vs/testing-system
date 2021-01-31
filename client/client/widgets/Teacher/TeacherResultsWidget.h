@@ -1,6 +1,8 @@
 #ifndef TEACHERRESULTSWIDGET_H
 #define TEACHERRESULTSWIDGET_H
 
+#include "../../lib/DateConverter.h"
+
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
@@ -45,6 +47,7 @@ private:
     QSet <QString> subjects;
 private:
     void showSort();
+    void editTable();
 signals:
 
 };

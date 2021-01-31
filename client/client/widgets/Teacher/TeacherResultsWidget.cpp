@@ -10,6 +10,7 @@ TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QStrin
         testNames.insert(i[3]);
         subjects.insert(i[5]);
     }
+
     goBack = new QPushButton("go back");
     sort = new QPushButton("sort");
     table = new QTableView();
@@ -24,7 +25,7 @@ TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QStrin
     {
         for(int col = 0; col < params.size(); ++col)
         {
-            QModelIndex index=model->index(row,0,QModelIndex());
+            QModelIndex index=model->index(row,col,QModelIndex());
             model->setData(index, list[row][col]);
         }
     }
@@ -60,16 +61,21 @@ void TeacherResultsWidget::showSort()
     for(auto &i : students)
         studentBox->addItem(i[0] + " " + i[1]);
     studentBox->setCurrentIndex(0);
+
+
     groupBox = new QComboBox();
     groupBox->addItem("");
     for(auto &i : groups)
         groupBox->addItem(i);
     groupBox->setCurrentIndex(0);
+
+
     testnameBox = new QComboBox();
     testnameBox->addItem("");
     for(auto &i : testNames)
-        groupBox->addItem(i);
+        testnameBox->addItem(i);
     testnameBox->setCurrentIndex(0);
+
     subjectBox = new QComboBox();
     subjectBox->addItem("");
     for(auto &i : subjects)
@@ -94,7 +100,52 @@ void TeacherResultsWidget::showSort()
     connect(buttonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
     d->setLayout(l);
-    d->show();
+    if(d->exec() == QDialog::Accepted)
+        editTable();
+}
+
+void TeacherResultsWidget::editTable()
+{
+//  const QList <QString> params = {"name","surname" "group", "test name", "percent", "subject", "date"};
+    QList <QString> student = studentBox->currentText().split(" ");
+    QString group = groupBox->currentText();
+    QString testname = testnameBox->currentText();
+    QString subject = subjectBox->currentText();
+    QString date = DateConverter::DateToStringFromat(sortDateEdit->date(), "DD-MM-YYYY");
+
+    qDebug() << student;qDebug() <<  group;  qDebug() << testname;qDebug() <<subject;qDebug() <<  !sortByDate->isChecked();
+
+    if(studentBox->currentText() == "" && group == "" && testname == "" && subject == "" && !sortByDate->isChecked())
+    {
+        qDebug() << "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n";
+        model->setRowCount(list.size());
+        for(int row = 0; row < list.size(); ++row)
+        {
+            for(int col = 0; col < params.size(); ++col)
+            {
+                QModelIndex index=model->index(row,col,QModelIndex());
+                model->setData(index, list[row][col]);
+            }
+        }
+    }
+
+    else
+    {
+        for(int row = 0; row < model->rowCount(); ++row)
+        {
+            if((studentBox->currentText() != "" &&
+                (model->data(model->index(row, 0, QModelIndex())).toString() != student[0] || model->data(model->index(row, 1, QModelIndex())).toString() != student[1]))
+            || (group != "" && model->data(model->index(row, 2, QModelIndex())).toString() != group)
+            || (testname != "" && model->data(model->index(row, 3, QModelIndex())).toString() != testname)
+            || (subject != "" && model->data(model->index(row, 5, QModelIndex())).toString() != subject)
+            || (sortByDate->isChecked() && date != "01-01-2000" && model->data(model->index(row, 6, QModelIndex())).toString() != date))
+            {
+                model->removeRow(row);
+                row--;
+            }
+        }
+    }
+
 
 
 

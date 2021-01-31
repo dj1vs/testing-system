@@ -69,6 +69,7 @@ private:
     TeacherGroupsWidget *teacherGroupsW;
     QList <QString> teacherGroups;
     TeacherResultsWidget *teacherResultsW;
+    QList <QList <QString>> teacherResults;
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;

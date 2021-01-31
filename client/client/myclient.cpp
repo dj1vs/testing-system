@@ -343,6 +343,24 @@ void MyClient::solveMsg(QString msg)
             teacherGroups.clear();
         }
     }
+    else if(cmd == "get teacher results")
+    {
+        if(cutArg(msg, "status") == "sending")
+        {
+            QList <QString> params = {"studentsname", "studentssurname", "studentsgroup", "testname", "percent", "subject", "date"};
+            QList <QString> buf;
+            for(int i = 0; i < params.size(); ++i)
+                buf.push_back(cutArg(msg, params[i]));
+            teacherResults.push_back(buf);
+        }
+        else
+        {
+            qDebug() << teacherResults;
+            teacherResultsW = new TeacherResultsWidget(this, teacherResults);
+            connect(teacherResultsW->goBack, &QPushButton::clicked, this, [this] {delete teacherResultsW;teacherResults.clear();setTeacherWindow();});
+            setCentralWidget(teacherResultsW);
+        }
+    }
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -528,7 +546,7 @@ void MyClient::setTeacherWindow()
             [this] {delete teacherW; slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}");});
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; teacherResultsW = new TeacherResultsWidget(this); setCentralWidget(teacherResultsW);});
+            [this] {delete teacherW; slotSendToServer("{cmd='get teacher results';teacherid='" + QString::number(id) + "';}");});
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);

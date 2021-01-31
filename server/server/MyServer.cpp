@@ -601,6 +601,30 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         sendToClient(pSocket, "{cmd='get teacher groups';status='sended';}");
     }
+    else if (cmd == "get teacher results")
+    {
+        QString id = cutArg(msg, "teacherid");
+        QString req = "SELECT users.name, users.surname, groups.name,  tests.name, results.percent, tests.subject, tests.planneddate "
+                "FROM users, results, group_by_user, groups, tests "
+                "WHERE group_by_user.groupid = groups.id AND groups.teacherid = " + id +  " AND group_by_user.userid = users.id "
+                "AND tests.id = results.testid "
+                "AND results.studentid = users.id; ";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+        {
+            QString msg = "{cmd='" + cmd + "';status='sending';";
+            QList <QString> params = {"studentsname", "studentssurname", "studentsgroup", "testname", "percent", "subject", "date"};
+            for(int i = 0; i < params.size(); ++i)
+                msg += params[i] + "='" + query.record().field(i).value().toString() + "';";
+            msg += "}";
+            sendToClient(pSocket, msg);
+        }
+        sendToClient(pSocket, "{cmd='" + cmd + "';status='sended';}");
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)
