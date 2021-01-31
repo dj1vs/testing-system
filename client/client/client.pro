@@ -20,6 +20,7 @@ SOURCES += \
     widgets/AdminPlus/AdminPlusWidget.cpp \
     widgets/AdminPlus/AppointGroupWidget.cpp \
     widgets/AuthorizationWidget.cpp \
+    widgets/Student/StudentWidget.cpp \
     widgets/Teacher/AddTaskWidget.cpp \
     widgets/Teacher/AddTestWidget.cpp \
     widgets/Teacher/TeacherGroupsWidget.cpp \
@@ -39,6 +40,7 @@ HEADERS += \
     widgets/AdminPlus/AdminPlusWidget.h \
     widgets/AdminPlus/AppointGroupWidget.h \
     widgets/AuthorizationWidget.h \
+    widgets/Student/StudentWidget.h \
     widgets/Teacher/AddTaskWidget.h \
     widgets/Teacher/AddTestWidget.h \
     widgets/Teacher/TeacherGroupsWidget.h \

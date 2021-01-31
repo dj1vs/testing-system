@@ -22,15 +22,14 @@
 #include "widgets/Teacher/TeacherGroupsWidget.h"
 #include "widgets/Teacher/TeacherResultsWidget.h"
 
+#include "widgets/Student/StudentWidget.h"
+
 #include <QtGlobal>
 #include <QMainWindow>
 #include <QTcpSocket>
-#include <QTime>
-#include <QTimer>
 #include <QTcpServer>
 #include <QDebug>
 #include <QStatusBar>
-#include <QCheckBox>
 
 class MyClient : public QMainWindow
 {
@@ -61,15 +60,16 @@ private:
 
     TeacherWidget *teacherW;
     AddTaskWidget *addTaskW;
-
     AddTestWidget *addTestW;
     QList <QList <QString>> allTasksList;
     int testid = 0;
-
     TeacherGroupsWidget *teacherGroupsW;
     QList <QString> teacherGroups;
     TeacherResultsWidget *teacherResultsW;
     QList <QList <QString>> teacherResults;
+
+    StudentWidget *studentW;
+
 
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
@@ -90,6 +90,7 @@ private slots:
     void setAdminPlusWindow();
     void setAdminWindow();
     void setTeacherWindow();
+    void setStudentWindow();
 
     void solveMsg(QString msg);
 };

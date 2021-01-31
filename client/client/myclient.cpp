@@ -103,6 +103,8 @@ void MyClient::solveMsg(QString msg)
                 setAdminWindow();
             else if (role == "teacher")
                 setTeacherWindow();
+            else if(role == "student")
+                setStudentWindow();
         }
         else
            showError("Invalid login/password :(");
@@ -550,5 +552,12 @@ void MyClient::setTeacherWindow()
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);
+}
+
+void MyClient::setStudentWindow()
+{
+    studentW = new StudentWidget();
+    connect(studentW->goBack,&QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow();});
+    setCentralWidget(studentW);
 }
 
