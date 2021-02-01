@@ -21,6 +21,7 @@
 #include "widgets/Teacher/AddTestWidget.h"
 #include "widgets/Teacher/TeacherGroupsWidget.h"
 #include "widgets/Teacher/TeacherResultsWidget.h"
+#include "widgets/Teacher/AppointTestWidget.h"
 
 #include "widgets/Student/StudentWidget.h"
 
@@ -67,6 +68,7 @@ private:
     QList <QString> teacherGroups;
     TeacherResultsWidget *teacherResultsW;
     QList <QList <QString>> teacherResults;
+    AppointTestWidget  *appointTestW;
 
     StudentWidget *studentW;
 

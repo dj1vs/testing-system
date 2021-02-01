@@ -23,6 +23,7 @@ SOURCES += \
     widgets/Student/StudentWidget.cpp \
     widgets/Teacher/AddTaskWidget.cpp \
     widgets/Teacher/AddTestWidget.cpp \
+    widgets/Teacher/AppointTestWidget.cpp \
     widgets/Teacher/TeacherGroupsWidget.cpp \
     widgets/Teacher/TeacherResultsWidget.cpp \
     widgets/Teacher/TeacherWidget.cpp
@@ -43,6 +44,7 @@ HEADERS += \
     widgets/Student/StudentWidget.h \
     widgets/Teacher/AddTaskWidget.h \
     widgets/Teacher/AddTestWidget.h \
+    widgets/Teacher/AppointTestWidget.h \
     widgets/Teacher/TeacherGroupsWidget.h \
     widgets/Teacher/TeacherResultsWidget.h \
     widgets/Teacher/TeacherWidget.h

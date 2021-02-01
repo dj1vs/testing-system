@@ -15,6 +15,7 @@ public:
     QPushButton *newTestButton;
     QPushButton *viewGroupsButton;
     QPushButton *viewResultsButton;
+    QPushButton *appointTest;
     QPushButton *goBack;
 private:
     QVBoxLayout *layout;

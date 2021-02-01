@@ -12,7 +12,6 @@ public:
     explicit StudentWidget(QWidget *parent = nullptr);
 public:
     QPushButton *currentTests;
-    QPushButton *plannedTests;
     QPushButton *results;
     QPushButton *goBack;
 signals:

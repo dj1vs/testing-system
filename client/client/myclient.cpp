@@ -549,6 +549,7 @@ void MyClient::setTeacherWindow()
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
             [this] {delete teacherW; slotSendToServer("{cmd='get teacher results';teacherid='" + QString::number(id) + "';}");});
+    connect(teacherW->appointTest, &QPushButton::clicked, this , [this] {appointTestW = new AppointTestWidget(); setCentralWidget(appointTestW);});
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);
@@ -556,7 +557,7 @@ void MyClient::setTeacherWindow()
 
 void MyClient::setStudentWindow()
 {
-    studentW = new StudentWidget();
+    studentW = new StudentWidget(this);
     connect(studentW->goBack,&QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow();});
     setCentralWidget(studentW);
 }
