@@ -76,6 +76,7 @@ private:
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
 private:
+    enum STATE {AUTHORIZATION, ADMIN, ADMINPLUS, TEACHER, APPOINTTEST} state = AUTHORIZATION;
     const int WINH = 450;
     const int WINW = 800;
     quint16 id = -1;

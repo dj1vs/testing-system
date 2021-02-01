@@ -272,6 +272,21 @@ void MyClient::solveMsg(QString msg)
         QString status = cutArg(msg, "status");
         if (status == "sended")
         {
+            if(state == APPOINTTEST)
+            {
+                delete teacherW;
+                QStringList testList;
+                for(auto &i : allPlannedTestsList)
+                    testList.push_back(i[2]);
+                appointTestW = new AppointTestWidget(this, teacherGroups, testList);
+                connect(appointTestW->goBack, &QPushButton::clicked, this, [this] {delete appointTestW; setTeacherWindow();});
+                connect(appointTestW->submit, &QPushButton::clicked, this, [this]
+                {
+                    slotSendToServer("{cmd='appoint test';testname='" + appointTestW->getTest() + "';groupname='" + appointTestW->getGroup() + "';}");
+                showMsg("sended!");});
+                setCentralWidget(appointTestW);
+                return;
+            }
             atw = new AllTestsWidget(this, allPlannedTestsList);
             connect(atw->goBack, &QPushButton::clicked, this,
                     [this] {delete atw; setAdminWindow();});
@@ -331,11 +346,16 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "get teacher groups")
     {
+
         if(cutArg(msg, "status") == "sending")
             teacherGroups.push_back(cutArg(msg, "groupname"));
         else
         {
-            qDebug() << 1 << Qt::endl << 1 << Qt::endl << 1 << Qt::endl << 1 <<Qt::endl<< 1 <<Qt::endl<< 1;
+            if(state == APPOINTTEST)
+            {
+                slotSendToServer("{cmd='view all planned tests';}");
+                return;
+            }
             teacherGroupsW = new TeacherGroupsWidget(this, teacherGroups);
             connect(teacherGroupsW->goBack, &QPushButton::clicked, this, [this] {delete teacherGroupsW; setTeacherWindow();});
             for(int i = 0; i < teacherGroupsW->tableButtons.size(); ++i)
@@ -549,7 +569,12 @@ void MyClient::setTeacherWindow()
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
             [this] {delete teacherW; slotSendToServer("{cmd='get teacher results';teacherid='" + QString::number(id) + "';}");});
-    connect(teacherW->appointTest, &QPushButton::clicked, this , [this] {appointTestW = new AppointTestWidget(); setCentralWidget(appointTestW);});
+    connect(teacherW->appointTest, &QPushButton::clicked, this , [this]
+    {
+        state = APPOINTTEST;
+        teacherGroups.clear();
+        allPlannedTestsList.clear();
+        slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}");});
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);

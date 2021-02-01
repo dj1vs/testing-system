@@ -595,10 +595,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().databaseText()
             << query.lastError().driverText();
         else while(query.next())
-        {
-            qDebug() << "{cmd='get teacher groups';status='sending';groupname='" + query.record().field(0).value().toString() + "';}";
             sendToClient(pSocket, "{cmd='get teacher groups';status='sending';groupname='" + query.record().field(0).value().toString() + "';}");
-        }
         sendToClient(pSocket, "{cmd='get teacher groups';status='sended';}");
     }
     else if (cmd == "get teacher results")
@@ -624,6 +621,52 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             sendToClient(pSocket, msg);
         }
         sendToClient(pSocket, "{cmd='" + cmd + "';status='sended';}");
+    }
+    else if (cmd == "appoint test")
+    {
+        QString group = cutArg(msg, "groupname");
+        QString test = cutArg(msg, "testname");
+
+        int testId = 0;
+        int groupId = 0;
+        QSqlQuery query = QSqlQuery(db);
+
+        QString req = "SELECT id FROM tests WHERE name='" + test + "';";
+        qDebug() << req;
+
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+        {
+            qDebug() << query.record();
+            testId = query.record().field(0).value().toInt();
+        }
+
+        req = "SELECT id FROM groups WHERE name='" + group + "';";
+        qDebug() << req;
+
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+        {
+            qDebug() << query.record();
+            groupId = query.record().field(0).value().toInt();
+        }
+
+        query.prepare("INSERT INTO test_by_group (testid, groupid) VALUES (:testid, :groupid);");
+        query.bindValue(":testid", testId);
+        query.bindValue(":groupid", groupId);
+
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+
+
     }
 }
 
