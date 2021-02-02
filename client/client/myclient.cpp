@@ -307,7 +307,12 @@ void MyClient::solveMsg(QString msg)
     {
         QString status = cutArg(msg, "status");
         if(status == "sended")
-           atw->showTestTasks(allPlannedTestsTaskList);
+        {
+           if(state == COMPLETETEST)
+            qDebug() << allPlannedTestsTaskList;
+           else
+              atw->showTestTasks(allPlannedTestsTaskList);
+        }
         else if(status == "started")
             allPlannedTestsTaskList.clear();
         else
@@ -383,6 +388,29 @@ void MyClient::solveMsg(QString msg)
             setCentralWidget(teacherResultsW);
         }
     }
+   else if (cmd == "get student tests")
+   {
+       if(cutArg(msg, "status") == "sending")
+           studentPlannedTests.push_back({cutArg(msg, "testname"), cutArg(msg, "testsubject"), cutArg(msg, "testplanneddate")});
+       else
+       {
+           delete studentW;
+           studentTestsW = new StudentTestsWidget(studentPlannedTests, this);
+           connect(studentTestsW->goBack, &QPushButton::clicked, this, [this] {delete studentTestsW; setStudentWindow();});
+           connect(studentTestsW->start, &QPushButton::clicked, this, [this]
+           {
+               QString testname = studentTestsW->getSelectedTest();
+              if(testname == "")
+                  showError("select test first");
+              else
+              {
+                  state = COMPLETETEST;
+                  slotSendToServer("{cmd='view test tasks';testname='" + testname + "';}");
+              }
+           });
+           setCentralWidget(studentTestsW);
+       }
+   }
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -584,6 +612,8 @@ void MyClient::setStudentWindow()
 {
     studentW = new StudentWidget(this);
     connect(studentW->goBack,&QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow();});
+    connect(studentW->currentTests, &QPushButton::clicked, this, [this]
+    {slotSendToServer("{cmd='get student tests';studentid='" + QString::number(id) + "';}");});
     setCentralWidget(studentW);
 }
 

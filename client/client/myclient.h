@@ -24,6 +24,7 @@
 #include "widgets/Teacher/AppointTestWidget.h"
 
 #include "widgets/Student/StudentWidget.h"
+#include "widgets/Student/StudentTestsWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -35,22 +36,18 @@
 class MyClient : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MyClient(const QString& strHost, int nPort, QWidget *parent = nullptr);
     ~MyClient();
 private:
     AuthorizationWidget *aw;
-
     AdminPlusWidget *adminPlusW;
     AddGroupWidget *agw;
     AddToGroupWidget *atgw;
     AppointGroupWidget *appgw;
     AddUserWidget *auw;
-
     AdminWidget *adminW;
     AllResultsWidget *arw;
-    QList <QList <QString>> allResultsList;
     AllGroupsWidget *allGroupsW;
     QList <QString> allGroupsList;
     QList <QList<QString>> groupStudents;
@@ -58,43 +55,42 @@ private:
     AllTestsWidget *atw;
     QList <QList<QString>> allPlannedTestsTaskList;
     QList <QList <QString>> allPlannedTestsList;
-
     TeacherWidget *teacherW;
     AddTaskWidget *addTaskW;
     AddTestWidget *addTestW;
     QList <QList <QString>> allTasksList;
-    int testid = 0;
     TeacherGroupsWidget *teacherGroupsW;
     QList <QString> teacherGroups;
     TeacherResultsWidget *teacherResultsW;
     QList <QList <QString>> teacherResults;
     AppointTestWidget  *appointTestW;
-
     StudentWidget *studentW;
-
-
-    QTcpSocket* m_pTcpSocket;
-    quint16 m_nNextBlockSize;
+    StudentTestsWidget *studentTestsW;
 private:
-    enum STATE {AUTHORIZATION, ADMIN, ADMINPLUS, TEACHER, APPOINTTEST} state = AUTHORIZATION;
+    enum STATE {AUTHORIZATION,
+                ADMIN, ADMINPLUS, TEACHER, APPOINTTEST, STUDENT, COMPLETETEST } state = AUTHORIZATION;
     const int WINH = 450;
     const int WINW = 800;
     quint16 id = -1;
+    int testid = 0;
+    QTcpSocket* m_pTcpSocket;
+    quint16 m_nNextBlockSize;
+private:
+    QList <QList <QString>> allResultsList;
+    QList <QStringList> studentPlannedTests;
 private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
     void showMsg(QString msg){statusBar()->showMessage(msg);};
     QString cutArg(QString str, QString cmd);
-private slots:
-    void slotReadyRead          (                            );
-    void slotError              (QAbstractSocket::SocketError);
-    void slotSendToServer       (QString msg                 );
-
     void setAuthorizationWindow();
     void setAdminPlusWindow();
     void setAdminWindow();
     void setTeacherWindow();
     void setStudentWindow();
-
+private slots:
+    void slotReadyRead          (                            );
+    void slotError              (QAbstractSocket::SocketError);
+    void slotSendToServer       (QString msg                 );
     void solveMsg(QString msg);
 };
 #endif // MYCLIENT_H

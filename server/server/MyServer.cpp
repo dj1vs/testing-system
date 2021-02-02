@@ -632,31 +632,19 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         QSqlQuery query = QSqlQuery(db);
 
         QString req = "SELECT id FROM tests WHERE name='" + test + "';";
-        qDebug() << req;
-
         if(!query.exec(req))
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
-        else while(query.next())
-        {
-            qDebug() << query.record();
+        else if(query.next())
             testId = query.record().field(0).value().toInt();
-        }
-
         req = "SELECT id FROM groups WHERE name='" + group + "';";
-        qDebug() << req;
-
         if(!query.exec(req))
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
-        else while(query.next())
-        {
-            qDebug() << query.record();
+        else if(query.next())
             groupId = query.record().field(0).value().toInt();
-        }
-
         query.prepare("INSERT INTO test_by_group (testid, groupid) VALUES (:testid, :groupid);");
         query.bindValue(":testid", testId);
         query.bindValue(":groupid", groupId);
@@ -665,8 +653,49 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
+    }
+    else if(cmd == "get student tests")
+    {
+        QString id = cutArg(msg, "studentid");
+        QString req = "SELECT groupid FROM group_by_user WHERE userid = " + id + ";";
+        QStringList groupIds;
+        QSet <QString> testIds;
+        QList <QList <QString>> result;
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while(query.next())
+            groupIds.push_back(query.record().field(0).value().toString());
+        for(auto &i : groupIds)
+        {
+            QString req = "SELECT testid FROM test_by_group WHERE groupid = " + i;
+            if(!query.exec(req))
+                qDebug() << "Can not run database query :("
+                << query.lastError().databaseText()
+                << query.lastError().driverText();
+            else while(query.next())
+                testIds.insert(query.record().field(0).value().toString());
+        }
+        for(auto &i : testIds)
+        {
+            QString req = "SELECT name, subject, planneddate FROM tests WHERE id = " + i + " AND planneddate > '" +
+                    DateConverter::DateToStringFromat(QDate::currentDate(), "DD-MM-YYYY") + "';";
+            if(!query.exec(req))
+                qDebug() << "Can not run database query :("
+                << query.lastError().databaseText()
+                << query.lastError().driverText();
+            else while(query.next())
+                result.push_back({query.record().field(0).value().toString(), query.record().field(1).value().toString(), query.record().field(2).value().toString()});
+        }
 
-
+        for(auto &i : result)
+        {
+            QString msg = "{cmd='get student tests';status='sending';testname='" + i[0] + "';testsubject='" + i[1] + "';testplanneddate='" + i[2] + "';}";
+            sendToClient(pSocket, msg);
+        }
+        sendToClient(pSocket, "{cmd='get student tests';status='sended';}");
     }
 }
 
