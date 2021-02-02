@@ -2,6 +2,11 @@
 #define STUDENTTESTSWIDGET_H
 
 #include <QWidget>
+#include <QPushButton>
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QItemSelectionModel>
+#include <QVBoxLayout>
 
 class StudentTestsWidget : public QWidget
 {
@@ -9,8 +14,11 @@ class StudentTestsWidget : public QWidget
 public:
     explicit StudentTestsWidget(QWidget *parent = nullptr);
 public:
-
+    QPushButton *goBack;
+    QPushButton *startTest;
 private:
+    QTableView *table;
+    QStandardItemModel *model;
 
 signals:
 
