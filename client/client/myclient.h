@@ -25,6 +25,7 @@
 
 #include "widgets/Student/StudentWidget.h"
 #include "widgets/Student/StudentTestsWidget.h"
+#include "widgets/Student/CompleteTestWidget.h"
 
 #include <QtGlobal>
 #include <QMainWindow>
@@ -49,7 +50,6 @@ private:
     AdminWidget *adminW;
     AllResultsWidget *arw;
     AllGroupsWidget *allGroupsW;
-    QList <QString> allGroupsList;
     QList <QList<QString>> groupStudents;
     QList <QList <QString>> groupTeachers;
     AllTestsWidget *atw;
@@ -66,6 +66,7 @@ private:
     AppointTestWidget  *appointTestW;
     StudentWidget *studentW;
     StudentTestsWidget *studentTestsW;
+    CompleteTestWidget *completeTestW;
 private:
     enum STATE {AUTHORIZATION,
                 ADMIN, ADMINPLUS, TEACHER, APPOINTTEST, STUDENT, COMPLETETEST } state = AUTHORIZATION;
@@ -78,6 +79,7 @@ private:
 private:
     QList <QList <QString>> allResultsList;
     QList <QStringList> studentPlannedTests;
+    QList <QString> allGroupsList;
 private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
     void showMsg(QString msg){statusBar()->showMessage(msg);};

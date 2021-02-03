@@ -309,7 +309,11 @@ void MyClient::solveMsg(QString msg)
         if(status == "sended")
         {
            if(state == COMPLETETEST)
-            qDebug() << allPlannedTestsTaskList;
+           {
+               delete studentTestsW;
+               completeTestW = new CompleteTestWidget(allPlannedTestsTaskList, this);
+               setCentralWidget(completeTestW);
+           }
            else
               atw->showTestTasks(allPlannedTestsTaskList);
         }
