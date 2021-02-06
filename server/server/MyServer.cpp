@@ -697,6 +697,33 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         sendToClient(pSocket, "{cmd='get student tests';status='sended';}");
     }
+    else if (cmd == "add result")
+    {
+        qDebug() << msg;
+        QString testname = cutArg(msg, "testname");
+        QString studentId = cutArg(msg, "studentid");
+        QString percent = cutArg(msg, "completionpercent");
+        QSqlQuery query = QSqlQuery(db);
+        QString testid;
+        if(!query.exec("SELECT id FROM tests WHERE name = '" + testname + "';"))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if(query.next())
+            testid = query.record().field(0).value().toString();
+
+        query.prepare("INSERT INTO results (percent, studentid, testid) VALUES (:percent, :studentid, :testid);");
+        query.bindValue(":percent", percent.toInt());
+        query.bindValue(":studentid", studentId.toInt());
+        query.bindValue(":testid", testid);
+
+        if(!query.exec())
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+
+
+    }
 }
 
 QString MyServer::cutArg(QString str, QString cmd)

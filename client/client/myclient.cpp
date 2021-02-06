@@ -312,6 +312,12 @@ void MyClient::solveMsg(QString msg)
            {
                delete studentTestsW;
                completeTestW = new CompleteTestWidget(allPlannedTestsTaskList, this);
+               connect(completeTestW, &CompleteTestWidget::finished, this, [this]{
+                   slotSendToServer("{cmd='add result';studentid='" + QString::number(id) + "';testname='" +
+                   completeTestW->testname + "';completionpercent='" + completeTestW->percent + "';}");
+                   delete completeTestW;
+                   setStudentWindow();
+               });
                setCentralWidget(completeTestW);
            }
            else
@@ -400,6 +406,7 @@ void MyClient::solveMsg(QString msg)
        {
            delete studentW;
            studentTestsW = new StudentTestsWidget(studentPlannedTests, this);
+           studentPlannedTests.clear();
            connect(studentTestsW->goBack, &QPushButton::clicked, this, [this] {delete studentTestsW; setStudentWindow();});
            connect(studentTestsW->start, &QPushButton::clicked, this, [this]
            {

@@ -11,12 +11,18 @@
 #include <QHBoxLayout>
 #include <QDebug>
 #include <QStackedLayout>
-
+#include <QMessageBox>
+#include <QTableView>
+#include <QStandardItemModel>
+#include <QLabel>
 class CompleteTestWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit CompleteTestWidget(QList <QList <QString>> list, QWidget *parent = nullptr);
+public:
+    QString percent;
+    QString testname;
 private:
 
     QList <QRadioButton *> answerOptionButtons;
@@ -30,6 +36,7 @@ private:
 private:
     int currentIndex;
     QList <QString> answers;
+    QList <bool> isAnswersCorrect;
 signals:
     void finished();
 private:

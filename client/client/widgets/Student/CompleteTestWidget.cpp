@@ -2,6 +2,7 @@
 
 CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list)
 {
+    testname = testList[0][0];
     for(int i = 0; i < testList.size(); ++i)
         answers.push_back("");
     qDebug() << testList;
@@ -84,5 +85,62 @@ void CompleteTestWidget::setIndexTask()
 
 void CompleteTestWidget::askIfFinished()
 {
-    qDebug() << answers;
+    QMessageBox msgBox;
+    msgBox.setText("Вы собираетесь закончить тест!");
+    msgBox.setInformativeText("Ок - закончить тест\nCancel - продолжить выполнение");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setIcon(QMessageBox::Information);
+    msgBox.setDefaultButton(QMessageBox::Ok);
+    if (msgBox.exec() != QMessageBox::Ok)
+        return;
+    int answerSum = 0;
+    for (int i = 0; i < answers.size(); ++i)
+    {
+        if (answers[i] == testList[i][3])
+        {
+            isAnswersCorrect.push_back(1);
+            answerSum++;
+        }
+        else
+           isAnswersCorrect.push_back(0);
+    }
+
+    percent = QString::number((int)(((answerSum * 1.0) / (answers.size() * 1.0)) * 100.0));
+
+    QTableView *table = new QTableView();
+    QStandardItemModel *model = new QStandardItemModel(answers.size(), 2, nullptr);
+
+    const QStringList params = {"Task number", "Status"};
+
+    for(int i = 0; i < params.size(); ++i)
+    {
+        QByteArray ba = params[i].toLocal8Bit();
+        const char* c_str = ba.data();
+        model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+    }
+    for(int row = 0; row < answers.size(); ++row)
+    {
+        QModelIndex index=model->index(row,0,QModelIndex());
+        model->setData(index, row+1);
+        index=model->index(row,1,QModelIndex());
+        model->setData(index, (isAnswersCorrect[row] ? "correct" : "wrong"));
+    }
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    table->setModel(model);
+
+    QLabel *title = new QLabel("You completed the test\nResult:" + percent + "percents");
+
+    QVBoxLayout *lay = new QVBoxLayout();
+    lay->addWidget(title);
+    lay->addWidget(table);
+
+    QDialog *d = new QDialog();
+    d->setLayout(lay);
+    d->exec();
+
+    emit finished();
+
+
+
+
 }
