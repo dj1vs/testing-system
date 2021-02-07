@@ -148,7 +148,7 @@ void MyClient::solveMsg(QString msg)
             showError("Введённые имя и фамилия не принадлежат ни одному учителю");
             break;
         case 2:
-            showError("No groups with this name");
+            showError("No groups with this name\nOr\nThis group is already appointed");
             break;
         }
     }

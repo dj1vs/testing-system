@@ -130,6 +130,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         else if(query.size())
         {
             sendToClient(pSocket, "{cmd='add group';staus='group already exists';}");
+            return;
         }
         query.prepare("INSERT INTO groups (name) "
                        "VALUES (:name)");
@@ -232,7 +233,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         else
             while(query.next())
                 teacherId = query.record().field(0).value().toInt();
-        sqlRequest = "SELECT id FROM groups WHERE name = '" + groupName + "';";
+        sqlRequest = "SELECT id FROM groups WHERE name = '" + groupName + "' AND teacherid IS NULL;";
         if(!query.exec(sqlRequest))
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
