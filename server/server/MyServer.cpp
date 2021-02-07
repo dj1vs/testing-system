@@ -263,11 +263,11 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         QString role = cutArg(msg, "role");
 
         QString sqlRequest = "SELECT id FROM users WHERE ";
-        sqlRequest += "name = '" + name + "' AND ";
+        sqlRequest += "(name = '" + name + "' AND ";
         sqlRequest += "surname = '" + surname + "' AND ";
         sqlRequest += "login = '" + login + "' AND ";
         sqlRequest += "password = '" + pass + "' AND ";
-        sqlRequest += "role = '" + role + "';";
+        sqlRequest += "role = '" + role + "') OR (login = '" + login + "' AND password = '" + pass + "');";
         qDebug() << sqlRequest;
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(sqlRequest))
