@@ -445,11 +445,12 @@ QString MyClient::cutArg(QString str, QString cmd)
 
 void MyClient::setAdminPlusWindow()
 {
+    state = ADMINPLUS;
     adminPlusW = new AdminPlusWidget(this);
-
     connect(adminPlusW->addGroup, &QPushButton::clicked, this, [this] {
         delete adminPlusW;
         agw = new AddGroupWidget(this);
+        state = ADDGROUP;
 
         connect(agw, &AddGroupWidget::sendGroupClicked, this, [this] {
 

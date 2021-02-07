@@ -68,7 +68,9 @@ private:
     StudentResultsWidget *studentsResultW;
 private:
     enum STATE {AUTHORIZATION,
-                ADMIN, ADMINPLUS, TEACHER, APPOINTTEST, STUDENT, COMPLETETEST } state = AUTHORIZATION;
+                ADMIN,
+                ADMINPLUS, ADDGROUP,
+                TEACHER, APPOINTTEST, STUDENT, COMPLETETEST } state = AUTHORIZATION;
     const int WINH = 450;
     const int WINW = 800;
     quint16 id = -1;
