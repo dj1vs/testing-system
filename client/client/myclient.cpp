@@ -113,7 +113,7 @@ void MyClient::solveMsg(QString msg)
     {
         QString r = cutArg(msg, "status");
         if(r == "0")
-            showMsg("Group added succesfully");
+            showMsgBox("Group added succesfully");
         else
             showError("This group already exists!");
     }
@@ -451,7 +451,7 @@ void MyClient::setAdminPlusWindow()
         delete adminPlusW;
         agw = new AddGroupWidget(this);
 
-        connect(agw->sendGroup, &QPushButton::clicked, this, [this] {
+        connect(agw, &AddGroupWidget::sendGroupClicked, this, [this] {
 
             QString groupTitle = agw->getGroupTitle();
             if(groupTitle == "")
@@ -464,7 +464,7 @@ void MyClient::setAdminPlusWindow()
             slotSendToServer(req);
         });
 
-        connect(agw->goBack, &QPushButton::clicked, this, [this] {delete agw; setAdminPlusWindow();});
+        connect(agw, &AddGroupWidget::goBackClicked, this, [this] {delete agw; setAdminPlusWindow();});
         setCentralWidget(agw);});
 
 

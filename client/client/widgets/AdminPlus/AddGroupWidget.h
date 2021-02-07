@@ -5,7 +5,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 class AddGroupWidget : public QWidget
 {
@@ -13,18 +12,15 @@ class AddGroupWidget : public QWidget
 public:
     explicit AddGroupWidget(QWidget *parent = nullptr);
     QString getGroupTitle() const {return title->text();};
-
-public:
-    QPushButton *sendGroup;
-    QPushButton *goBack;
 private:
     QLabel *titleLabel;
     QLineEdit *title;
-    QHBoxLayout *titleLayout;
-    QVBoxLayout *addGroupLayout;
+    QPushButton *sendGroup;
+    QPushButton *goBack;
 
 signals:
-
+    void goBackClicked();
+    void sendGroupClicked();
 };
 
 #endif // ADDGROUPWIDGET_H
