@@ -406,7 +406,6 @@ void MyClient::solveMsg(QString msg)
        {
            delete studentW;
            studentTestsW = new StudentTestsWidget(studentPlannedTests, this);
-           studentPlannedTests.clear();
            connect(studentTestsW->goBack, &QPushButton::clicked, this, [this] {delete studentTestsW; setStudentWindow();});
            connect(studentTestsW->start, &QPushButton::clicked, this, [this]
            {
@@ -422,6 +421,17 @@ void MyClient::solveMsg(QString msg)
            setCentralWidget(studentTestsW);
        }
    }
+    else if (cmd == "get student results")
+    {
+        if(cutArg(msg, "status") == "sending")
+            studentResults.push_back({cutArg(msg, "testsubject"), cutArg(msg, "testname"), cutArg(msg, "testdate"),cutArg(msg, "resultpercent")});
+        else
+        {
+            studentsResultW = new StudentResultsWidget(studentResults);
+            connect(studentsResultW, &StudentResultsWidget::finished, this, [this] () { delete studentsResultW; setStudentWindow();});
+            setCentralWidget(studentsResultW);
+        }
+    }
 }
 
 QString MyClient::cutArg(QString str, QString cmd)
@@ -624,7 +634,10 @@ void MyClient::setStudentWindow()
     studentW = new StudentWidget(this);
     connect(studentW->goBack,&QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow();});
     connect(studentW->currentTests, &QPushButton::clicked, this, [this]
-    {slotSendToServer("{cmd='get student tests';studentid='" + QString::number(id) + "';}");});
+    {           studentPlannedTests.clear();slotSendToServer("{cmd='get student tests';studentid='" + QString::number(id) + "';}");});
+    connect(studentW->results, &QPushButton::clicked, this, [this]
+    {studentResults.clear(); slotSendToServer("{cmd='get student results';studentid='" + QString::number(id) + "';}");});
+
     setCentralWidget(studentW);
 }
 

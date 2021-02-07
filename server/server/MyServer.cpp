@@ -470,6 +470,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "add test")
     {
+        qDebug() << msg;
         QString testName = cutArg(msg, "testname");
         QString subject = cutArg(msg, "subject");
         QString plannedDate = cutArg(msg, "planneddate");
@@ -504,8 +505,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         if(theme != "ALL")
             req += " AND theme = '" + theme + "'";
         if(taskAuthor != "ALL")
-            req += "AND teacherid='" + taskAuthor +"'";
+            req += " AND teacherid=" + taskAuthor;
         req += ';';
+        qDebug() << req;
         if(!query.exec(req))
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
@@ -516,6 +518,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         for(int i = 0; i < taskId.size(); ++i)
             std::swap(taskId[i], taskId[QRandomGenerator::global()->generate() % taskId.size()]);
+        qDebug() << taskId;
         if(taskId.size() <= amount.toInt())
         {
             for(auto &i: taskId)
@@ -680,7 +683,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         for(auto &i : testIds)
         {
-            QString req = "SELECT name, subject, planneddate FROM tests WHERE id = " + i + " AND planneddate > '" +
+            QString req = "SELECT name, subject, planneddate FROM tests WHERE id = " + i + " AND planneddate >= '" +
                     DateConverter::DateToStringFromat(QDate::currentDate(), "DD-MM-YYYY") + "';";
             if(!query.exec(req))
                 qDebug() << "Can not run database query :("
@@ -721,8 +724,31 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             qDebug() << "Can not run database query :("
             << query.lastError().databaseText()
             << query.lastError().driverText();
-
-
+    }
+    else if (cmd == "get student results")
+    {
+        QString studentid = cutArg(msg, "studentid");
+        QString req = "SELECT tests.subject, tests.name, tests.planneddate, results.percent "
+                       "FROM results "
+                       "INNER JOIN tests ON results.testid = tests.id "
+                       "WHERE studentid = 3 ORDER BY tests.planneddate DESC;";
+        QSqlQuery query = QSqlQuery(db);
+        if(!query.exec(req))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else while (query.next())
+        {
+            const QStringList params = {"testsubject", "testname", "testdate", "resultpercent"};
+            QString msg = "{cmd='get student results';status='sending';";
+            for (int i = 0; i < params.size(); ++i)
+            {
+                msg += params[i] + "='" + query.record().field(i).value().toString() + "';";
+            }
+            msg += "}";
+            sendToClient(pSocket, msg);
+        }
+        sendToClient(pSocket, "{cmd='get student results';status='sended';}");
     }
 }
 

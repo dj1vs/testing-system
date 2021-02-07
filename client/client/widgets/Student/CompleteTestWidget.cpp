@@ -2,6 +2,7 @@
 
 CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list)
 {
+    qDebug() << testList;
     testname = testList[0][0];
     for(int i = 0; i < testList.size(); ++i)
         answers.push_back("");
