@@ -111,9 +111,11 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "add group")
     {
-        int r = cutArg(msg, "status").toInt();
-        if(!r)
+        QString r = cutArg(msg, "status");
+        if(r == "0")
             showMsg("Group added succesfully");
+        else
+            showError("This group already exists!");
     }
     else if(cmd == "add to group")
     {

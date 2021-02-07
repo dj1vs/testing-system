@@ -123,6 +123,14 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     {
         QString groupName = cutArg(msg, "groupname");
         QSqlQuery query = QSqlQuery(db);
+        if(!query.exec("SELECT id FROM groups WHERE name = '" + groupName + "';"))
+            qDebug() << "Can not run database query :("
+            << query.lastError().databaseText()
+            << query.lastError().driverText();
+        else if(query.size())
+        {
+            sendToClient(pSocket, "{cmd='add group';staus='group already exists';}");
+        }
         query.prepare("INSERT INTO groups (name) "
                        "VALUES (:name)");
         query.bindValue(":name", groupName);
