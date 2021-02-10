@@ -17,4 +17,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    MyServer.h
+    MyServer.h \
+    lib/DateConverter.h \
+    lib/StringOperator.h

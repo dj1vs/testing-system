@@ -1,0 +1,4 @@
+#ifndef STRINGOPERATOR_H
+#define STRINGOPERATOR_H
+
+#endif // STRINGOPERATOR_H
