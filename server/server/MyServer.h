@@ -1,7 +1,7 @@
 #ifndef MYSERVER_H
 #define MYSERVER_H
 
-#include "../../client/client/lib/DateConverter.h"
+#include "../../lib/DateConverter.h"
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>

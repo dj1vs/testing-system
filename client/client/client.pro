@@ -33,8 +33,8 @@ SOURCES += \
     widgets/Teacher/TeacherWidget.cpp
 
 HEADERS += \
-    lib/DateConverter.h \
-    lib/StringOperator.h \
+    ../../lib/DateConverter.h \
+    ../../lib/StringOperator.h \
     myclient.h \
     widgets/Admin/AdminWidget.h \
     widgets/Admin/AllGroupsWidget.h \
