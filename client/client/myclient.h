@@ -2,6 +2,7 @@
 #define MYCLIENT_H
 
 #include "../../lib/DateConverter.h"
+#include "../../lib/StringOperator.h"
 
 #include "widgets/AuthorizationWidget.h"
 
@@ -90,7 +91,6 @@ private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
     void showMsg(QString msg){statusBar()->showMessage(msg);};
     void showMsgBox(QString msg) {QMessageBox msgBox;msgBox.setText(msg);msgBox.exec();};
-    QString cutArg(QString str, QString cmd);
     void setAuthorizationWindow();
     void setAdminPlusWindow();
     void setAdminWindow();

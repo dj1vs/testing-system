@@ -111,7 +111,7 @@ void TeacherResultsWidget::editTable()
     QString group = groupBox->currentText();
     QString testname = testnameBox->currentText();
     QString subject = subjectBox->currentText();
-    QString date = DateConverter::DateToStringFromat(sortDateEdit->date(), "DD-MM-YYYY");
+    QString date = DateConverter::DateToStringFormat(sortDateEdit->date(), "DD-MM-YYYY");
 
     qDebug() << student;qDebug() <<  group;  qDebug() << testname;qDebug() <<subject;qDebug() <<  !sortByDate->isChecked();
 

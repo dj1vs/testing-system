@@ -2,6 +2,7 @@
 #define MYSERVER_H
 
 #include "../../lib/DateConverter.h"
+#include "../../lib/StringOperator.h"
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
@@ -33,7 +34,6 @@ private:
 private:
     void sendToClient(QTcpSocket* pSocket, const QString& str);
     void solveMsg(QTcpSocket* pSocket, QString msg);
-    QString cutArg(QString str, QString cmd);
 public slots:
     virtual void slotNewConnection();
             void slotReadClient   ();

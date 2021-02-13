@@ -88,11 +88,11 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         qDebug() << "Invalid package: " + msg;
         return;
     }
-    QString cmd = cutArg(msg, "cmd");
+    QString cmd = StringOperator::cutArg(msg, "cmd");
     if(cmd == "authorize")
     {
-        QString login = cutArg(msg, "login");
-        QString pass = cutArg(msg, "pass");
+        QString login = StringOperator::cutArg(msg, "login");
+        QString pass = StringOperator::cutArg(msg, "pass");
         QString sqlRequest = "SELECT role, id FROM users WHERE ";
         sqlRequest += "login = '" + login + "' AND ";
         sqlRequest += "password = '" + pass + "'";
@@ -121,7 +121,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "add group")
     {
-        QString groupName = cutArg(msg, "groupname");
+        QString groupName = StringOperator::cutArg(msg, "groupname");
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec("SELECT id FROM groups WHERE name = '" + groupName + "';"))
             qDebug() << "Can not run database query :("
@@ -146,9 +146,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     {
         int groupId = 0;
         int userId = 0;
-        QString name = cutArg(msg, "studentsname");
-        QString surname = cutArg(msg, "studentssurname");
-        QString title = cutArg(msg, "groupname");
+        QString name = StringOperator::cutArg(msg, "studentsname");
+        QString surname = StringOperator::cutArg(msg, "studentssurname");
+        QString title = StringOperator::cutArg(msg, "groupname");
         QString sqlRequest = "SELECT id FROM groups WHERE name = '" + title + "';";
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(sqlRequest))
@@ -212,9 +212,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "appoint")
     {
-        QString teacherName = cutArg(msg, "teachername");
-        QString teacherSurname = cutArg(msg, "teachersurname");
-        QString groupName = cutArg(msg, "groupname");
+        QString teacherName = StringOperator::cutArg(msg, "teachername");
+        QString teacherSurname = StringOperator::cutArg(msg, "teachersurname");
+        QString groupName = StringOperator::cutArg(msg, "groupname");
         int teacherId = 0;
 
         QString sqlRequest = "SELECT id FROM users WHERE ";
@@ -256,11 +256,11 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "add user")
     {
-        QString name = cutArg(msg, "name");
-        QString surname = cutArg(msg, "surname");
-        QString login = cutArg(msg, "login");
-        QString pass = cutArg(msg, "pass");
-        QString role = cutArg(msg, "role");
+        QString name = StringOperator::cutArg(msg, "name");
+        QString surname = StringOperator::cutArg(msg, "surname");
+        QString login = StringOperator::cutArg(msg, "login");
+        QString pass = StringOperator::cutArg(msg, "pass");
+        QString role = StringOperator::cutArg(msg, "role");
 
         QString sqlRequest = "SELECT id FROM users WHERE ";
         sqlRequest += "(name = '" + name + "' AND ";
@@ -343,7 +343,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     else if (cmd == "view group teachers")
     {
         QString req = "SELECT users.name, users.surname FROM groups ";
-        req += "INNER JOIN users ON groups.teacherid = users.id WHERE groups.name = '" + cutArg(msg, "groupname") + "';";
+        req += "INNER JOIN users ON groups.teacherid = users.id WHERE groups.name = '" + StringOperator::cutArg(msg, "groupname") + "';";
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(req))
             qDebug() << "Can not run database query :("
@@ -365,7 +365,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         QString req = "SELECT users.name, users.surname FROM group_by_user ";
         req += "INNER JOIN users ON group_by_user.userid = users.id ";
         req += "INNER JOIN groups ON group_by_user.groupid = groups.id ";
-        req += "WHERE groups.name = '" + cutArg(msg, "groupname") + "';";
+        req += "WHERE groups.name = '" + StringOperator::cutArg(msg, "groupname") + "';";
         QSqlQuery query = QSqlQuery(db);
         if (!query.exec(req))
             qDebug() << "Can not run database query :("
@@ -411,7 +411,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         QString req = "SELECT tests.name, tasks.task, tasks.answeroptions, tasks.answer, tasks.theme ";
         req += "FROM test_by_task INNER JOIN tests ON tests.id = test_by_task.testid ";
         req += "INNER JOIN tasks ON tasks.id = test_by_task.taskid ";
-        req += "WHERE tests.name = '" + cutArg(msg, "testname") + "';";
+        req += "WHERE tests.name = '" + StringOperator::cutArg(msg, "testname") + "';";
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(req))
             qDebug() << "Can not run database query :("
@@ -434,12 +434,12 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "add task")
     {
-        quint16 id = cutArg(msg, "id").toInt();
-        QString tasktext = cutArg(msg, "tasktext");
-        QString answer = cutArg(msg, "answer");
-        QString theme = cutArg(msg, "theme");
-        QString subject = cutArg(msg, "subject");
-        QString answerOptions = cutArg(msg, "answerOptions");
+        quint16 id = StringOperator::cutArg(msg, "id").toInt();
+        QString tasktext = StringOperator::cutArg(msg, "tasktext");
+        QString answer = StringOperator::cutArg(msg, "answer");
+        QString theme = StringOperator::cutArg(msg, "theme");
+        QString subject = StringOperator::cutArg(msg, "subject");
+        QString answerOptions = StringOperator::cutArg(msg, "answerOptions");
 
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO tasks (task, answeroptions, answer, theme, subject, teacherid) "\
@@ -480,10 +480,10 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     else if(cmd == "add test")
     {
         qDebug() << msg;
-        QString testName = cutArg(msg, "testname");
-        QString subject = cutArg(msg, "subject");
-        QString plannedDate = cutArg(msg, "planneddate");
-        QString teacherid = cutArg(msg, "teacherid");
+        QString testName = StringOperator::cutArg(msg, "testname");
+        QString subject = StringOperator::cutArg(msg, "subject");
+        QString plannedDate = StringOperator::cutArg(msg, "planneddate");
+        QString teacherid = StringOperator::cutArg(msg, "teacherid");
 
         int testId = 1;
         QSqlQuery query = QSqlQuery(db);
@@ -504,9 +504,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
             << query.lastError().driverText();
         else if(query.next())
             testId = query.record().field(0).value().toInt();
-        QString amount = cutArg(msg, "amount");
-        QString theme = cutArg(msg, "theme");
-        QString taskAuthor = cutArg(msg, "taskauthor");
+        QString amount = StringOperator::cutArg(msg, "amount");
+        QString theme = StringOperator::cutArg(msg, "theme");
+        QString taskAuthor = StringOperator::cutArg(msg, "taskauthor");
 
         QList <int> taskId;
 
@@ -560,10 +560,10 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "add separated test")
     {
-        QString testName = cutArg(msg, "testname");
-        QString subject = cutArg(msg, "subject");
-        QString plannedDate = cutArg(msg, "planneddate");
-        QString teacherid = cutArg(msg, "teacherid");
+        QString testName = StringOperator::cutArg(msg, "testname");
+        QString subject = StringOperator::cutArg(msg, "subject");
+        QString plannedDate = StringOperator::cutArg(msg, "planneddate");
+        QString teacherid = StringOperator::cutArg(msg, "teacherid");
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO tests (name, subject, planneddate, teacherid) "
                                         "VALUES (:name, :subject, :planneddate, :teacherid);");
@@ -586,8 +586,8 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "appoint task to test")
     {
-        QString testId = cutArg(msg, "testid");
-        QString taskId = cutArg(msg, "taskid");
+        QString testId = StringOperator::cutArg(msg, "testid");
+        QString taskId = StringOperator::cutArg(msg, "taskid");
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO test_by_task (testid, taskid) VALUES (:testid, :taskid);");
         query.bindValue(":testid", testId);
@@ -599,7 +599,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "get teacher groups")
     {
-        QString teacherid = cutArg(msg, "teacherid");
+        QString teacherid = StringOperator::cutArg(msg, "teacherid");
         QString req = "SELECT name FROM groups WHERE teacherid='" + teacherid + "';";
         QSqlQuery query = QSqlQuery(db);
         if(!query.exec(req))
@@ -612,7 +612,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "get teacher results")
     {
-        QString id = cutArg(msg, "teacherid");
+        QString id = StringOperator::cutArg(msg, "teacherid");
         QString req = "SELECT users.name, users.surname, groups.name,  tests.name, results.percent, tests.subject, tests.planneddate "
                 "FROM users, results, group_by_user, groups, tests "
                 "WHERE group_by_user.groupid = groups.id AND groups.teacherid = " + id +  " AND group_by_user.userid = users.id "
@@ -636,8 +636,8 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "appoint test")
     {
-        QString group = cutArg(msg, "groupname");
-        QString test = cutArg(msg, "testname");
+        QString group = StringOperator::cutArg(msg, "groupname");
+        QString test = StringOperator::cutArg(msg, "testname");
 
         int testId = 0;
         int groupId = 0;
@@ -668,7 +668,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if(cmd == "get student tests")
     {
-        QString id = cutArg(msg, "studentid");
+        QString id = StringOperator::cutArg(msg, "studentid");
         QString req = "SELECT groupid FROM group_by_user WHERE userid = " + id + ";";
         QStringList groupIds;
         QSet <QString> testIds;
@@ -693,7 +693,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         for(auto &i : testIds)
         {
             QString req = "SELECT name, subject, planneddate FROM tests WHERE id = " + i + " AND planneddate >= '" +
-                    DateConverter::DateToStringFromat(QDate::currentDate(), "DD-MM-YYYY") + "';";
+                    DateConverter::DateToStringFormat(QDate::currentDate(), "DD-MM-YYYY") + "';";
             if(!query.exec(req))
                 qDebug() << "Can not run database query :("
                 << query.lastError().databaseText()
@@ -712,9 +712,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     else if (cmd == "add result")
     {
         qDebug() << msg;
-        QString testname = cutArg(msg, "testname");
-        QString studentId = cutArg(msg, "studentid");
-        QString percent = cutArg(msg, "completionpercent");
+        QString testname = StringOperator::cutArg(msg, "testname");
+        QString studentId = StringOperator::cutArg(msg, "studentid");
+        QString percent = StringOperator::cutArg(msg, "completionpercent");
         QSqlQuery query = QSqlQuery(db);
         QString testid;
         if(!query.exec("SELECT id FROM tests WHERE name = '" + testname + "';"))
@@ -736,7 +736,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
     }
     else if (cmd == "get student results")
     {
-        QString studentid = cutArg(msg, "studentid");
+        QString studentid = StringOperator::cutArg(msg, "studentid");
         QString req = "SELECT tests.subject, tests.name, tests.planneddate, results.percent "
                        "FROM results "
                        "INNER JOIN tests ON results.testid = tests.id "
@@ -759,11 +759,4 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg)
         }
         sendToClient(pSocket, "{cmd='get student results';status='sended';}");
     }
-}
-
-QString MyServer::cutArg(QString str, QString cmd)
-{
-    int pos1 = str.indexOf(cmd) + cmd.size() + 2;
-    int pos2 = str.midRef(pos1, str.size()).indexOf("'");
-    return str.mid(pos1, pos2);
 }

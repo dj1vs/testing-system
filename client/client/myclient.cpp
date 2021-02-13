@@ -88,14 +88,14 @@ void MyClient::solveMsg(QString msg)
         qDebug() << msg;
         return;
     }
-    QString cmd = cutArg(msg, "cmd");
+    QString cmd = StringOperator::cutArg(msg, "cmd");
     if(cmd == "authorize")
     {
-        if(cutArg(msg, "status") == "0")
+        if(StringOperator::cutArg(msg, "status") == "0")
         {
-            QString role = cutArg(msg, "role");
+            QString role = StringOperator::cutArg(msg, "role");
             showMsg("Succesfuly logged in!\nRole: " + role);
-            id = cutArg(msg, "id").toInt();
+            id = StringOperator::cutArg(msg, "id").toInt();
             delete aw;
             if(role == "admin+")
                 setAdminPlusWindow();
@@ -111,7 +111,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "add group")
     {
-        QString r = cutArg(msg, "status");
+        QString r = StringOperator::cutArg(msg, "status");
         if(r == "0")
             showMsgBox("Group added succesfully");
         else
@@ -119,7 +119,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "add to group")
     {
-        int r = cutArg(msg, "status").toInt();
+        int r = StringOperator::cutArg(msg, "status").toInt();
         switch(r)
         {
         case 0:
@@ -138,7 +138,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "appoint")
     {
-        int r = cutArg(msg, "status").toInt();
+        int r = StringOperator::cutArg(msg, "status").toInt();
         switch(r)
         {
         case 0:
@@ -154,7 +154,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if (cmd == "add user")
     {
-        int r = cutArg(msg, "status").toInt();
+        int r = StringOperator::cutArg(msg, "status").toInt();
         switch(r)
         {
         case 0:
@@ -167,7 +167,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "view all results")
     {
-        if(cutArg(msg, "status") == "sended")
+        if(StringOperator::cutArg(msg, "status") == "sended")
         {
             delete adminW;
             arw = new AllResultsWidget(this, allResultsList);
@@ -175,19 +175,19 @@ void MyClient::solveMsg(QString msg)
             setCentralWidget(arw);
             return;
         }
-        else if(cutArg(msg, "status") == "started")
+        else if(StringOperator::cutArg(msg, "status") == "started")
         {
             allResultsList.clear();
             return;
         }
         allResultsList.push_back({
-        cutArg(msg, "testname"), cutArg(msg, "subject"),
-        cutArg(msg, "studentsname"), cutArg(msg, "studentssurname"),
-        cutArg(msg, "percent")});
+        StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "subject"),
+        StringOperator::cutArg(msg, "studentsname"), StringOperator::cutArg(msg, "studentssurname"),
+        StringOperator::cutArg(msg, "percent")});
     }
     else if(cmd == "view all groups")
     {
-        if(cutArg(msg, "status") == "sended")
+        if(StringOperator::cutArg(msg, "status") == "sended")
         {
             QTableView *table = new QTableView();
             QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
@@ -242,22 +242,22 @@ void MyClient::solveMsg(QString msg)
             setCentralWidget(allGroupsW);
             return;
         }
-        allGroupsList.push_back(cutArg(msg, "name"));
+        allGroupsList.push_back(StringOperator::cutArg(msg, "name"));
     }
     else if (cmd == "view group teachers")
     {
-        QString status = cutArg(msg, "status");
+        QString status = StringOperator::cutArg(msg, "status");
         if(status == "sended")
         {
             allGroupsW->showGroupTeachers(groupTeachers);
             groupTeachers.clear();
         }
         else
-            groupTeachers.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
+            groupTeachers.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "surname")});
     }
     else if (cmd == "view group students")
     {
-        QString status = cutArg(msg, "status");
+        QString status = StringOperator::cutArg(msg, "status");
         if(status == "sended")
         {
             if(teacherGroupsW != nullptr)
@@ -267,11 +267,11 @@ void MyClient::solveMsg(QString msg)
             groupStudents.clear();
         }
         else
-            groupStudents.push_back({cutArg(msg, "name"), cutArg(msg, "surname")});
+            groupStudents.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "surname")});
     }
     else if(cmd == "view all planned tests")
     {
-        QString status = cutArg(msg, "status");
+        QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended")
         {
             if(state == APPOINTTEST)
@@ -302,12 +302,12 @@ void MyClient::solveMsg(QString msg)
         else if (status == "started")
             allPlannedTestsList.clear();
         else
-            allPlannedTestsList.push_back({cutArg(msg, "teachername"), cutArg(msg, "teachersurname"), cutArg(msg, "testname"),
-                                          cutArg(msg, "subject"), cutArg(msg, "date")});
+            allPlannedTestsList.push_back({StringOperator::cutArg(msg, "teachername"), StringOperator::cutArg(msg, "teachersurname"), StringOperator::cutArg(msg, "testname"),
+                                          StringOperator::cutArg(msg, "subject"), StringOperator::cutArg(msg, "date")});
     }
     else if(cmd == "view test tasks")
     {
-        QString status = cutArg(msg, "status");
+        QString status = StringOperator::cutArg(msg, "status");
         if(status == "sended")
         {
            if(state == COMPLETETEST)
@@ -328,12 +328,12 @@ void MyClient::solveMsg(QString msg)
         else if(status == "started")
             allPlannedTestsTaskList.clear();
         else
-            allPlannedTestsTaskList.push_back({cutArg(msg, "testname"), cutArg(msg, "taskname"), cutArg(msg, "answeroptions"),
-                                              cutArg(msg, "answertext"), cutArg(msg, "theme")});
+            allPlannedTestsTaskList.push_back({StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "taskname"), StringOperator::cutArg(msg, "answeroptions"),
+                                              StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme")});
     }
     else if(cmd == "add task")
     {
-        QString status = cutArg(msg, "status");
+        QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended")
             showMsg("task added successfully");
     }
@@ -341,10 +341,10 @@ void MyClient::solveMsg(QString msg)
         showMsg("added!");
     else if(cmd == "get all tasks")
     {
-        qDebug() << cutArg(msg, "status");
-        if(cutArg(msg, "status") == "sending")
-            allTasksList.push_back({cutArg(msg, "taskid"), cutArg(msg, "subject"), cutArg(msg, "tasktext"), cutArg(msg, "answeroptions")
-                                   , cutArg(msg, "answertext"), cutArg(msg, "theme"), cutArg(msg, "teacherid")});
+        qDebug() << StringOperator::cutArg(msg, "status");
+        if(StringOperator::cutArg(msg, "status") == "sending")
+            allTasksList.push_back({StringOperator::cutArg(msg, "taskid"), StringOperator::cutArg(msg, "subject"), StringOperator::cutArg(msg, "tasktext"), StringOperator::cutArg(msg, "answeroptions")
+                                   , StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme"), StringOperator::cutArg(msg, "teacherid")});
         else
         {
             addTestW->setUserID(id);
@@ -354,7 +354,7 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "add separated test")
     {
-        QString testId = cutArg(msg, "testid");
+        QString testId = StringOperator::cutArg(msg, "testid");
         QList <QString> list = addTestW->getPickedTasks();
         showMsg(QString::number(list.size()));
         for(auto &i : list)
@@ -364,8 +364,8 @@ void MyClient::solveMsg(QString msg)
     else if(cmd == "get teacher groups")
     {
 
-        if(cutArg(msg, "status") == "sending")
-            teacherGroups.push_back(cutArg(msg, "groupname"));
+        if(StringOperator::cutArg(msg, "status") == "sending")
+            teacherGroups.push_back(StringOperator::cutArg(msg, "groupname"));
         else
         {
             if(state == APPOINTTEST)
@@ -384,12 +384,12 @@ void MyClient::solveMsg(QString msg)
     }
     else if(cmd == "get teacher results")
     {
-        if(cutArg(msg, "status") == "sending")
+        if(StringOperator::cutArg(msg, "status") == "sending")
         {
             QList <QString> params = {"studentsname", "studentssurname", "studentsgroup", "testname", "percent", "subject", "date"};
             QList <QString> buf;
             for(int i = 0; i < params.size(); ++i)
-                buf.push_back(cutArg(msg, params[i]));
+                buf.push_back(StringOperator::cutArg(msg, params[i]));
             teacherResults.push_back(buf);
         }
         else
@@ -402,8 +402,8 @@ void MyClient::solveMsg(QString msg)
     }
    else if (cmd == "get student tests")
    {
-       if(cutArg(msg, "status") == "sending")
-           studentPlannedTests.push_back({cutArg(msg, "testname"), cutArg(msg, "testsubject"), cutArg(msg, "testplanneddate")});
+       if(StringOperator::cutArg(msg, "status") == "sending")
+           studentPlannedTests.push_back({StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "testsubject"), StringOperator::cutArg(msg, "testplanneddate")});
        else
        {
            delete studentW;
@@ -425,8 +425,8 @@ void MyClient::solveMsg(QString msg)
    }
     else if (cmd == "get student results")
     {
-        if(cutArg(msg, "status") == "sending")
-            studentResults.push_back({cutArg(msg, "testsubject"), cutArg(msg, "testname"), cutArg(msg, "testdate"),cutArg(msg, "resultpercent")});
+        if(StringOperator::cutArg(msg, "status") == "sending")
+            studentResults.push_back({StringOperator::cutArg(msg, "testsubject"), StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "testdate"),StringOperator::cutArg(msg, "resultpercent")});
         else
         {
             studentsResultW = new StudentResultsWidget(studentResults);
@@ -434,13 +434,6 @@ void MyClient::solveMsg(QString msg)
             setCentralWidget(studentsResultW);
         }
     }
-}
-
-QString MyClient::cutArg(QString str, QString cmd)
-{
-    int pos1 = str.indexOf(cmd) + cmd.size() + 2;
-    int pos2 = str.midRef(pos1, str.size()).indexOf("'");
-    return str.mid(pos1, pos2);
 }
 
 void MyClient::setAdminPlusWindow()
@@ -596,13 +589,13 @@ void MyClient::setTeacherWindow()
                 slotSendToServer ("{cmd='add test';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
                                   "testname='" + addTestW->getName() + "';"
                                   "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
-                                  "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFromat(addTestW->getDate(), "DD-MM-YYYY") + "';"
+                                  "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFormat(addTestW->getDate(), "DD-MM-YYYY") + "';"
                                   "teacherid='" + QString::number(id) + "';"
                                   "theme='" + (addTestW->getTheme() == "" ? "ALL" : addTestW->getTheme()) + "';}");
             else
                 slotSendToServer("{cmd='add separated test';"
                                  "testname='" + addTestW->getName() + "';"
-                                 "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFromat(addTestW->getDate(), "DD-MM-YYYY") + "';"
+                                 "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFormat(addTestW->getDate(), "DD-MM-YYYY") + "';"
                                  "teacherid='" + QString::number(id) + "';}");
 
         });

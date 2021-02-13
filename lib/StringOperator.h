@@ -4,7 +4,7 @@
 #include <QString>
 class StringOperator{
 public:
-    QString cutArg(QString x, QString req)
+    static QString cutArg(QString x, QString req)
     {
         //{cmd='do something';}
         int i = 1;
@@ -27,7 +27,7 @@ public:
         }
         return "";
     };
-    bool validatePackage(QString x)
+    static bool validatePackage(QString x)
     {
         if(x.indexOf("cmd") == -1 || x.size() < 3)
             return false;
@@ -52,7 +52,7 @@ public:
         return true;
 
     }
-   QString validateUserInput(QString x)
+   static QString validateUserInput(QString x)
     {
        while(x.indexOf("';") != -1 || x.indexOf("='") != -1)
        {
@@ -70,13 +70,13 @@ public:
        return x;
     }
 private:
-    int getArgTextEnd(QString x, int start)
+    static int getArgTextEnd(QString x, int start)
     {
         int res = start;
         for(;x.mid(res, 2) != "';"; ++res);
         return --res;
     };
-    int getArgEnd(QString x, int start)
+    static int getArgEnd(QString x, int start)
     {
         int res = start;
         for(;x.mid(res, 2) != "='" ; ++res);
