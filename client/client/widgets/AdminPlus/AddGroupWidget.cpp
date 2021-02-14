@@ -1,10 +1,10 @@
-#include "AddGroupWidget.h"
+// Copyright 2021 Dmitriy Trifonov
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QSpacerItem>
+#include "AddGroupWidget.h"
 
-AddGroupWidget::AddGroupWidget(QWidget *parent) : QWidget(parent)
-{
+AddGroupWidget::AddGroupWidget(QWidget *parent) : QWidget(parent) {
     titleLabel = new QLabel("Group title: ", this);
     title = new QLineEdit(this);
     sendGroup = new QPushButton("&Add group", this);

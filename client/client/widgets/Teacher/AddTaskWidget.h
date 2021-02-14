@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ADDTASKWIDGET_H
 #define ADDTASKWIDGET_H
 
@@ -10,21 +11,22 @@
 #include <QStringListModel>
 #include <QInputDialog>
 
-class AddTaskWidget : public QWidget
-{
+class AddTaskWidget : public QWidget {
     Q_OBJECT
-public:
-    explicit AddTaskWidget(QWidget *parent = nullptr);
-    QString getTask() const {return quesition->toPlainText();};
-    QString getAnswer() const {return answer->toPlainText();};
-    QList <QString> getAnswerOptions() const {return answerOptionsModel->stringList();};
-    QString getTheme() const {return theme->text();};
-    QString getSubject() const {return subject->text();};
 
-public:
+ public:
+    explicit AddTaskWidget(QWidget *parent = nullptr);
+    QString getTask() const {return quesition->toPlainText(); }
+    QString getAnswer() const {return answer->toPlainText(); }
+    QList <QString> getAnswerOptions() const {return answerOptionsModel->stringList(); }
+    QString getTheme() const {return theme->text(); }
+    QString getSubject() const {return subject->text(); }
+
+ public:
     QPushButton *save;
     QPushButton *quit;
-private:
+
+ private:
     QPushButton *newTaskButton;
     QPushButton *newTestButton;
     QPushButton *viewTeacherGroupsButton;
@@ -44,11 +46,10 @@ private:
     QLineEdit *subject;
     QVBoxLayout *layout;
     QList <QString> answerOptions;
-private:
+
+ private:
     void showAddAnswerOptions();
     void addTaskAnswerOptionsDeleteEmpty();
-signals:
-
 };
 
-#endif // ADDTASKWIDGET_H
+#endif  // ADDTASKWIDGET_H

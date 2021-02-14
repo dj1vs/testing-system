@@ -1,34 +1,30 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AllTestsWidget.h"
 
-AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWidget(parent), testsList(l)
-{
+AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWidget(parent), testsList(l) {
     table = new QTableView(this);
     table->setAttribute(Qt::WA_DeleteOnClose);
     model = new QStandardItemModel(testsList.size(), testsList[0].size() + 1, this);
     QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date", "Tasks"};
-    for(int i = 0; i < testsList[0].size()+1; ++i)
-    {
+    for (int i = 0; i < testsList[0].size()+1; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
         model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    for(int row = 0; row < testsList.size(); ++row)
-    {
-        for(int col = 0; col < testsList[0].size(); ++col)
-        {
-            QModelIndex index=model->index(row,col,QModelIndex());
+    for (int row = 0; row < testsList.size(); ++row) {
+        for (int col = 0; col < testsList[0].size(); ++col) {
+            QModelIndex index = model->index(row, col, QModelIndex());
             model->setData(index, testsList[row][col]);
         }
     }
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setModel(model);
 
-    for(int row = 0; row < testsList.size(); ++row)
-    {
-        QModelIndex index=model->index(row,testsList[0].size(),QModelIndex());
+    for (int row = 0; row < testsList.size(); ++row) {
+        QModelIndex index = model->index(row, testsList[0].size(), QModelIndex());
         QPushButton *button = new QPushButton(this);
         list.push_back(button);
-        button->setAccessibleName(model->index(row,2,QModelIndex()).data().toString());
+        button->setAccessibleName(model->index(row, 2, QModelIndex()).data().toString());
         buttons.push_back(button);
         table->setIndexWidget(index, button);
     }
@@ -46,8 +42,7 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
 
     setLayout(layout);
 }
-void AllTestsWidget::showAllPlannedTestsSort()
-{
+void AllTestsWidget::showAllPlannedTestsSort() {
     sortNameLabel = new QLabel("Teacher name:", this);
     sortSurnameLabel = new QLabel("Teacher surname:", this);
     sortTestLabel = new QLabel("Test name:", this);
@@ -59,9 +54,9 @@ void AllTestsWidget::showAllPlannedTestsSort()
     sortDate = new QDateEdit();
     sortSubject = new QLineEdit();
     sortViewPast = new QRadioButton("Прошедшие");
-    sortViewFuture= new QRadioButton("Запланированные");
-    sortViewAll= new QRadioButton("Все");
-    sortSave = new QPushButton("Сохранить ");
+    sortViewFuture = new QRadioButton("Запланированные");
+    sortViewAll = new QRadioButton("Все");
+    sortSave = new QPushButton("Сохранить");
 
     QHBoxLayout *name = new QHBoxLayout();
     name->addWidget(sortNameLabel);
@@ -100,13 +95,12 @@ void AllTestsWidget::showAllPlannedTestsSort()
     sortLayout->addWidget(sortSave);
 
     QDialog *d = new QDialog();
-    connect(sortSave, &QPushButton::clicked, this, [this, d] {editAllPlannedTestsTable(); d->close();});
+    connect(sortSave, &QPushButton::clicked, this, [this, d] {editAllPlannedTestsTable(); d->close(); });
 
     d->setLayout(sortLayout);
     d->show();
 }
-void AllTestsWidget::editAllPlannedTestsTable()
-{
+void AllTestsWidget::editAllPlannedTestsTable() {
     QString name = sortName->text();
     QString surname = sortSurname->text();
     QString test = sortTest->text();
@@ -117,33 +111,28 @@ void AllTestsWidget::editAllPlannedTestsTable()
     bool isFuture = sortViewFuture->isChecked();
     bool isAll = sortViewAll->isChecked();
 
-    if(name == "" && surname == "" && subject == "" && test == "" && date == "2000-01-01" && !isPast  && !isFuture && !isAll)
+    if (name == "" && surname == "" && subject == "" && test == "" && date == "2000-01-01" && !isPast  && !isFuture && !isAll)
         return;
 
-    for(int row = 0; row < model->rowCount(); ++row)
-    {
-        QString modelName = model->index(row,0,QModelIndex()).data().toString();
-        QString modelSurname = model->index(row,1,QModelIndex()).data().toString();
-        QString modelSubject = model->index(row,3,QModelIndex()).data().toString();
-        QString modelTest = model->index(row,2,QModelIndex()).data().toString();
-        QString modelDate = model->index(row,4,QModelIndex()).data().toString();
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QString modelName = model->index(row, 0, QModelIndex()).data().toString();
+        QString modelSurname = model->index(row, 1, QModelIndex()).data().toString();
+        QString modelSubject = model->index(row, 3, QModelIndex()).data().toString();
+        QString modelTest = model->index(row, 2, QModelIndex()).data().toString();
+        QString modelDate = model->index(row, 4, QModelIndex()).data().toString();
 
         if ( (name != "" &&  surname != "" && (modelName != name || modelSurname != surname)) || (test != "" && modelTest != test)
              || (date != "2000-01-01" && date != modelDate) || (subject != "" && subject != modelSubject) ||
-             (isPast && QDate::fromString(modelDate) >= QDate::currentDate()) || (isFuture && QDate::fromString(modelDate) < QDate::currentDate()))
-        {
+             (isPast && QDate::fromString(modelDate) >= QDate::currentDate()) || (isFuture && QDate::fromString(modelDate) < QDate::currentDate())) {
             model->removeRow(row);
             row--;
         }
-
     }
     table->setModel(model);
 }
-void AllTestsWidget::showTestTasks(QList <QList<QString>> l)
-{
+void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
     taskList = l;
-    if (!taskList.size())
-    {
+    if (!taskList.size()) {
         QErrorMessage *d = new QErrorMessage(this);
         d->showMessage("This test is empty");
         return;
@@ -179,9 +168,8 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l)
     d->setLayout(taskLayout);
     d->show();
 }
-void AllTestsWidget::showNextTask()
-{
-    if(currTask+1 >= taskList.size())
+void AllTestsWidget::showNextTask() {
+    if (currTask+1 >= taskList.size())
         return;
     ++currTask;
     taskText->setText(taskList[currTask][1]);
@@ -189,9 +177,8 @@ void AllTestsWidget::showNextTask()
     taskAnswerOptionsModel->setStringList(taskList[currTask][2].split(';'));
     taskAnswerOptionsView->setModel(taskAnswerOptionsModel);
 }
-void AllTestsWidget::showPrevTask()
-{
-    if(!currTask)
+void AllTestsWidget::showPrevTask() {
+    if (!currTask)
         return;
     --currTask;
     taskText->setText(taskList[currTask][1]);

@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AdminPlusWidget.h"
 
-AdminPlusWidget::AdminPlusWidget(QWidget *parent) : QWidget(parent)
-{
+AdminPlusWidget::AdminPlusWidget(QWidget *parent) : QWidget(parent) {
     addGroup = new QPushButton("&Add group", this);
     addToGroup = new QPushButton("&Add to group", this);
     appointGroup = new QPushButton("&Appoint group", this);
@@ -14,5 +14,5 @@ AdminPlusWidget::AdminPlusWidget(QWidget *parent) : QWidget(parent)
     layout->addWidget(addUser);
     layout->addWidget(goBack);
 
-    this->setLayout(layout);
+    setLayout(layout);
 }

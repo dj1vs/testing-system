@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef STUDENTRESULTSWIDGET_H
 #define STUDENTRESULTSWIDGET_H
 
@@ -8,19 +9,20 @@
 #include <QDialog>
 #include <QDebug>
 
-class StudentResultsWidget : public QWidget
-{
+class StudentResultsWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit StudentResultsWidget(QList <QStringList> new_list  = {}, QWidget *parent = nullptr);
-public:
-private:
+
+ private:
     QPushButton *goBack;
     QTableView *table;
     QStandardItemModel *model;
     QList <QStringList> list;
-signals:
+
+ signals:
     void finished();
 };
 
-#endif // STUDENTRESULTSWIDGET_H
+#endif  // STUDENTRESULTSWIDGET_H

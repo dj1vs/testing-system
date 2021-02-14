@@ -1,5 +1,17 @@
+// Copyright 2021 Dmitriy Trifonov
+
+
 #ifndef MYCLIENT_H
 #define MYCLIENT_H
+
+
+#include <QtGlobal>
+#include <QMainWindow>
+#include <QTcpSocket>
+#include <QTcpServer>
+#include <QDebug>
+#include <QStatusBar>
+#include <QMessageBox>
 
 #include "../../lib/DateConverter.h"
 #include "../../lib/StringOperator.h"
@@ -29,21 +41,14 @@
 #include "widgets/Student/CompleteTestWidget.h"
 #include "widgets/Student/StudentResultsWidget.h"
 
-#include <QtGlobal>
-#include <QMainWindow>
-#include <QTcpSocket>
-#include <QTcpServer>
-#include <QDebug>
-#include <QStatusBar>
-#include <QMessageBox>
-
-class MyClient : public QMainWindow
-{
+class MyClient : public QMainWindow {
     Q_OBJECT
-public:
+
+ public:
     MyClient(const QString& strHost, int nPort, QWidget *parent = nullptr);
     ~MyClient();
-private:
+
+ private:
     AuthorizationWidget *aw;
     AdminPlusWidget *adminPlusW;
     AddGroupWidget *agw;
@@ -67,7 +72,8 @@ private:
     StudentTestsWidget *studentTestsW;
     CompleteTestWidget *completeTestW;
     StudentResultsWidget *studentsResultW;
-private:
+
+ private:
     enum STATE {AUTHORIZATION,
                 ADMIN,
                 ADMINPLUS, ADDGROUP,
@@ -78,7 +84,8 @@ private:
     int testid = 0;
     QTcpSocket* m_pTcpSocket;
     quint16 m_nNextBlockSize;
-private:
+
+ private:
     QList <QList <QString>> allResultsList;
     QList <QStringList> studentPlannedTests;
     QList <QString> allGroupsList;
@@ -87,19 +94,22 @@ private:
     QList <QList<QString>> allPlannedTestsTaskList;
     QList <QList <QString>> allPlannedTestsList;
     QList <QStringList> studentResults;
-private:
-    void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err);};
-    void showMsg(QString msg){statusBar()->showMessage(msg);};
-    void showMsgBox(QString msg) {QMessageBox msgBox;msgBox.setText(msg);msgBox.exec();};
+
+ private:
+    void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err); }
+    void showMsg(QString msg) {statusBar()->showMessage(msg); }
+    void showMsgBox(QString msg) {QMessageBox msgBox; msgBox.setText(msg); msgBox.exec(); }
     void setAuthorizationWindow();
     void setAdminPlusWindow();
     void setAdminWindow();
     void setTeacherWindow();
     void setStudentWindow();
-private slots:
-    void slotReadyRead          (                            );
-    void slotError              (QAbstractSocket::SocketError);
-    void slotSendToServer       (QString msg                 );
+
+ private slots:
+
+    void slotReadyRead();
+    void slotError(QAbstractSocket::SocketError);
+    void slotSendToServer(QString msg);
     void solveMsg(QString msg);
 };
-#endif // MYCLIENT_H
+#endif  // MYCLIENT_H

@@ -1,24 +1,21 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "StudentTestsWidget.h"
 
-StudentTestsWidget::StudentTestsWidget(QList <QStringList> list,  QWidget *parent) : QWidget(parent)
-{
+StudentTestsWidget::StudentTestsWidget(QList <QStringList> list,  QWidget *parent) : QWidget(parent) {
     goBack = new QPushButton("back", this);
     start = new QPushButton("start", this);
 
     table = new QTableView(this);
     model = new QStandardItemModel(list.size(), params.size(), this);
 
-    for(int i = 0; i < params.size(); ++i)
-    {
+    for (int i = 0; i < params.size(); ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
         model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    for(int row = 0; row < list.size(); ++row)
-    {
-        for(int col = 0; col < params.size(); ++col)
-        {
-            QModelIndex index=model->index(row,col,QModelIndex());
+    for (int row = 0; row < list.size(); ++row) {
+        for (int col = 0; col < params.size(); ++col) {
+            QModelIndex index = model->index(row, col, QModelIndex());
             model->setData(index, list[row][col]);
         }
     }

@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ADDUSERWIDGET_H
 #define ADDUSERWIDGET_H
 
@@ -9,20 +10,22 @@
 #include <QFormLayout>
 #include <QComboBox>
 
-class AddUserWidget : public QWidget
-{
+class AddUserWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AddUserWidget(QWidget *parent = nullptr);
-    QString getLogin() const {return login->text();};
-    QString getPassword() const {return password->text();};
-    QString getName() const {return name->text();};
-    QString getSurname() const {return surname->text();};
-    QString getRole() const {return roleBox->itemText(roleBox->currentIndex());};
-public:
+    QString getLogin() const {return login->text(); }
+    QString getPassword() const {return password->text(); }
+    QString getName() const {return name->text(); }
+    QString getSurname() const {return surname->text(); }
+    QString getRole() const {return roleBox->itemText(roleBox->currentIndex()); }
+
+ public:
     QPushButton *addUser;
     QPushButton *goBack;
-private:
+
+ private:
     QLabel *loginLabel;
     QLabel *passwordLabel;
     QLabel *nameLabel;
@@ -34,9 +37,6 @@ private:
     QLineEdit *name;
     QLineEdit *surname;
     QFormLayout *layout;
-
-signals:
-
 };
 
-#endif // ADDUSERWIDGET_H
+#endif  // ADDUSERWIDGET_H

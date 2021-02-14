@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AppointGroupWidget.h"
 
-AppointGroupWidget::AppointGroupWidget(QWidget *parent) : QWidget(parent)
-{
+AppointGroupWidget::AppointGroupWidget(QWidget *parent) : QWidget(parent) {
     nameLabel = new QLabel("Teacher name:", this);
     surnameLabel = new QLabel("Teacher surname:", this);
     titleLabel = new QLabel("Group name:", this);

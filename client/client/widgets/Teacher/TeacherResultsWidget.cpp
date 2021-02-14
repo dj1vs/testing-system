@@ -1,31 +1,30 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "TeacherResultsWidget.h"
 
-TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QString>> l) : QWidget(parent), list(l)
-{
-//        const QList <QString> params = {"name","surname" "group", "test name", "percent", "subject", "date"};
-    for(auto &i : list)
-    {
-        students.insert({i[0], i[1]});
-        groups.insert(i[2]);
-        testNames.insert(i[3]);
-        subjects.insert(i[5]);
+TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QString>> l) : QWidget(parent), list(l) {
+    for (auto &i : list) {
+        if(students.indexOf({i[0], i[1]}) == -1)
+            students.push_back({i[0], i[1]});
+        if(groups.indexOf(i[2]) == -1)
+            groups.push_back(i[2]);
+        if(testNames.indexOf(i[3]) == -1)
+            testNames.push_back(i[3]);
+        if(subjects.indexOf(i[5]) == -1)
+            subjects.push_back(i[5]);
     }
 
     goBack = new QPushButton("go back");
     sort = new QPushButton("sort");
     table = new QTableView();
     model = new QStandardItemModel(list.size(), params.size());
-    for(int i = 0; i < params.size(); ++i)
-    {
+    for (int i = 0; i < params.size(); ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
         model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    for(int row = 0; row < list.size(); ++row)
-    {
-        for(int col = 0; col < params.size(); ++col)
-        {
-            QModelIndex index=model->index(row,col,QModelIndex());
+    for (int row = 0; row < list.size(); ++row) {
+        for (int col = 0; col < params.size(); ++col) {
+            QModelIndex index = model->index(row, col, QModelIndex());
             model->setData(index, list[row][col]);
         }
     }
@@ -40,45 +39,32 @@ TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QStrin
     layout->addWidget(goBack);
 
     setLayout(layout);
-
 }
 
-void TeacherResultsWidget::showSort()
-{
-
-//    const QList <QString> sortLabelTexts = {"student", "group", "test name", "subject", "date"};
-//    QList <QLabel *> sortLabels;
-
-//    QComboBox *studentBox;
-//    QComboBox *groupBox;
-//    QComboBox *testnameBox;
-//    QComboBox *subjectBox;
-//    QCheckBox *sortByDate;
-//    QDateEdit *sortDateEdit;
-//    QDialogButtonBox *buttonBox;
+void TeacherResultsWidget::showSort() {
     studentBox = new QComboBox();
     studentBox->addItem("");
-    for(auto &i : students)
+    for (auto &i : students)
         studentBox->addItem(i[0] + " " + i[1]);
     studentBox->setCurrentIndex(0);
 
 
     groupBox = new QComboBox();
     groupBox->addItem("");
-    for(auto &i : groups)
+    for (auto &i : groups)
         groupBox->addItem(i);
     groupBox->setCurrentIndex(0);
 
 
     testnameBox = new QComboBox();
     testnameBox->addItem("");
-    for(auto &i : testNames)
+    for (auto &i : testNames)
         testnameBox->addItem(i);
     testnameBox->setCurrentIndex(0);
 
     subjectBox = new QComboBox();
     subjectBox->addItem("");
-    for(auto &i : subjects)
+    for (auto &i : subjects)
         subjectBox->addItem(i);
     subjectBox->setCurrentIndex(0);
 
@@ -100,53 +86,36 @@ void TeacherResultsWidget::showSort()
     connect(buttonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
     d->setLayout(l);
-    if(d->exec() == QDialog::Accepted)
+    if (d->exec() == QDialog::Accepted)
         editTable();
 }
 
-void TeacherResultsWidget::editTable()
-{
-//  const QList <QString> params = {"name","surname" "group", "test name", "percent", "subject", "date"};
+void TeacherResultsWidget::editTable() {
     QList <QString> student = studentBox->currentText().split(" ");
     QString group = groupBox->currentText();
     QString testname = testnameBox->currentText();
     QString subject = subjectBox->currentText();
     QString date = DateConverter::DateToStringFormat(sortDateEdit->date(), "DD-MM-YYYY");
 
-    qDebug() << student;qDebug() <<  group;  qDebug() << testname;qDebug() <<subject;qDebug() <<  !sortByDate->isChecked();
-
-    if(studentBox->currentText() == "" && group == "" && testname == "" && subject == "" && !sortByDate->isChecked())
-    {
-        qDebug() << "1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n1\n";
+    if (studentBox->currentText() == "" && group == "" && testname == "" && subject == "" && !sortByDate->isChecked()) {
         model->setRowCount(list.size());
-        for(int row = 0; row < list.size(); ++row)
-        {
-            for(int col = 0; col < params.size(); ++col)
-            {
-                QModelIndex index=model->index(row,col,QModelIndex());
+        for (int row = 0; row < list.size(); ++row) {
+            for (int col = 0; col < params.size(); ++col) {
+                QModelIndex index = model->index(row, col, QModelIndex());
                 model->setData(index, list[row][col]);
             }
         }
-    }
-
-    else
-    {
-        for(int row = 0; row < model->rowCount(); ++row)
-        {
-            if((studentBox->currentText() != "" &&
+    } else {
+        for (int row = 0; row < model->rowCount(); ++row) {
+            if ((studentBox->currentText() != "" &&
                 (model->data(model->index(row, 0, QModelIndex())).toString() != student[0] || model->data(model->index(row, 1, QModelIndex())).toString() != student[1]))
             || (group != "" && model->data(model->index(row, 2, QModelIndex())).toString() != group)
             || (testname != "" && model->data(model->index(row, 3, QModelIndex())).toString() != testname)
             || (subject != "" && model->data(model->index(row, 5, QModelIndex())).toString() != subject)
-            || (sortByDate->isChecked() && date != "01-01-2000" && model->data(model->index(row, 6, QModelIndex())).toString() != date))
-            {
+            || (sortByDate->isChecked() && date != "01-01-2000" && model->data(model->index(row, 6, QModelIndex())).toString() != date)) {
                 model->removeRow(row);
                 row--;
             }
         }
     }
-
-
-
-
 }

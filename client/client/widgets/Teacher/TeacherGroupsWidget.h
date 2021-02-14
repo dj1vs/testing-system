@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef TEACHERGROUPSWIDGET_H
 #define TEACHERGROUPSWIDGET_H
 
@@ -12,22 +13,23 @@
 #include <QDebug>
 
 
-class TeacherGroupsWidget : public QWidget
-{
+class TeacherGroupsWidget : public QWidget {
     Q_OBJECT
-public:
-    explicit TeacherGroupsWidget(QWidget *parent = nullptr, QList <QString> list = {});
+
+ public:
+    explicit TeacherGroupsWidget
+    (QWidget *parent = nullptr, QList <QString> list = {});
     void showGroupStudents(QList <QList <QString>> groupStudents);
-signals:
-public:
+
+ public:
     QPushButton *goBack;
     QList <QPushButton *> tableButtons;
-private:
+
+ private:
     QTableView *view;
     QStandardItemModel *model;
 
     const QList <QString> headerList = {"Group name", "students"};
-
 };
 
-#endif // TEACHERGROUPSWIDGET_H
+#endif  // TEACHERGROUPSWIDGET_H

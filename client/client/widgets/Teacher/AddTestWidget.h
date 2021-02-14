@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ADDTESTWIDGET_H
 #define ADDTESTWIDGET_H
 
@@ -24,35 +25,37 @@
 
 typedef enum {RANDOM, MANUAL} STATE;
 
-class AddTestWidget : public QWidget
-{
+class AddTestWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AddTestWidget(QWidget *parent = nullptr);
 
-    void setManualTaskList (QList <QList <QString>> l) {manualTaskList = l;};
-    void setUserID(int id) {userID = id;};
+    void setManualTaskList(QList <QList <QString>> l) {manualTaskList = l; }
+    void setUserID(int id) {userID = id; }
 
 
-    QString getName() const {return nameEdit->text();};
-    QString getSubject() const {return subjectEdit->text();};
-    QDate getDate() const {return dateEdit->selectedDate();};
-    int getState() const {return state;};
-    QString getTheme() const {return randomThemeEdit->text();};
-    int getTasksAmount() const {return randomAmountBox->value();};
-    QString getTasksAuthor() const {return randomShowMy->isChecked() ? "ME" : "ALL";};
+    QString getName() const {return nameEdit->text(); }
+    QString getSubject() const {return subjectEdit->text(); }
+    QDate getDate() const {return dateEdit->selectedDate(); }
+    int getState() const {return state; }
+    QString getTheme() const {return randomThemeEdit->text(); }
+    int getTasksAmount() const {return randomAmountBox->value(); }
+    QString getTasksAuthor() const {return randomShowMy->isChecked() ? "ME" : "ALL"; }
     QList <QString> getPickedTasks() const {
         QList <QString> res;
-        for(int i = 0; i < manualPickedModel->rowCount(); ++i)
-            res.append(manualAllModel->data(manualAllModel->index(i,0,QModelIndex())).toString());
+        for (int i = 0; i < manualPickedModel->rowCount(); ++i)
+            res.append(manualAllModel->data(manualAllModel->index(i, 0, QModelIndex())).toString());
         return res;
-    };
+    }
 
     void setManual();
-public:
+
+ public:
     STATE state;
     QPushButton *createButton;
-private:
+
+ private:
     QList <QLabel *> labels;
     const QList <QString> labelNames = {"Test name", "Subject", "Date"};
     QLineEdit *nameEdit;
@@ -81,8 +84,8 @@ private:
     QComboBox *manualSortTheme;
     QCheckBox *manualSortMine;
 
-    QSet <QString> manualSubjects;
-    QSet <QString> manualThemes;
+    QList <QString> manualSubjects;
+    QList <QString> manualThemes;
     QList <QList <QString>> manualTaskList;
     QPushButton *manualSort;
     QPushButton *manualDelete;
@@ -97,13 +100,13 @@ private:
 
 
 
-private:
+ private:
     bool checkStart();
     void setParamsRandom();
-signals:
+
+ signals:
     void finished();
     void setUpManual();
-
 };
 
-#endif // ADDTESTWIDGET_H
+#endif  // ADDTESTWIDGET_H

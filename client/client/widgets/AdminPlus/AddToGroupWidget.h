@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ADDTOGROUPWIDGET_H
 #define ADDTOGROUPWIDGET_H
 
@@ -8,18 +9,20 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 
-class AddToGroupWidget : public QWidget
-{
+class AddToGroupWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AddToGroupWidget(QWidget *parent = nullptr);
-    QString getName() const {return name->text();};
-    QString getSurame() const {return surname->text();};
-    QString getTitle() const {return title->text();};
-public:
+    QString getName() const {return name->text(); }
+    QString getSurame() const {return surname->text(); }
+    QString getTitle() const {return title->text(); }
+
+ public:
     QPushButton *sendToGroup;
     QPushButton *goBack;
-private:
+
+ private:
     QLabel *nameLabel;
     QLabel *surnameLabel;
     QLabel *titleLabel;
@@ -29,4 +32,4 @@ private:
     QVBoxLayout *layout;
 };
 
-#endif // ADDTOGROUPWIDGET_H
+#endif  // ADDTOGROUPWIDGET_H

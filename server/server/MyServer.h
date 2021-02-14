@@ -1,13 +1,11 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef MYSERVER_H
 #define MYSERVER_H
 
-#include "../../lib/DateConverter.h"
-#include "../../lib/StringOperator.h"
 #include <QObject>
 #include <QTcpServer>
 #include <QTcpSocket>
 #include <QTime>
-#include <iostream>
 #include <QDataStream>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -18,25 +16,39 @@
 #include <QSqlTableModel>
 #include <QRandomGenerator>
 
+#include <iostream>
+#include <utility>
+
+#include "../../lib/DateConverter.h"
+#include "../../lib/StringOperator.h"
+
 class QTcpServer;
 class QTcpSocket;
 
 
-class MyServer : public QObject
-{
+class MyServer : public QObject {
     Q_OBJECT
-public:
+
+ public:
     explicit MyServer(int nPort, QObject *parent = nullptr);
-private:
+
+ private:
     QTcpServer* m_ptcpServer;
-    quint16     m_nNextBlockSize;
+    quint16 m_nNextBlockSize;
     QSqlDatabase db;
-private:
+
+ private:
     void sendToClient(QTcpSocket* pSocket, const QString& str);
     void solveMsg(QTcpSocket* pSocket, QString msg);
-public slots:
+    void printSQLError(QSqlQuery query) {qDebug() << "Can not run database query :("
+                                         << query.lastError().databaseText()
+                                         << query.lastError().driverText(); }
+
+
+
+ public slots:
     virtual void slotNewConnection();
-            void slotReadClient   ();
+    void slotReadClient();
 };
 
-#endif // MYSERVER_H
+#endif  // MYSERVER_H

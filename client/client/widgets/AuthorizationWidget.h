@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef AUTHORIZATIONWIDGET_H
 #define AUTHORIZATIONWIDGET_H
 
@@ -6,18 +7,19 @@
 #include <QPushButton>
 #include <KPasswordLineEdit>
 
-class AuthorizationWidget : public QWidget
-{
+class AuthorizationWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AuthorizationWidget(QWidget *parent = nullptr);
-    QString getLogin() const {return login->text();};
-    QString getPassword() const {return password->password();};
+    QString getLogin() const {return login->text(); }
+    QString getPassword() const {return password->password(); }
 
     QPushButton* authorize;
-private:
+
+ private:
     QLineEdit* login;
     KPasswordLineEdit* password;
 };
 
-#endif // AUTHORIZATIONWIDGET_H
+#endif  // AUTHORIZATIONWIDGET_H

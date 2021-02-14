@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef APPOINTGROUPWIDGET_H
 #define APPOINTGROUPWIDGET_H
 
@@ -8,18 +9,20 @@
 #include <QVBoxLayout>
 #include <QFormLayout>
 
-class AppointGroupWidget : public QWidget
-{
+class AppointGroupWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AppointGroupWidget(QWidget *parent = nullptr);
-    QString getName() const {return name->text();};
-    QString getSurname() const {return surname->text();};
-    QString getTitle() const {return title->text();};
-public:
+    QString getName() const {return name->text(); }
+    QString getSurname() const {return surname->text(); }
+    QString getTitle() const {return title->text(); }
+
+ public:
     QPushButton *sendAppointGroup;
     QPushButton *goBack;
-private:
+
+ private:
     QLabel *nameLabel;
     QLabel *surnameLabel;
     QLabel *titleLabel;
@@ -27,8 +30,6 @@ private:
     QLineEdit *surname;
     QLineEdit *title;
     QVBoxLayout *layout;
-signals:
-
 };
 
-#endif // APPOINTGROUPWIDGET_H
+#endif  // APPOINTGROUPWIDGET_H

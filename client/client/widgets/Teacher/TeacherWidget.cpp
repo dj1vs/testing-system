@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "TeacherWidget.h"
 
-TeacherWidget::TeacherWidget(QWidget *parent) : QWidget(parent)
-{
+TeacherWidget::TeacherWidget(QWidget *parent) : QWidget(parent) {
     newTaskButton = new QPushButton("new task");
     newTestButton = new QPushButton("new test");
     viewGroupsButton = new QPushButton("view groups");

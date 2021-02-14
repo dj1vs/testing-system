@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "StudentWidget.h"
 
-StudentWidget::StudentWidget(QWidget *parent) : QWidget(parent)
-{
+StudentWidget::StudentWidget(QWidget *parent) : QWidget(parent) {
     currentTests = new QPushButton("current tests");
     results = new QPushButton("results");
     goBack = new QPushButton("go back");

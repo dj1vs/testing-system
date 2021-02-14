@@ -1,7 +1,6 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef TEACHERRESULTSWIDGET_H
 #define TEACHERRESULTSWIDGET_H
-
-#include "../../lib/DateConverter.h"
 
 #include <QWidget>
 #include <QPushButton>
@@ -18,14 +17,19 @@
 #include <QFormLayout>
 #include <QDialogButtonBox>
 
-class TeacherResultsWidget : public QWidget
-{
+#include "../../lib/DateConverter.h"
+
+class TeacherResultsWidget : public QWidget {
     Q_OBJECT
-public:
-    explicit TeacherResultsWidget(QWidget *parent = nullptr, QList <QList <QString>> l = {});
-public:
+
+ public:
+    explicit TeacherResultsWidget(QWidget *parent = nullptr,
+                                  QList <QList <QString>> l = {});
+
+ public:
     QPushButton *goBack;
-private:
+
+ private:
     QPushButton *sort;
     QStandardItemModel *model;
     QTableView *table;
@@ -38,18 +42,18 @@ private:
     QDateEdit *sortDateEdit;
     QDialogButtonBox *buttonBox;
 
-    const QList <QString> params = {"name","surname", "group", "test name", "percent", "subject", "date"};
+    const QList <QString> params =
+    {"name", "surname", "group", "test name", "percent", "subject", "date"};
 
     QList <QList <QString>> list;
-    QSet <QList<QString>> students;
-    QSet <QString> groups;
-    QSet <QString> testNames;
-    QSet <QString> subjects;
-private:
+    QList <QList<QString>> students;
+    QList <QString> groups;
+    QList <QString> testNames;
+    QList <QString> subjects;
+
+ private:
     void showSort();
     void editTable();
-signals:
-
 };
 
-#endif // TEACHERRESULTSWIDGET_H
+#endif  // TEACHERRESULTSWIDGET_H

@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef APPOINTTESTWIDGET_H
 #define APPOINTTESTWIDGET_H
 
@@ -7,18 +8,19 @@
 #include <QPushButton>
 #include <QFormLayout>
 
-class AppointTestWidget : public QWidget
-{
+class AppointTestWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AppointTestWidget(QWidget *parent = nullptr, QList <QString> groups = {}, QList <QString> tests = {});
-    QString getGroup() const {return groupBox->currentText();};
-    QString getTest() const {return testBox->currentText();};
-public:
+    QString getGroup() const {return groupBox->currentText(); }
+    QString getTest() const {return testBox->currentText(); }
+
+ public:
     QPushButton *submit;
     QPushButton *goBack;
-signals:
-private:
+
+ private:
     KComboBox *groupBox;
     KComboBox *testBox;
 
@@ -26,4 +28,4 @@ private:
     KCompletion *testCompletion;
 };
 
-#endif // APPOINTTESTWIDGET_H
+#endif  // APPOINTTESTWIDGET_H

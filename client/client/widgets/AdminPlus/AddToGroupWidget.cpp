@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AddToGroupWidget.h"
 
-AddToGroupWidget::AddToGroupWidget(QWidget *parent) : QWidget(parent)
-{
+AddToGroupWidget::AddToGroupWidget(QWidget *parent) : QWidget(parent) {
     nameLabel = new QLabel("Name:", this);
     surnameLabel = new QLabel("Surname:", this);
     titleLabel = new QLabel("Group title:", this);

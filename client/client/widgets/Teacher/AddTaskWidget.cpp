@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AddTaskWidget.h"
 
-AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent)
-{
+AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     quesitionLabel = new QLabel("Вопрос:");
     answerLabel = new QLabel("Answer");
     answerOptionsLabel = new QLabel("Answer options");
@@ -14,10 +14,10 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent)
     deleteEmpty = new QPushButton("delete empty");
 
     connect(newOption, &QPushButton::clicked, this,
-            [this] {showAddAnswerOptions();});
+            [this] {showAddAnswerOptions(); });
 
     connect(deleteEmpty, &QPushButton::clicked, this,
-            [this] {addTaskAnswerOptionsDeleteEmpty();});
+            [this] {addTaskAnswerOptionsDeleteEmpty(); });
 
     quesition = new QTextEdit();
     answer = new QTextEdit();
@@ -47,23 +47,19 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent)
     setLayout(layout);
 }
 
-void AddTaskWidget::showAddAnswerOptions()
-{
+void AddTaskWidget::showAddAnswerOptions() {
     bool ok;
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                          tr("New answer option:"), QLineEdit::Normal, "", &ok);
-    if (ok && !text.isEmpty())
-    {
+    if (ok && !text.isEmpty()) {
         answerOptions.push_back(text);
         answerOptionsModel->setStringList(answerOptions);
         answerOptionsView->setModel(answerOptionsModel);
     }
 }
-void AddTaskWidget::addTaskAnswerOptionsDeleteEmpty()
-{
-    for(int i = 0; i < answerOptionsModel->rowCount(); ++i)
-    {
-        if(answerOptionsModel->stringList().at(i) == "")
+void AddTaskWidget::addTaskAnswerOptionsDeleteEmpty() {
+    for (int i = 0; i < answerOptionsModel->rowCount(); ++i) {
+        if (answerOptionsModel->stringList().at(i) == "")
             answerOptionsModel->removeRow(i);
     }
     answerOptionsView->setModel(answerOptionsModel);

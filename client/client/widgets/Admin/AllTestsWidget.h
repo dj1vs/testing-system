@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ALLTESTSWIDGET_H
 #define ALLTESTSWIDGET_H
 
@@ -16,23 +17,24 @@
 #include <QListView>
 #include <QErrorMessage>
 
-class AllTestsWidget : public QWidget
-{
+class AllTestsWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AllTestsWidget(QWidget *parent = nullptr, QList<QList <QString>> l = {});
     void showTestTasks(QList <QList<QString>> allPlannedTestsTaskList);
-public:
+
+ public:
     QPushButton *goBack;
     QList <QPushButton *> buttons;
-private:
+
+ private:
     QTableView *table;
     QStandardItemModel *model;
     QPushButton *sort;
     QVBoxLayout *layout;
 
     QList <QPushButton *> list;
-    ////////////////////////////////////////////
     QList <QList<QString>> taskList;
     QList <QList <QString>> testsList;
     QLabel *sortNameLabel;
@@ -59,13 +61,12 @@ private:
     QStringListModel *taskAnswerOptionsModel;
     QListView *taskAnswerOptionsView;
     QVBoxLayout *taskLayout;
-private:
+
+ private:
     void showAllPlannedTestsSort();
     void editAllPlannedTestsTable();
     void showNextTask();
     void showPrevTask();
-signals:
-
 };
 
-#endif // ALLTESTSWIDGET_H
+#endif  // ALLTESTSWIDGET_H

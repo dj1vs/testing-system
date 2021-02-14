@@ -1,12 +1,10 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "CompleteTestWidget.h"
 
-CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list)
-{
-    qDebug() << testList;
+CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list) {
     testname = testList[0][0];
-    for(int i = 0; i < testList.size(); ++i)
+    for (int i = 0; i < testList.size(); ++i)
         answers.push_back("");
-    qDebug() << testList;
     currentIndex = 0;
     next = new QPushButton("next");
     previous = new QPushButton("prev");
@@ -14,34 +12,28 @@ CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *pa
     buttonsBox = new QGroupBox();
 
     connect(next, &QPushButton::clicked, this, [this] {
-        for(int i = 0; i < answerOptionButtons.size(); ++i)
-        {
-            if(answerOptionButtons[i]->isChecked())
-            {
+        for (int i = 0; i < answerOptionButtons.size(); ++i) {
+            if (answerOptionButtons[i]->isChecked()) {
                 answers[currentIndex] = answerOptionButtons[i]->text();
                 break;
             }
         }
-        if (currentIndex+1 == testList.size())
+        if (currentIndex+1 == testList.size()) {
             askIfFinished();
-        else
-        {
+        } else {
             currentIndex++;
             setIndexTask();
         }
     });
 
     connect(previous, &QPushButton::clicked, this, [this] {
-        for(int i = 0; i < answerOptionButtons.size(); ++i)
-        {
-            if(answerOptionButtons[i]->isChecked())
-            {
+        for (int i = 0; i < answerOptionButtons.size(); ++i) {
+            if (answerOptionButtons[i]->isChecked()) {
                 answers[currentIndex] = answerOptionButtons[i]->text();
                 break;
             }
         }
-        if (currentIndex)
-        {
+        if (currentIndex) {
             currentIndex--;
             setIndexTask();
         }
@@ -61,8 +53,7 @@ CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *pa
     setIndexTask();
 }
 
-void CompleteTestWidget::setIndexTask()
-{
+void CompleteTestWidget::setIndexTask() {
     generalLayout->removeItem(generalLayout->itemAt(1));
     delete buttonsBox;
     buttonsBox = new QGroupBox();
@@ -70,12 +61,11 @@ void CompleteTestWidget::setIndexTask()
     taskText->setText(testList[currentIndex][1]);
     QStringList answerOptions = testList[currentIndex][2].split(";");
     QVBoxLayout *l = new QVBoxLayout();
-    for(int i = 0; i < answerOptions.size(); ++i)
-    {
-        if(answerOptions[i] == "")
+    for (int i = 0; i < answerOptions.size(); ++i) {
+        if (answerOptions[i] == "")
             continue;
         QRadioButton *buf = new QRadioButton(answerOptions[i], this);
-        if(answerOptions[i] == answers[currentIndex])
+        if (answerOptions[i] == answers[currentIndex])
             buf->setChecked(1);
         l->addWidget(buf);
         answerOptionButtons.push_back(buf);
@@ -84,8 +74,7 @@ void CompleteTestWidget::setIndexTask()
     generalLayout->insertWidget(1, buttonsBox);
 }
 
-void CompleteTestWidget::askIfFinished()
-{
+void CompleteTestWidget::askIfFinished() {
     QMessageBox msgBox;
     msgBox.setText("Вы собираетесь закончить тест!");
     msgBox.setInformativeText("Ок - закончить тест\nCancel - продолжить выполнение");
@@ -95,35 +84,31 @@ void CompleteTestWidget::askIfFinished()
     if (msgBox.exec() != QMessageBox::Ok)
         return;
     int answerSum = 0;
-    for (int i = 0; i < answers.size(); ++i)
-    {
-        if (answers[i] == testList[i][3])
-        {
+    for (int i = 0; i < answers.size(); ++i) {
+        if (answers[i] == testList[i][3]) {
             isAnswersCorrect.push_back(1);
             answerSum++;
-        }
-        else
+        } else {
            isAnswersCorrect.push_back(0);
+        }
     }
 
-    percent = QString::number((int)(((answerSum * 1.0) / (answers.size() * 1.0)) * 100.0));
+    percent = QString::number(static_cast<int>((((answerSum * 1.0) / (answers.size() * 1.0)) * 100.0)));
 
     QTableView *table = new QTableView();
     QStandardItemModel *model = new QStandardItemModel(answers.size(), 2, nullptr);
 
     const QStringList params = {"Task number", "Status"};
 
-    for(int i = 0; i < params.size(); ++i)
-    {
+    for (int i = 0; i < params.size(); ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
         model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    for(int row = 0; row < answers.size(); ++row)
-    {
-        QModelIndex index=model->index(row,0,QModelIndex());
+    for (int row = 0; row < answers.size(); ++row) {
+        QModelIndex index = model->index(row, 0, QModelIndex());
         model->setData(index, row+1);
-        index=model->index(row,1,QModelIndex());
+        index = model->index(row, 1, QModelIndex());
         model->setData(index, (isAnswersCorrect[row] ? "correct" : "wrong"));
     }
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -140,8 +125,4 @@ void CompleteTestWidget::askIfFinished()
     d->exec();
 
     emit finished();
-
-
-
-
 }

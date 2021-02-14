@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef COMPLETETESTWIDGET_H
 #define COMPLETETESTWIDGET_H
 
@@ -15,16 +16,17 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QLabel>
-class CompleteTestWidget : public QWidget
-{
+class CompleteTestWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit CompleteTestWidget(QList <QList <QString>> list, QWidget *parent = nullptr);
-public:
+
+ public:
     QString percent;
     QString testname;
-private:
 
+ private:
     QList <QRadioButton *> answerOptionButtons;
     QGroupBox *buttonsBox;
     QTextBrowser *taskText;
@@ -33,15 +35,18 @@ private:
     QPushButton *finish;
     QList <QList <QString>> testList;
     QVBoxLayout *generalLayout;
-private:
+
+ private:
     int currentIndex;
     QList <QString> answers;
     QList <bool> isAnswersCorrect;
-signals:
+
+ signals:
     void finished();
-private:
+
+ private:
     void setIndexTask();
     void askIfFinished();
 };
 
-#endif // COMPLETETESTWIDGET_H
+#endif  // COMPLETETESTWIDGET_H

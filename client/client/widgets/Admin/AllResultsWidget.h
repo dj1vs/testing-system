@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ALLRESULTSWIDGET_H
 #define ALLRESULTSWIDGET_H
 
@@ -10,18 +11,21 @@
 #include <QLineEdit>
 #include <QDialog>
 
-class AllResultsWidget : public QWidget
-{
+class AllResultsWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AllResultsWidget(QWidget *parent = nullptr, QList <QList <QString>> l = {});
-public:
+
+ public:
     QPushButton *goBack;
     QList <QList<QString>> list;
-private:
+
+ private:
     void showAllResultsSort();
     void editAllResults();
-private:
+
+ private:
     QPushButton *sort;
     QPushButton *save;
     QTableView *table;
@@ -36,8 +40,6 @@ private:
     QLineEdit *sortSubject;
     QLineEdit *sortTest;
     QVBoxLayout *sortLayout;
-signals:
-
 };
 
-#endif // ALLRESULTSWIDGET_H
+#endif  // ALLRESULTSWIDGET_H

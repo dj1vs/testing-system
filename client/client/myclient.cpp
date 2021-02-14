@@ -1,39 +1,35 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "myclient.h"
 
 MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
-    : QMainWindow(parent)
-{
+    : QMainWindow(parent) {
     m_pTcpSocket = new QTcpSocket(this);
     m_pTcpSocket->connectToHost(strHost, nPort);
 
-    connect(m_pTcpSocket, &QTcpSocket::connected, this, [this] {showMsg("Received the connected() signal");});
+    connect(m_pTcpSocket, &QTcpSocket::connected,
+            this, [this] {showMsg("Received the connected() signal");});
     connect(m_pTcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
-            this,         SLOT(slotError(QAbstractSocket::SocketError))
-           );
+            this,         SLOT(slotError(QAbstractSocket::SocketError)));
 
     setMinimumSize(WINW, WINH);
 
     setAuthorizationWindow();
 }
 
-MyClient::~MyClient()
-{
+MyClient::~MyClient() {
 }
 
-void MyClient::setAuthorizationWindow()
-{
+void MyClient::setAuthorizationWindow() {
     aw = new AuthorizationWidget(this);
-    connect(aw->authorize, &QPushButton::clicked, this, [this]
-    {
+    connect(aw->authorize, &QPushButton::clicked, this, [this] {
         slotSendToServer("{cmd='authorize';login='" + aw->getLogin() + "';"
                          "pass='" + aw->getPassword() + "';}");
     });
     setCentralWidget(aw);
 }
 
-void MyClient::slotReadyRead()
-{
+void MyClient::slotReadyRead() {
     QDataStream in(m_pTcpSocket);
     for (;;) {
         if (!m_nNextBlockSize) {
@@ -46,7 +42,7 @@ void MyClient::slotReadyRead()
         if (m_pTcpSocket->bytesAvailable() < m_nNextBlockSize) {
             break;
         }
-        QTime   time;
+        QTime time;
         QString str;
         in >> time >> str;
         solveMsg(str);
@@ -54,8 +50,7 @@ void MyClient::slotReadyRead()
     }
 }
 
-void MyClient::slotError(QAbstractSocket::SocketError err)
-{
+void MyClient::slotError(QAbstractSocket::SocketError err) {
     QString strError =
         "Error: " + (err == QAbstractSocket::HostNotFoundError ?
                      "The host was not found." :
@@ -63,13 +58,11 @@ void MyClient::slotError(QAbstractSocket::SocketError err)
                      "The remote host is closed." :
                      err == QAbstractSocket::ConnectionRefusedError ?
                      "The connection was refused." :
-                     QString(m_pTcpSocket->errorString())
-                    );
+                     QString(m_pTcpSocket->errorString()));
     showError(strError);
 }
 
-void MyClient::slotSendToServer(QString msg)
-{
+void MyClient::slotSendToServer(QString msg) {
     QByteArray  arrBlock;
     QDataStream out(&arrBlock, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_DefaultCompiledVersion);
@@ -80,48 +73,38 @@ void MyClient::slotSendToServer(QString msg)
     m_pTcpSocket->write(arrBlock);
 }
 
-void MyClient::solveMsg(QString msg)
-{
-    if(msg[0] != '{')
-    {
-        qDebug() << "Recieved invalid package:";
-        qDebug() << msg;
+void MyClient::solveMsg(QString msg) {
+    if (!StringOperator::validatePackage(msg)) {
+        qDebug() << "Recieved invalid package:" << msg;
         return;
     }
     QString cmd = StringOperator::cutArg(msg, "cmd");
-    if(cmd == "authorize")
-    {
-        if(StringOperator::cutArg(msg, "status") == "0")
-        {
+    if (cmd == "authorize") {
+        if (StringOperator::cutArg(msg, "status") == "0") {
             QString role = StringOperator::cutArg(msg, "role");
             showMsg("Succesfuly logged in!\nRole: " + role);
             id = StringOperator::cutArg(msg, "id").toInt();
             delete aw;
-            if(role == "admin+")
+            if (role == "admin+")
                 setAdminPlusWindow();
-            else if(role == "admin")
+            else if (role == "admin")
                 setAdminWindow();
             else if (role == "teacher")
                 setTeacherWindow();
-            else if(role == "student")
+            else if (role == "student")
                 setStudentWindow();
-        }
-        else
+        } else {
            showError("Invalid login/password :(");
-    }
-    else if(cmd == "add group")
-    {
+        }
+    } else if (cmd == "add group") {
         QString r = StringOperator::cutArg(msg, "status");
-        if(r == "0")
+        if (r == "0")
             showMsgBox("Group added succesfully");
         else
             showError("This group already exists!");
-    }
-    else if(cmd == "add to group")
-    {
+    } else if (cmd == "add to group") {
         int r = StringOperator::cutArg(msg, "status").toInt();
-        switch(r)
-        {
+        switch (r) {
         case 0:
             showMsg("added to group succesfully");
             break;
@@ -135,12 +118,9 @@ void MyClient::solveMsg(QString msg)
             showError("Already added");
             break;
         }
-    }
-    else if(cmd == "appoint")
-    {
+    } else if (cmd == "appoint") {
         int r = StringOperator::cutArg(msg, "status").toInt();
-        switch(r)
-        {
+        switch (r) {
         case 0:
             showMsg("successfully appointed");
             break;
@@ -151,12 +131,9 @@ void MyClient::solveMsg(QString msg)
             showError("No groups with this name\nOr\nThis group is already appointed");
             break;
         }
-    }
-    else if (cmd == "add user")
-    {
+    } else if (cmd == "add user") {
         int r = StringOperator::cutArg(msg, "status").toInt();
-        switch(r)
-        {
+        switch (r) {
         case 0:
             showMsg("User succesfully added");
             break;
@@ -164,19 +141,14 @@ void MyClient::solveMsg(QString msg)
             showError("This user already exists");
             break;
         }
-    }
-    else if(cmd == "view all results")
-    {
-        if(StringOperator::cutArg(msg, "status") == "sended")
-        {
+    } else if (cmd == "view all results") {
+        if (StringOperator::cutArg(msg, "status") == "sended") {
             delete adminW;
             arw = new AllResultsWidget(this, allResultsList);
             connect(arw->goBack, &QPushButton::clicked, this, [this] {delete arw; setAdminWindow();});
             setCentralWidget(arw);
             return;
-        }
-        else if(StringOperator::cutArg(msg, "status") == "started")
-        {
+        } else if (StringOperator::cutArg(msg, "status") == "started") {
             allResultsList.clear();
             return;
         }
@@ -184,57 +156,48 @@ void MyClient::solveMsg(QString msg)
         StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "subject"),
         StringOperator::cutArg(msg, "studentsname"), StringOperator::cutArg(msg, "studentssurname"),
         StringOperator::cutArg(msg, "percent")});
-    }
-    else if(cmd == "view all groups")
-    {
-        if(StringOperator::cutArg(msg, "status") == "sended")
-        {
+    } else if (cmd == "view all groups") {
+        if (StringOperator::cutArg(msg, "status") == "sended") {
             QTableView *table = new QTableView();
             QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
 
             QList <QString> params = {"Name", "Teachers", "Students"};
 
-            for(int i = 0; i < 3; ++i)
-            {
+            for (int i = 0; i < 3; ++i) {
                 QByteArray ba = params[i].toLocal8Bit();
                 const char* c_str = ba.data();
                 model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
             }
 
-            for(int row = 0; row < allGroupsList.size(); ++row)
-            {
-                QModelIndex index=model->index(row,0,QModelIndex());
+            for (int row = 0; row < allGroupsList.size(); ++row) {
+                QModelIndex index = model->index(row, 0, QModelIndex());
                 model->setData(index, allGroupsList[row]);
             }
 
             table->setEditTriggers(QAbstractItemView::NoEditTriggers);
             table->setModel(model);
 
-            for(int row = 0; row < allGroupsList.size(); ++row)
-            {
-                QModelIndex index1=model->index(row,1,QModelIndex());
-                QString str = model->index(row,0,QModelIndex()).data().toString();
+            for (int row = 0; row < allGroupsList.size(); ++row) {
+                QModelIndex index1 = model->index(row, 1, QModelIndex());
+                QString str = model->index(row, 0, QModelIndex()).data().toString();
                 QPushButton *button1 = new QPushButton(this);
                 button1->setAccessibleName(str);
                 connect(button1, &QPushButton::clicked, this,
-                        [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}");});
-
+                        [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}"); });
                 table->setIndexWidget(index1, button1);
-
-                QModelIndex index2=model->index(row,2,QModelIndex());
+                QModelIndex index2 = model->index(row, 2, QModelIndex());
                 QPushButton *button2 = new QPushButton(this);
                 button2->setAccessibleName(str);
 
                 connect(button2, &QPushButton::clicked, this,
-                        [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}");});
+                        [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}"); });
 
 
                 table->setIndexWidget(index2, button2);
             }
 
             allGroupsW = new AllGroupsWidget(this, table, model);
-            connect(allGroupsW->goBack, &QPushButton::clicked, this, [this]
-               {
+            connect(allGroupsW->goBack, &QPushButton::clicked, this, [this] {
                delete allGroupsW;
                groupStudents.clear(); groupTeachers.clear();
                allGroupsList.clear();
@@ -243,75 +206,59 @@ void MyClient::solveMsg(QString msg)
             return;
         }
         allGroupsList.push_back(StringOperator::cutArg(msg, "name"));
-    }
-    else if (cmd == "view group teachers")
-    {
+    } else if (cmd == "view group teachers") {
         QString status = StringOperator::cutArg(msg, "status");
-        if(status == "sended")
-        {
+        if (status == "sended") {
             allGroupsW->showGroupTeachers(groupTeachers);
             groupTeachers.clear();
-        }
-        else
+        } else {
             groupTeachers.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "surname")});
-    }
-    else if (cmd == "view group students")
-    {
+        }
+    } else if (cmd == "view group students") {
         QString status = StringOperator::cutArg(msg, "status");
-        if(status == "sended")
-        {
-            if(teacherGroupsW != nullptr)
+        if (status == "sended") {
+            if (teacherGroupsW != nullptr)
                 teacherGroupsW->showGroupStudents(groupStudents);
             else
                 allGroupsW->showGroupStudents(groupStudents);
             groupStudents.clear();
-        }
-        else
+        } else {
             groupStudents.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "surname")});
-    }
-    else if(cmd == "view all planned tests")
-    {
+        }
+    } else if (cmd == "view all planned tests") {
         QString status = StringOperator::cutArg(msg, "status");
-        if (status == "sended")
-        {
-            if(state == APPOINTTEST)
-            {
+        if (status == "sended") {
+            if (state == APPOINTTEST) {
                 delete teacherW;
                 QStringList testList;
-                for(auto &i : allPlannedTestsList)
+                for (auto &i : allPlannedTestsList)
                     testList.push_back(i[2]);
                 appointTestW = new AppointTestWidget(this, teacherGroups, testList);
                 connect(appointTestW->goBack, &QPushButton::clicked, this, [this] {delete appointTestW; setTeacherWindow();});
-                connect(appointTestW->submit, &QPushButton::clicked, this, [this]
-                {
+                connect(appointTestW->submit, &QPushButton::clicked, this, [this] {
                     slotSendToServer("{cmd='appoint test';testname='" + appointTestW->getTest() + "';groupname='" + appointTestW->getGroup() + "';}");
-                showMsg("sended!");});
+                showMsg("sended!"); });
                 setCentralWidget(appointTestW);
                 return;
             }
             atw = new AllTestsWidget(this, allPlannedTestsList);
             connect(atw->goBack, &QPushButton::clicked, this,
                     [this] {delete atw; setAdminWindow();});
-            for(int i = 0; i < atw->buttons.size(); ++i)
-            {
+            for (int i = 0; i < atw->buttons.size(); ++i) {
                 connect(atw->buttons[i], &QPushButton::clicked, this, [this, i]
                 {slotSendToServer("{cmd='view test tasks';testname='" + atw->buttons[i]->accessibleName() + "';}");});
             }
             setCentralWidget(atw);
-        }
-        else if (status == "started")
+        } else if (status == "started") {
             allPlannedTestsList.clear();
-        else
+        } else {
             allPlannedTestsList.push_back({StringOperator::cutArg(msg, "teachername"), StringOperator::cutArg(msg, "teachersurname"), StringOperator::cutArg(msg, "testname"),
                                           StringOperator::cutArg(msg, "subject"), StringOperator::cutArg(msg, "date")});
-    }
-    else if(cmd == "view test tasks")
-    {
+        }
+    } else if (cmd == "view test tasks") {
         QString status = StringOperator::cutArg(msg, "status");
-        if(status == "sended")
-        {
-           if(state == COMPLETETEST)
-           {
+        if (status == "sended") {
+           if (state == COMPLETETEST) {
                delete studentTestsW;
                completeTestW = new CompleteTestWidget(allPlannedTestsTaskList, this);
                connect(completeTestW, &CompleteTestWidget::finished, this, [this]{
@@ -321,114 +268,89 @@ void MyClient::solveMsg(QString msg)
                    setStudentWindow();
                });
                setCentralWidget(completeTestW);
-           }
-           else
+           } else {
               atw->showTestTasks(allPlannedTestsTaskList);
-        }
-        else if(status == "started")
+           }
+        } else if (status == "started") {
             allPlannedTestsTaskList.clear();
-        else
+        } else {
             allPlannedTestsTaskList.push_back({StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "taskname"), StringOperator::cutArg(msg, "answeroptions"),
                                               StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme")});
-    }
-    else if(cmd == "add task")
-    {
+        }
+    } else if (cmd == "add task") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended")
             showMsg("task added successfully");
-    }
-    else if(cmd == "add test")
+    } else if (cmd == "add test") {
         showMsg("added!");
-    else if(cmd == "get all tasks")
-    {
+    } else if (cmd == "get all tasks") {
         qDebug() << StringOperator::cutArg(msg, "status");
-        if(StringOperator::cutArg(msg, "status") == "sending")
+        if (StringOperator::cutArg(msg, "status") == "sending") {
             allTasksList.push_back({StringOperator::cutArg(msg, "taskid"), StringOperator::cutArg(msg, "subject"), StringOperator::cutArg(msg, "tasktext"), StringOperator::cutArg(msg, "answeroptions")
                                    , StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme"), StringOperator::cutArg(msg, "teacherid")});
-        else
-        {
+        } else {
             addTestW->setUserID(id);
             addTestW->setManualTaskList(allTasksList);
             addTestW->setManual();
         }
-    }
-    else if(cmd == "add separated test")
-    {
+    } else if (cmd == "add separated test") {
         QString testId = StringOperator::cutArg(msg, "testid");
         QList <QString> list = addTestW->getPickedTasks();
         showMsg(QString::number(list.size()));
-        for(auto &i : list)
+        for (auto &i : list)
             slotSendToServer("{cmd='appoint task to test';taskid='" + i + "';testid='" + testId + "';}");
         showMsg("sended!");
-    }
-    else if(cmd == "get teacher groups")
-    {
-
-        if(StringOperator::cutArg(msg, "status") == "sending")
+    } else if (cmd == "get teacher groups") {
+        if (StringOperator::cutArg(msg, "status") == "sending") {
             teacherGroups.push_back(StringOperator::cutArg(msg, "groupname"));
-        else
-        {
-            if(state == APPOINTTEST)
-            {
+        } else {
+            if (state == APPOINTTEST) {
                 slotSendToServer("{cmd='view all planned tests';}");
                 return;
             }
             teacherGroupsW = new TeacherGroupsWidget(this, teacherGroups);
             connect(teacherGroupsW->goBack, &QPushButton::clicked, this, [this] {delete teacherGroupsW; setTeacherWindow();});
-            for(int i = 0; i < teacherGroupsW->tableButtons.size(); ++i)
+            for (int i = 0; i < teacherGroupsW->tableButtons.size(); ++i)
                 connect(teacherGroupsW->tableButtons[i], &QPushButton::clicked, this, [this, i] {slotSendToServer("{cmd='view group students';groupname='" +
                                                                                                                   teacherGroupsW->tableButtons[i]->accessibleName() + "';}");});
             setCentralWidget(teacherGroupsW);
             teacherGroups.clear();
         }
-    }
-    else if(cmd == "get teacher results")
-    {
-        if(StringOperator::cutArg(msg, "status") == "sending")
-        {
+    } else if (cmd == "get teacher results") {
+        if (StringOperator::cutArg(msg, "status") == "sending") {
             QList <QString> params = {"studentsname", "studentssurname", "studentsgroup", "testname", "percent", "subject", "date"};
             QList <QString> buf;
-            for(int i = 0; i < params.size(); ++i)
+            for (int i = 0; i < params.size(); ++i)
                 buf.push_back(StringOperator::cutArg(msg, params[i]));
             teacherResults.push_back(buf);
-        }
-        else
-        {
+        } else {
             qDebug() << teacherResults;
             teacherResultsW = new TeacherResultsWidget(this, teacherResults);
-            connect(teacherResultsW->goBack, &QPushButton::clicked, this, [this] {delete teacherResultsW;teacherResults.clear();setTeacherWindow();});
+            connect(teacherResultsW->goBack, &QPushButton::clicked, this, [this] {delete teacherResultsW; teacherResults.clear(); setTeacherWindow(); });
             setCentralWidget(teacherResultsW);
         }
-    }
-   else if (cmd == "get student tests")
-   {
-       if(StringOperator::cutArg(msg, "status") == "sending")
+    } else if (cmd == "get student tests") {
+          if (StringOperator::cutArg(msg, "status") == "sending") {
            studentPlannedTests.push_back({StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "testsubject"), StringOperator::cutArg(msg, "testplanneddate")});
-       else
-       {
+       } else {
            delete studentW;
            studentTestsW = new StudentTestsWidget(studentPlannedTests, this);
            connect(studentTestsW->goBack, &QPushButton::clicked, this, [this] {delete studentTestsW; setStudentWindow();});
-           connect(studentTestsW->start, &QPushButton::clicked, this, [this]
-           {
+           connect(studentTestsW->start, &QPushButton::clicked, this, [this] {
                QString testname = studentTestsW->getSelectedTest();
-              if(testname == "")
+              if (testname == "") {
                   showError("select test first");
-              else
-              {
+              } else {
                   state = COMPLETETEST;
                   slotSendToServer("{cmd='view test tasks';testname='" + testname + "';}");
               }
            });
            setCentralWidget(studentTestsW);
        }
-   }
-    else if (cmd == "get student results")
-    {
-        if(StringOperator::cutArg(msg, "status") == "sending")
-            studentResults.push_back({StringOperator::cutArg(msg, "testsubject"), StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "testdate"),StringOperator::cutArg(msg, "resultpercent")});
-        else
-        {
+     } else if (cmd == "get student results") {
+        if (StringOperator::cutArg(msg, "status") == "sending") {
+            studentResults.push_back({StringOperator::cutArg(msg, "testsubject"), StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "testdate"), StringOperator::cutArg(msg, "resultpercent")});
+        } else {
             studentsResultW = new StudentResultsWidget(studentResults);
             connect(studentsResultW, &StudentResultsWidget::finished, this, [this] () { delete studentsResultW; setStudentWindow();});
             setCentralWidget(studentsResultW);
@@ -436,8 +358,7 @@ void MyClient::solveMsg(QString msg)
     }
 }
 
-void MyClient::setAdminPlusWindow()
-{
+void MyClient::setAdminPlusWindow() {
     state = ADMINPLUS;
     adminPlusW = new AdminPlusWidget(this);
     connect(adminPlusW->addGroup, &QPushButton::clicked, this, [this] {
@@ -446,10 +367,8 @@ void MyClient::setAdminPlusWindow()
         state = ADDGROUP;
 
         connect(agw, &AddGroupWidget::sendGroupClicked, this, [this] {
-
             QString groupTitle = agw->getGroupTitle();
-            if(groupTitle == "")
-            {
+            if (groupTitle == "") {
                 showError("Group title is empty");
                 return;
             }
@@ -470,13 +389,10 @@ void MyClient::setAdminPlusWindow()
             QString name = atgw->getName();
             QString surname = atgw->getSurame();
             QString title = atgw->getTitle();
-            if(name == "" || surname == "" || title == "")
-            {
+            if (name == "" || surname == "" || title == "") {
                 showError("Заполните все поля");
                 return;
-            }
-            else
-            {
+            } else {
                 QString msg = "{cmd='add to group';";
                 msg += "studentsname='" + name + "';";
                 msg += "studentssurname='" + surname + "';";
@@ -530,8 +446,7 @@ void MyClient::setAdminPlusWindow()
     setCentralWidget(adminPlusW);
 }
 
-void MyClient::setAdminWindow()
-{
+void MyClient::setAdminWindow() {
     adminW = new AdminWidget(this);
 
     connect(adminW->results, &QPushButton::clicked, this,
@@ -548,45 +463,40 @@ void MyClient::setAdminWindow()
     setCentralWidget(adminW);
 }
 
-void MyClient::setTeacherWindow()
-{
+void MyClient::setTeacherWindow() {
     teacherW = new TeacherWidget(this);
     connect(teacherW->newTaskButton, &QPushButton::clicked, this,
             [this] {
         delete teacherW;
         addTaskW = new AddTaskWidget(this);
         connect(addTaskW->quit, &QPushButton::clicked, this, [this] {delete addTaskW; setTeacherWindow();});
-        connect(addTaskW->save, &QPushButton::clicked, this, [this]
-        {   QString task = addTaskW->getTask();
+        connect(addTaskW->save, &QPushButton::clicked, this, [this] {
+            QString task = addTaskW->getTask();
             QString answer = addTaskW->getAnswer();
             QList <QString> answerOptions = addTaskW->getAnswerOptions();
             QString theme = addTaskW->getTheme();
             QString subject = addTaskW->getSubject();
 
-            if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty())
-            {
+            if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty()) {
                 showError("Заполните все поля.");
                 return;
-            }
-            else
-            {
+            } else {
                 QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";
                 msg += "answer='" + answer + "';theme='" + theme + "';subject='" + subject + "';answerOptions='";
-                for(auto &i : answerOptions)
+                for (auto &i : answerOptions)
                     msg += i + ';';
                 msg += "';}";
                 slotSendToServer(msg);
-            }});
+            } });
         setCentralWidget(addTaskW);});
 
     connect(teacherW->newTestButton, &QPushButton::clicked, this,
             [this] {
         delete teacherW;
         addTestW = new AddTestWidget(this);
-        connect(addTestW, &AddTestWidget::finished, this, [this]
-        {
-            if(addTestW->getState() == RANDOM)
-                slotSendToServer ("{cmd='add test';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
+        connect(addTestW, &AddTestWidget::finished, this, [this] {
+            if (addTestW->getState() == RANDOM)
+                slotSendToServer("{cmd='add test';amount='" + QString::number(addTestW->getTasksAmount()) + "';"
                                   "testname='" + addTestW->getName() + "';"
                                   "taskauthor='" + (addTestW->getTasksAuthor() == "ME" ? QString::number(id) : "ALL") + "';"
                                   "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFormat(addTestW->getDate(), "DD-MM-YYYY") + "';"
@@ -597,42 +507,38 @@ void MyClient::setTeacherWindow()
                                  "testname='" + addTestW->getName() + "';"
                                  "subject='" + addTestW->getSubject() + "';" + "planneddate='" + DateConverter::DateToStringFormat(addTestW->getDate(), "DD-MM-YYYY") + "';"
                                  "teacherid='" + QString::number(id) + "';}");
-
         });
-
-        connect(addTestW, &AddTestWidget::setUpManual, this, [this]
-        {
-           slotSendToServer("{cmd='get all tasks';}");
-        });
-
-
+        connect(addTestW, &AddTestWidget::setUpManual, this, [this] {
+           slotSendToServer("{cmd='get all tasks';}"); });
         setCentralWidget(addTestW);
     });
 
     connect(teacherW->viewGroupsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}");});
+            [this] {delete teacherW; slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}"); });
 
     connect(teacherW->viewResultsButton, &QPushButton::clicked, this,
-            [this] {delete teacherW; slotSendToServer("{cmd='get teacher results';teacherid='" + QString::number(id) + "';}");});
-    connect(teacherW->appointTest, &QPushButton::clicked, this , [this]
-    {
+            [this] {delete teacherW; slotSendToServer("{cmd='get teacher results';teacherid='" + QString::number(id) + "';}"); });
+    connect(teacherW->appointTest, &QPushButton::clicked, this , [this] {
         state = APPOINTTEST;
         teacherGroups.clear();
         allPlannedTestsList.clear();
-        slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}");});
+        slotSendToServer("{cmd='get teacher groups';teacherid='" + QString::number(id) + "';}"); });
 
     connect(teacherW->goBack, &QPushButton::clicked, this, [this] {delete teacherW; setAuthorizationWindow();});
     setCentralWidget(teacherW);
 }
 
-void MyClient::setStudentWindow()
-{
+void MyClient::setStudentWindow() {
     studentW = new StudentWidget(this);
-    connect(studentW->goBack,&QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow();});
-    connect(studentW->currentTests, &QPushButton::clicked, this, [this]
-    {           studentPlannedTests.clear();slotSendToServer("{cmd='get student tests';studentid='" + QString::number(id) + "';}");});
-    connect(studentW->results, &QPushButton::clicked, this, [this]
-    {studentResults.clear(); slotSendToServer("{cmd='get student results';studentid='" + QString::number(id) + "';}");});
+    connect(studentW->goBack, &QPushButton::clicked, this, [this] {delete studentW; setAuthorizationWindow(); });
+    connect(studentW->currentTests, &QPushButton::clicked, this, [this] {
+        studentPlannedTests.clear();
+        slotSendToServer("{cmd='get student tests';studentid='"
+                         + QString::number(id) + "';}"); });
+    connect(studentW->results, &QPushButton::clicked, this, [this] {
+        studentResults.clear();
+        slotSendToServer("{cmd='get student results';studentid='"
+                         + QString::number(id) + "';}");});
 
     setCentralWidget(studentW);
 }

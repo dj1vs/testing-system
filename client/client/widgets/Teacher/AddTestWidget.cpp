@@ -1,11 +1,10 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AddTestWidget.h"
 
-AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
-{
+AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent) {
     QList <QLabel *> labels;
     const QList <QString> labelNames = {"Test name", "Subject", "Date"};
-    for(int i = 0; i < labelNames.size(); ++i)
-    {
+    for (int i = 0; i < labelNames.size(); ++i) {
         QLabel *buf = new QLabel(labelNames[i], this);
         labels.push_back(buf);
     }
@@ -15,17 +14,12 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
     createButton = new QPushButton("Create test", this);
     dateEdit = new QCalendarWidget(this);
     dateEdit->setMinimumDate(QDate::currentDate());
-    connect(createButton, &QPushButton::clicked, this, [this]
-    {
-        if(checkStart())
-        {
-            if(!isManualCheck->isChecked())
-            {
+    connect(createButton, &QPushButton::clicked, this, [this] {
+        if (checkStart()) {
+            if (!isManualCheck->isChecked()) {
                 state = RANDOM;
                 setParamsRandom();
-            }
-            else
-            {
+            } else {
                 state = MANUAL;
                 emit setUpManual();
             }
@@ -52,11 +46,8 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent)
     layout->addWidget(createButton);
 
     setLayout(layout);
-
-
 }
-void AddTestWidget::setParamsRandom()
-{
+void AddTestWidget::setParamsRandom() {
     randomThemeLabel  = new QLabel("Theme", this);
     randomAmountLabel = new QLabel("Amount", this);
     randomThemeEdit = new QLineEdit(this);
@@ -70,7 +61,6 @@ void AddTestWidget::setParamsRandom()
     amountLayout->addWidget(randomAmountLabel);
     amountLayout->addWidget(randomAmountBox);
 
-
     randomLayout = new QVBoxLayout();
     randomLayout->addWidget(randomThemeLabel);
     randomLayout->addWidget(randomThemeEdit);
@@ -82,36 +72,34 @@ void AddTestWidget::setParamsRandom()
     connect(randomButtonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(randomButtonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
     d->setLayout(randomLayout);
-    if(d->exec() == QDialog::Accepted)
+    if (d->exec() == QDialog::Accepted)
         emit finished();
 }
 
-bool AddTestWidget::checkStart()
-{
+bool AddTestWidget::checkStart() {
     return QList <QString> {nameEdit->text(), subjectEdit->text()} != QList <QString> {"", ""};
 }
 
-void AddTestWidget::setManual()
-{
-    for(auto &i : manualTaskList)
-    {
-        manualSubjects.insert(i[1]);
-        manualThemes.insert(i[5]);
+void AddTestWidget::setManual() {
+    for (auto &i : manualTaskList) {
+        if(manualSubjects.indexOf(i[1]) == -1)
+            manualSubjects.push_back(i[1]);
+        if(manualThemes.indexOf(i[5]) == -1)
+            manualThemes.push_back(i[5]);
     }
 
     manualSortTask = new QLineEdit();
     manualSortSubject = new QComboBox();
     manualSortSubject->addItem("");
-    for(auto &i : manualSubjects)
+    for (auto &i : manualSubjects)
         manualSortSubject->addItem(i);
     manualSortSubject->setCurrentIndex(0);
     manualSortTheme = new QComboBox();
     manualSortTheme->addItem("");
-    for(auto &i : manualThemes)
+    for (auto &i : manualThemes)
         manualSortTheme->addItem(i);
     manualSortTheme->setCurrentIndex(0);
     manualSortMine = new QCheckBox("Only mine");
-
 
     manualAllLabel = new QLabel("all");
     manualPickedLabel = new QLabel("picked");
@@ -119,17 +107,14 @@ void AddTestWidget::setManual()
     manualPicked = new QTableView();
     manualAllModel = new QStandardItemModel(manualTaskList.size(), 6);
     QList <QString> params = {"ID", "Subject", "Task", "Answer options", "Answer", "Theme"};
-    for(int i = 0; i < 6; ++i)
-    {
+    for (int i = 0; i < 6; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
         manualAllModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
-    for(int row = 0; row < manualTaskList.size(); ++row)
-    {
-        for(int col = 0; col < 6; ++col)
-        {
-            QModelIndex index=manualAllModel->index(row,col,QModelIndex());
+    for (int row = 0; row < manualTaskList.size(); ++row) {
+        for (int col = 0; col < 6; ++col) {
+            QModelIndex index = manualAllModel->index(row, col, QModelIndex());
             manualAllModel->setData(index, manualTaskList[row][col]);
         }
     }
@@ -140,8 +125,7 @@ void AddTestWidget::setManual()
     manualPicked->setModel(manualPickedModel);
 
     QList <QString> paramsPicked = {"ID", "Task"};
-    for(int i = 0; i < 2; ++i)
-    {
+    for (int i = 0; i < 2; ++i) {
         QByteArray ba = paramsPicked[i].toLocal8Bit();
         const char* c_str = ba.data();
         manualPickedModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
@@ -152,14 +136,8 @@ void AddTestWidget::setManual()
     manualPick = new QPushButton("Pick");
     manualUp = new QPushButton("Up");
     manualDown = new QPushButton("Down");
-//    const QList <QString> manualButtonsTexts =
-//    {"Sort", "Pick","Delete","Move Up","Move Down"};
-
-
-    connect(manualPick, &QPushButton::clicked, this, [this]
-    {
-        if (manualAll->selectionModel()->hasSelection())
-        {
+    connect(manualPick, &QPushButton::clicked, this, [this] {
+        if (manualAll->selectionModel()->hasSelection()) {
             int row = manualAll->selectionModel()->currentIndex().row();
             QList<QStandardItem *> items;
             items.append(new QStandardItem(manualTaskList[row][0]));
@@ -169,74 +147,54 @@ void AddTestWidget::setManual()
     });
 
     connect(manualDelete, &QPushButton::clicked, this, [this] {
-       if(manualPicked->selectionModel()->hasSelection())
-       {
+       if (manualPicked->selectionModel()->hasSelection()) {
            int row = manualPicked->selectionModel()->currentIndex().row();
            manualPickedModel->removeRow(row);
        }
     });
 
-    connect(manualUp, &QPushButton::clicked, this, [this]
-    {
-        if(manualPicked->selectionModel()->hasSelection())
-        {
+    connect(manualUp, &QPushButton::clicked, this, [this] {
+        if (manualPicked->selectionModel()->hasSelection()) {
             int row = manualPicked->selectionModel()->currentIndex().row();
-            if(row)
-            {
+            if (row) {
                 QList <QStandardItem *> list = manualPickedModel->takeRow(row);
                 manualPickedModel->insertRow(row-1, list);
             }
         }
     });
-    connect(manualDown, &QPushButton::clicked, this, [this]
-    {
-        if(manualPicked->selectionModel()->hasSelection())
-        {
+    connect(manualDown, &QPushButton::clicked, this, [this] {
+        if (manualPicked->selectionModel()->hasSelection()) {
             int row = manualPicked->selectionModel()->currentIndex().row();
-            if(row < manualPickedModel->rowCount()-1)
-            {
+            if (row < manualPickedModel->rowCount()-1) {
                 QList <QStandardItem *> list = manualPickedModel->takeRow(row);
                 manualPickedModel->insertRow(row+1, list);
             }
         }
     });
 
-//        QList <QString> params = {"ID", "Subject", "Task", "Answer options", "Answer", "Theme"};
-
-    connect(manualSort, &QPushButton::clicked, this, [this]
-    {
-       if(manualSortSubject->currentText() == "" && manualSortTheme->currentText() == "" &&
-       !manualSortMine->isChecked() && manualSortTask->text() == "")
-       {
+    connect(manualSort, &QPushButton::clicked, this, [this] {
+       if (manualSortSubject->currentText() == "" && manualSortTheme->currentText() == "" &&
+       !manualSortMine->isChecked() && manualSortTask->text() == "") {
            manualAllModel->setRowCount(manualTaskList.size());
-           for(int row = 0; row < manualTaskList.size(); ++row)
-           {
-               for(int col = 0; col < 6; ++col)
-               {
-                   QModelIndex index=manualAllModel->index(row,col,QModelIndex());
+           for (int row = 0; row < manualTaskList.size(); ++row) {
+               for (int col = 0; col < 6; ++col) {
+                   QModelIndex index = manualAllModel->index(row, col, QModelIndex());
                    manualAllModel->setData(index, manualTaskList[row][col]);
                }
            }
-       }
-       else
-       {
-           for(int row = 0; row < manualAllModel->rowCount(); ++row)
-           {
-               if((manualSortSubject->currentText() != "" && manualAllModel->data(manualAllModel->index(row,1,QModelIndex())).toString() != manualSortSubject->currentText())
-                || (manualSortTheme->currentText() != "" && manualAllModel->data(manualAllModel->index(row,5,QModelIndex())).toString() != manualSortTheme->currentText())
-                || (manualSortTask->text() != "" && manualAllModel->data(manualAllModel->index(row,2,QModelIndex())).toString() != manualSortTask->text()))
-               {
+       } else {
+           for (int row = 0; row < manualAllModel->rowCount(); ++row) {
+               if ((manualSortSubject->currentText() != "" && manualAllModel->data(manualAllModel->index(row, 1, QModelIndex())).toString() != manualSortSubject->currentText())
+                || (manualSortTheme->currentText() != "" && manualAllModel->data(manualAllModel->index(row, 5, QModelIndex())).toString() != manualSortTheme->currentText())
+                || (manualSortTask->text() != "" && manualAllModel->data(manualAllModel->index(row, 2, QModelIndex())).toString() != manualSortTask->text())) {
                    manualAllModel->removeRow(row);
                    row--;
                }
-               if(!manualSortMine->isChecked())
+               if (!manualSortMine->isChecked())
                    continue;
-               for(auto &i : manualTaskList)
-               {
-                   if(i[0] == manualAllModel->data(manualAllModel->index(row,0,QModelIndex())).toString())
-                   {
-                       if(i[6].toInt() != userID)
-                       {
+               for (auto &i : manualTaskList) {
+                   if (i[0] == manualAllModel->data(manualAllModel->index(row, 0, QModelIndex())).toString()) {
+                       if (i[6].toInt() != userID) {
                            manualAllModel->removeRow(row);
                            row--;
                        }
@@ -251,9 +209,9 @@ void AddTestWidget::setManual()
                                            | QDialogButtonBox::Cancel);
 
     QFormLayout *sortLayout = new QFormLayout();
-    sortLayout->addRow(tr("task text"),manualSortTask);
-    sortLayout->addRow(tr("subject"),manualSortSubject);
-    sortLayout->addRow(tr("theme"),manualSortTheme);
+    sortLayout->addRow(tr("task text"), manualSortTask);
+    sortLayout->addRow(tr("subject"), manualSortSubject);
+    sortLayout->addRow(tr("theme"), manualSortTheme);
     sortLayout->addWidget(manualSortMine);
     sortLayout->addWidget(manualSort);
 
@@ -299,7 +257,7 @@ void AddTestWidget::setManual()
     connect(manualButtonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(manualButtonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
     d->setLayout(manualLayout);
-    if(d->exec() == QDialog::Accepted)
+    if (d->exec() == QDialog::Accepted)
         emit finished();
 }
 

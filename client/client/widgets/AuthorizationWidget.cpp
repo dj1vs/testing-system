@@ -1,9 +1,8 @@
-#include "AuthorizationWidget.h"
+// Copyright 2021 Dmitriy Trifonov
 #include <QFormLayout>
+#include "AuthorizationWidget.h"
 
-AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent)
-{
-
+AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent) {
     login = new QLineEdit(this);
     password = new KPasswordLineEdit();
 

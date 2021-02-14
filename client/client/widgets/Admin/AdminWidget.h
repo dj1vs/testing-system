@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef ADMINWIDGET_H
 #define ADMINWIDGET_H
 
@@ -7,20 +8,20 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-class AdminWidget : public QWidget
-{
+class AdminWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit AdminWidget(QWidget *parent = nullptr);
-public:
+
+ public:
     QPushButton *results;
     QPushButton *groups;
     QPushButton *tests;
     QPushButton *goBack;
-private:
-    QVBoxLayout *layout;
-signals:
 
+ private:
+    QVBoxLayout *layout;
 };
 
-#endif // ADMINWIDGET_H
+#endif  // ADMINWIDGET_H

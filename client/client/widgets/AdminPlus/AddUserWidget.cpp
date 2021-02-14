@@ -1,7 +1,7 @@
+// Copyright 2021 Dmitriy Trifonov
 #include "AddUserWidget.h"
 
-AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent)
-{
+AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent) {
     loginLabel = new QLabel("Login:", this);
     passwordLabel = new QLabel("Password:", this);
     nameLabel = new QLabel("Name:", this);

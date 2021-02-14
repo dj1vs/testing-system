@@ -1,3 +1,4 @@
+// Copyright 2021 Dmitriy Trifonov
 #ifndef STUDENTWIDGET_H
 #define STUDENTWIDGET_H
 
@@ -5,17 +6,16 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-class StudentWidget : public QWidget
-{
+class StudentWidget : public QWidget {
     Q_OBJECT
-public:
+
+ public:
     explicit StudentWidget(QWidget *parent = nullptr);
-public:
+
+ public:
     QPushButton *currentTests;
     QPushButton *results;
     QPushButton *goBack;
-signals:
-
 };
 
-#endif // STUDENTWIDGET_H
+#endif  // STUDENTWIDGET_H
