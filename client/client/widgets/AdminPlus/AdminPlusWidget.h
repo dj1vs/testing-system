@@ -4,7 +4,6 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 class AdminPlusWidget : public QWidget {
     Q_OBJECT
@@ -16,9 +15,6 @@ class AdminPlusWidget : public QWidget {
     QPushButton *appointGroup;
     QPushButton *goBack;
     QPushButton *addUser;
-
- private:
-    QVBoxLayout *layout;
 };
 
 #endif  // ADMINPLUSWIDGET_H

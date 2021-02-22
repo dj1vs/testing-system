@@ -6,7 +6,6 @@
 #include <KComboBox>
 #include <KCompletion>
 #include <QPushButton>
-#include <QFormLayout>
 
 class AppointTestWidget : public QWidget {
     Q_OBJECT

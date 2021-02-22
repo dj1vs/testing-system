@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
+#include <QFormLayout>
 #include "AppointGroupWidget.h"
 
 AppointGroupWidget::AppointGroupWidget(QWidget *parent) : QWidget(parent) {
@@ -16,7 +18,7 @@ AppointGroupWidget::AppointGroupWidget(QWidget *parent) : QWidget(parent) {
     f->addRow(surnameLabel, surname);
     f->addRow(titleLabel, title);
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addLayout(f);
     layout->addWidget(sendAppointGroup);
     layout->addWidget(goBack);

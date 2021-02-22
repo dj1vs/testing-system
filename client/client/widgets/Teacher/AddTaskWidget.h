@@ -8,7 +8,7 @@
 #include <QListView>
 #include <QTextEdit>
 #include <QStringListModel>
-#include <QInputDialog>
+#include <QLineEdit>
 
 class AddTaskWidget : public QWidget {
     Q_OBJECT

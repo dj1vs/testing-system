@@ -1,4 +1,8 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QDialog>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QFormLayout>
 #include "AddTestWidget.h"
 
 AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent) {
@@ -41,7 +45,7 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent) {
     topLayout->addLayout(textLayout);
     topLayout->addLayout(dateLayout);
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addLayout(topLayout);
     layout->addWidget(createButton);
 
@@ -61,17 +65,17 @@ void AddTestWidget::setParamsRandom() {
     amountLayout->addWidget(randomAmountLabel);
     amountLayout->addWidget(randomAmountBox);
 
-    randomLayout = new QVBoxLayout();
-    randomLayout->addWidget(randomThemeLabel);
-    randomLayout->addWidget(randomThemeEdit);
-    randomLayout->addWidget(randomShowMy);
-    randomLayout->addLayout(amountLayout);
-    randomLayout->addWidget(randomButtonBox);
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(randomThemeLabel);
+    layout->addWidget(randomThemeEdit);
+    layout->addWidget(randomShowMy);
+    layout->addLayout(amountLayout);
+    layout->addWidget(randomButtonBox);
 
     QDialog *d = new QDialog();
     connect(randomButtonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(randomButtonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
-    d->setLayout(randomLayout);
+    d->setLayout(layout);
     if (d->exec() == QDialog::Accepted)
         emit finished();
 }
@@ -247,16 +251,16 @@ void AddTestWidget::setManual() {
     pickedLayout->addLayout(pickedTable);
     pickedLayout->addLayout(pickedButtons);
 
-    manualLayout = new QVBoxLayout();
-    manualLayout->addWidget(allBox);
-    manualLayout->addLayout(pickedLayout);
-    manualLayout->addWidget(manualButtonBox);
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(allBox);
+    layout->addLayout(pickedLayout);
+    layout->addWidget(manualButtonBox);
 
     QDialog *d = new QDialog();
     d->setMinimumWidth(1000);
     connect(manualButtonBox, &QDialogButtonBox::accepted, d, &QDialog::accept);
     connect(manualButtonBox, &QDialogButtonBox::rejected, d, &QDialog::reject);
-    d->setLayout(manualLayout);
+    d->setLayout(layout);
     if (d->exec() == QDialog::Accepted)
         emit finished();
 }

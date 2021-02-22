@@ -6,10 +6,8 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QPushButton>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QDialog>
 
 class AllResultsWidget : public QWidget {
     Q_OBJECT
@@ -30,7 +28,6 @@ class AllResultsWidget : public QWidget {
     QPushButton *save;
     QTableView *table;
     QStandardItemModel *model;
-    QVBoxLayout *layout;
     QLabel *sortNameLabel;
     QLabel *sortSurnameLabel;
     QLabel *sortSubjectLabel;
@@ -39,7 +36,6 @@ class AllResultsWidget : public QWidget {
     QLineEdit *sortSurname;
     QLineEdit *sortSubject;
     QLineEdit *sortTest;
-    QVBoxLayout *sortLayout;
 };
 
 #endif  // ALLRESULTSWIDGET_H

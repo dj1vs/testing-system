@@ -5,16 +5,11 @@
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QStandardItemModel>
 #include <QTableView>
-#include <QDialog>
-#include <QDebug>
 #include <QComboBox>
 #include <QDateEdit>
 #include <QCheckBox>
-#include <QFormLayout>
 #include <QDialogButtonBox>
 
 #include "../../lib/DateConverter.h"

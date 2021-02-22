@@ -6,16 +6,13 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QPushButton>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
-#include <QDialog>
 #include <QDateEdit>
 #include <QRadioButton>
 #include <QTextBrowser>
 #include <QStringListModel>
 #include <QListView>
-#include <QErrorMessage>
 
 class AllTestsWidget : public QWidget {
     Q_OBJECT
@@ -32,7 +29,6 @@ class AllTestsWidget : public QWidget {
     QTableView *table;
     QStandardItemModel *model;
     QPushButton *sort;
-    QVBoxLayout *layout;
 
     QList <QPushButton *> list;
     QList <QList<QString>> taskList;
@@ -51,7 +47,6 @@ class AllTestsWidget : public QWidget {
     QRadioButton *sortViewFuture;
     QRadioButton *sortViewAll;
     QPushButton *sortSave;
-    QVBoxLayout *sortLayout;
     quint16 tasksAmount = 0;
     quint16 currTask = 0;
     QPushButton *taskNext;
@@ -60,7 +55,6 @@ class AllTestsWidget : public QWidget {
     QTextBrowser *taskAnswer;
     QStringListModel *taskAnswerOptionsModel;
     QListView *taskAnswerOptionsView;
-    QVBoxLayout *taskLayout;
 
  private:
     void showAllPlannedTestsSort();

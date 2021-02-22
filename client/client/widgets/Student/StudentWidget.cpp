@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "StudentWidget.h"
 
 StudentWidget::StudentWidget(QWidget *parent) : QWidget(parent) {

@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QErrorMessage>
 
 #include "../../lib/DateConverter.h"
 #include "../../lib/StringOperator.h"

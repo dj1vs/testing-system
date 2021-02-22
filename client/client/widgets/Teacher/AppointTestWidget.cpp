@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFormLayout>
 #include "AppointTestWidget.h"
 
 AppointTestWidget::AppointTestWidget(QWidget *parent, QList <QString> groups, QList <QString> tests) : QWidget(parent) {

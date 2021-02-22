@@ -4,13 +4,8 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QStandardItemModel>
 #include <QTableView>
-#include <QDialog>
-#include <QDebug>
 
 
 class TeacherGroupsWidget : public QWidget {

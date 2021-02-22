@@ -6,8 +6,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QVBoxLayout>
-#include <QFormLayout>
 #include <QComboBox>
 
 class AddUserWidget : public QWidget {
@@ -36,7 +34,6 @@ class AddUserWidget : public QWidget {
     QLineEdit *password;
     QLineEdit *name;
     QLineEdit *surname;
-    QFormLayout *layout;
 };
 
 #endif  // ADDUSERWIDGET_H

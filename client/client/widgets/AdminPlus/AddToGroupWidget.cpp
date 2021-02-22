@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFormLayout>
+#include <QVBoxLayout>
 #include "AddToGroupWidget.h"
 
 AddToGroupWidget::AddToGroupWidget(QWidget *parent) : QWidget(parent) {
@@ -16,7 +18,7 @@ AddToGroupWidget::AddToGroupWidget(QWidget *parent) : QWidget(parent) {
     fl->addRow(surnameLabel, surname);
     fl->addRow(titleLabel, title);
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addLayout(fl);
     layout->addWidget(sendToGroup);
     layout->addWidget(goBack);

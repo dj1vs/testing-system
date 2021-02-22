@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "AllGroupsWidget.h"
 
 AllGroupsWidget::AllGroupsWidget(QWidget *parent, QList <QStringList> l) : QWidget(parent), list(l) {
@@ -37,7 +38,7 @@ AllGroupsWidget::AllGroupsWidget(QWidget *parent, QList <QStringList> l) : QWidg
         table->setIndexWidget(index, button);
     }
     goBack = new QPushButton("Go Back", this);
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(table);
     layout->addWidget(goBack);
 

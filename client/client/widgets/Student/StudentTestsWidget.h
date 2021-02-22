@@ -6,9 +6,6 @@
 #include <QPushButton>
 #include <QTableView>
 #include <QStandardItemModel>
-#include <QItemSelectionModel>
-#include <QVBoxLayout>
-#include <QDebug>
 
 class StudentTestsWidget : public QWidget {
     Q_OBJECT

@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFormLayout>
 #include "AddUserWidget.h"
 
 AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent) {
@@ -18,7 +19,7 @@ AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent) {
     addUser = new QPushButton("Add user", this);
     goBack = new QPushButton("Go back", this);
 
-    layout = new QFormLayout();
+    QFormLayout *layout = new QFormLayout();
     layout->addRow(loginLabel, login);
     layout->addRow(passwordLabel, password);
     layout->addRow(nameLabel, name);

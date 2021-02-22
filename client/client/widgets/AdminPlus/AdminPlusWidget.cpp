@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "AdminPlusWidget.h"
 
 AdminPlusWidget::AdminPlusWidget(QWidget *parent) : QWidget(parent) {
@@ -7,7 +8,7 @@ AdminPlusWidget::AdminPlusWidget(QWidget *parent) : QWidget(parent) {
     appointGroup = new QPushButton("&Appoint group", this);
     addUser = new QPushButton("&Add user", this);
     goBack = new QPushButton("&Go Back", this);
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(addGroup);
     layout->addWidget(addToGroup);
     layout->addWidget(appointGroup);

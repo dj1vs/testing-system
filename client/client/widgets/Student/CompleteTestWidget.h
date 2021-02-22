@@ -9,13 +9,6 @@
 #include <QTextBrowser>
 #include <QGroupBox>
 #include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QDebug>
-#include <QStackedLayout>
-#include <QMessageBox>
-#include <QTableView>
-#include <QStandardItemModel>
-#include <QLabel>
 class CompleteTestWidget : public QWidget {
     Q_OBJECT
 

@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "AdminWidget.h"
 
 AdminWidget::AdminWidget(QWidget *parent) : QWidget(parent) {
@@ -7,7 +8,7 @@ AdminWidget::AdminWidget(QWidget *parent) : QWidget(parent) {
     tests = new QPushButton("View Planned Tests", this);
     goBack = new QPushButton("Go back", this);
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(groups);
     layout->addWidget(tests);
     layout->addWidget(results);

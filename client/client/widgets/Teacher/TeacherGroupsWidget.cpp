@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QDialog>
+#include <QVBoxLayout>
 #include "TeacherGroupsWidget.h"
 
 TeacherGroupsWidget::TeacherGroupsWidget(QWidget *parent, QList <QString> list) : QWidget(parent) {

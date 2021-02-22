@@ -6,8 +6,6 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QVBoxLayout>
-#include <QFormLayout>
 
 class AddToGroupWidget : public QWidget {
     Q_OBJECT
@@ -29,7 +27,6 @@ class AddToGroupWidget : public QWidget {
     QLineEdit *name;
     QLineEdit *surname;
     QLineEdit *title;
-    QVBoxLayout *layout;
 };
 
 #endif  // ADDTOGROUPWIDGET_H

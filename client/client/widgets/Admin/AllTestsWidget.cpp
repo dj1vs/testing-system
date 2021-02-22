@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
+#include <QErrorMessage>
 #include "AllTestsWidget.h"
 
 AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWidget(parent), testsList(l) {
@@ -35,7 +37,7 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
     goBack->setAttribute(Qt::WA_DeleteOnClose);
 
     connect(sort, SIGNAL(clicked()), this, SLOT(showAllPlannedTestsSort()));
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(table);
     layout->addWidget(sort);
     layout->addWidget(goBack);
@@ -85,19 +87,19 @@ void AllTestsWidget::showAllPlannedTestsSort() {
     options->addWidget(sortViewAll);
 
 
-    sortLayout = new QVBoxLayout();
-    sortLayout->addLayout(name);
-    sortLayout->addLayout(surname);
-    sortLayout->addLayout(test);
-    sortLayout->addLayout(date);
-    sortLayout->addLayout(subject);
-    sortLayout->addLayout(options);
-    sortLayout->addWidget(sortSave);
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addLayout(name);
+    layout->addLayout(surname);
+    layout->addLayout(test);
+    layout->addLayout(date);
+    layout->addLayout(subject);
+    layout->addLayout(options);
+    layout->addWidget(sortSave);
 
     QDialog *d = new QDialog();
     connect(sortSave, &QPushButton::clicked, this, [this, d] {editAllPlannedTestsTable(); d->close(); });
 
-    d->setLayout(sortLayout);
+    d->setLayout(layout);
     d->show();
 }
 void AllTestsWidget::editAllPlannedTestsTable() {
@@ -158,14 +160,14 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
     buttons->addWidget(taskNext);
 
 
-    taskLayout = new QVBoxLayout();
-    taskLayout->addWidget(taskText);
-    taskLayout->addWidget(taskAnswerOptionsView);
-    taskLayout->addWidget(taskAnswer);
-    taskLayout->addLayout(buttons);
+    QVBoxLayout *layout = new QVBoxLayout();
+    layout->addWidget(taskText);
+    layout->addWidget(taskAnswerOptionsView);
+    layout->addWidget(taskAnswer);
+    layout->addLayout(buttons);
 
     QDialog *d = new QDialog(this);
-    d->setLayout(taskLayout);
+    d->setLayout(layout);
     d->show();
 }
 void AllTestsWidget::showNextTask() {

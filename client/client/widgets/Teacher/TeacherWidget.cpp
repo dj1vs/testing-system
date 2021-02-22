@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "TeacherWidget.h"
 
 TeacherWidget::TeacherWidget(QWidget *parent) : QWidget(parent) {
@@ -9,7 +10,7 @@ TeacherWidget::TeacherWidget(QWidget *parent) : QWidget(parent) {
     appointTest = new QPushButton("appoint test");
     goBack = new QPushButton("go back");
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(newTaskButton);
     layout->addWidget(newTestButton);
     layout->addWidget(viewGroupsButton);

@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFormLayout>
+#include <QDialog>
 #include "TeacherResultsWidget.h"
 
 TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QString>> l) : QWidget(parent), list(l) {

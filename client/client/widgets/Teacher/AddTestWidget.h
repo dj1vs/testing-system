@@ -3,14 +3,11 @@
 #define ADDTESTWIDGET_H
 
 #include <QWidget>
-#include <QDialog>
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
 #include <QCalendarWidget>
 #include <QPushButton>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 #include <QDate>
 #include <QSpinBox>
 #include <QDialogButtonBox>
@@ -20,8 +17,6 @@
 #include <QItemSelectionModel>
 #include <QGroupBox>
 #include <QComboBox>
-#include <QFormLayout>
-#include <QGridLayout>
 
 typedef enum {RANDOM, MANUAL} STATE;
 
@@ -62,7 +57,6 @@ class AddTestWidget : public QWidget {
     QLineEdit *subjectEdit;
     QCheckBox *isManualCheck;
     QCalendarWidget *dateEdit;
-    QVBoxLayout *layout;
 
     QLabel *randomThemeLabel;
     QLabel *randomAmountLabel;
@@ -70,7 +64,6 @@ class AddTestWidget : public QWidget {
     QCheckBox *randomShowMy;
     QSpinBox *randomAmountBox;
     QDialogButtonBox *randomButtonBox;
-    QVBoxLayout *randomLayout;
 
     QLabel *manualAllLabel;
     QLabel *manualPickedLabel;
@@ -93,8 +86,6 @@ class AddTestWidget : public QWidget {
     QPushButton *manualUp;
     QPushButton *manualDown;
     QDialogButtonBox *manualButtonBox;
-    QVBoxLayout *manualLayout;
-
     int userID = 1;
 
 

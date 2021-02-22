@@ -4,7 +4,6 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 class StudentWidget : public QWidget {
     Q_OBJECT

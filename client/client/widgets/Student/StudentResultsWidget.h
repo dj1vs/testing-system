@@ -6,8 +6,6 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QPushButton>
-#include <QDialog>
-#include <QDebug>
 
 class StudentResultsWidget : public QWidget {
     Q_OBJECT

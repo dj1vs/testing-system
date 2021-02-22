@@ -1,6 +1,7 @@
 // Copyright 2021 Dmitriy Trifonov
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QInputDialog>
 #include "AddTaskWidget.h"
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {

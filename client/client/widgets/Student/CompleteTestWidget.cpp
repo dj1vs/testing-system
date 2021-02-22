@@ -1,4 +1,9 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QMessageBox>
+#include <QStandardItemModel>
+#include <QLabel>
+#include <QHBoxLayout>
+#include <QTableView>
 #include "CompleteTestWidget.h"
 
 CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list) {

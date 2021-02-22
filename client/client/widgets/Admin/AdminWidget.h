@@ -3,10 +3,7 @@
 #define ADMINWIDGET_H
 
 #include <QWidget>
-#include <QLabel>
-#include <QLineEdit>
 #include <QPushButton>
-#include <QVBoxLayout>
 
 class AdminWidget : public QWidget {
     Q_OBJECT
@@ -19,9 +16,6 @@ class AdminWidget : public QWidget {
     QPushButton *groups;
     QPushButton *tests;
     QPushButton *goBack;
-
- private:
-    QVBoxLayout *layout;
 };
 
 #endif  // ADMINWIDGET_H

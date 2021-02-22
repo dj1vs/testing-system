@@ -6,7 +6,6 @@
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QPushButton>
-#include <QVBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
 #include <QDialog>
@@ -24,7 +23,6 @@ class AllGroupsWidget : public QWidget {
  private:
     QTableView *table;
     QStandardItemModel *model;
-    QVBoxLayout *layout;
     QList <QStringList> list;
 
  public slots:

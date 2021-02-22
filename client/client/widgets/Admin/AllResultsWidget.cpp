@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
+#include <QDialog>
 #include "AllResultsWidget.h"
 
 AllResultsWidget::AllResultsWidget(QWidget *parent, QList <QList <QString>> l) : QWidget(parent), list(l) {
@@ -29,7 +31,7 @@ AllResultsWidget::AllResultsWidget(QWidget *parent, QList <QList <QString>> l) :
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setModel(model);
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(table);
     layout->addWidget(sort);
     layout->addWidget(goBack);
@@ -62,7 +64,7 @@ void AllResultsWidget::showAllResultsSort() {
     test->addWidget(sortTestLabel);
     test->addWidget(sortTest);
 
-    sortLayout = new QVBoxLayout();
+    QVBoxLayout *sortLayout = new QVBoxLayout();
     sortLayout->addLayout(name);
     sortLayout->addLayout(surname);
     sortLayout->addLayout(subject);

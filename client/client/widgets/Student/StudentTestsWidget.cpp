@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
 #include "StudentTestsWidget.h"
 
 StudentTestsWidget::StudentTestsWidget(QList <QStringList> list,  QWidget *parent) : QWidget(parent) {
