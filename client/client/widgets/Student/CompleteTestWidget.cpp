@@ -11,8 +11,8 @@ CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *pa
     for (int i = 0; i < testList.size(); ++i)
         answers.push_back("");
     currentIndex = 0;
-    next = new QPushButton("next");
-    previous = new QPushButton("prev");
+    next = new QPushButton("Вперёд");
+    previous = new QPushButton("Назад");
     taskText = new QTextBrowser();
     buttonsBox = new QGroupBox();
 
@@ -103,7 +103,7 @@ void CompleteTestWidget::askIfFinished() {
     QTableView *table = new QTableView();
     QStandardItemModel *model = new QStandardItemModel(answers.size(), 2, nullptr);
 
-    const QStringList params = {"Task number", "Status"};
+    const QStringList params = {"Номер задания", "Статус"};
 
     for (int i = 0; i < params.size(); ++i) {
         QByteArray ba = params[i].toLocal8Bit();
@@ -114,12 +114,12 @@ void CompleteTestWidget::askIfFinished() {
         QModelIndex index = model->index(row, 0, QModelIndex());
         model->setData(index, row+1);
         index = model->index(row, 1, QModelIndex());
-        model->setData(index, (isAnswersCorrect[row] ? "correct" : "wrong"));
+        model->setData(index, (isAnswersCorrect[row] ? "Правильно" : "Не правильно"));
     }
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setModel(model);
 
-    QLabel *title = new QLabel("You completed the test\nResult:" + percent + "percents");
+    QLabel *title = new QLabel("Вы завершили прохождение теста\nРезультат: " + percent + " процентов");
 
     QVBoxLayout *lay = new QVBoxLayout();
     lay->addWidget(title);

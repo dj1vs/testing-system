@@ -3,12 +3,12 @@
 #include "TeacherWidget.h"
 
 TeacherWidget::TeacherWidget(QWidget *parent) : QWidget(parent) {
-    newTaskButton = new QPushButton("new task");
-    newTestButton = new QPushButton("new test");
-    viewGroupsButton = new QPushButton("view groups");
-    viewResultsButton = new QPushButton("view results");
-    appointTest = new QPushButton("appoint test");
-    goBack = new QPushButton("go back");
+    newTaskButton = new QPushButton("Новое задание");
+    newTestButton = new QPushButton("Новый тест");
+    viewGroupsButton = new QPushButton("Мои группы");
+    viewResultsButton = new QPushButton("Результаты моих учеников");
+    appointTest = new QPushButton("Задать тест");
+    goBack = new QPushButton("Назад");
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(newTaskButton);

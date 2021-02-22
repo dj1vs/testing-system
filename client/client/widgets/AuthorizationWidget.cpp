@@ -6,10 +6,10 @@ AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent) {
     login = new QLineEdit(this);
     password = new KPasswordLineEdit();
 
-    authorize = new QPushButton("&Log in", this);
+    authorize = new QPushButton("&Войти", this);
     QFormLayout *f = new QFormLayout();
-    f->addRow(tr("Login"), login);
-    f->addRow(tr("Password"), password);
+    f->addRow(tr("Логин"), login);
+    f->addRow(tr("Пароль"), password);
     f->addWidget(authorize);
 
     setLayout(f);

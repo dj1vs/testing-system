@@ -23,12 +23,12 @@ AppointTestWidget::AppointTestWidget(QWidget *parent, QList <QString> groups, QL
     connect(testBox, SIGNAL(returnPressed(QString)), testCompletion, SLOT(addItem(QString)));
 
     testCompletion->insertItems(groups);
-    submit = new QPushButton("Submit");
-    goBack = new QPushButton("Go Back");
+    submit = new QPushButton("Подтвердить");
+    goBack = new QPushButton("Назад");
 
     QFormLayout *l = new QFormLayout();
-    l->addRow(tr("Group:"), groupBox);
-    l->addRow(tr("Test:"), testBox);
+    l->addRow(tr("Группа:"), groupBox);
+    l->addRow(tr("Тест:"), testBox);
     l->addWidget(submit);
     l->addWidget(goBack);
 

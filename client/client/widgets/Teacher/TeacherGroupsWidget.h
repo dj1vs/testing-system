@@ -24,7 +24,7 @@ class TeacherGroupsWidget : public QWidget {
     QTableView *view;
     QStandardItemModel *model;
 
-    const QList <QString> headerList = {"Group name", "students"};
+    const QList <QString> headerList = {"Группа", "Ученики"};
 };
 
 #endif  // TEACHERGROUPSWIDGET_H

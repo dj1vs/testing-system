@@ -25,7 +25,7 @@ class StudentTestsWidget : public QWidget {
  private:
     QTableView *table;
     QStandardItemModel *model;
-    const QStringList params = {"test name", "subject", "planned date"};
+    const QStringList params = {"Тест", "Предмет", "Запланированная дата"};
 };
 
 #endif  // STUDENTTESTSWIDGET_H

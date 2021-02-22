@@ -3,8 +3,8 @@
 #include "StudentTestsWidget.h"
 
 StudentTestsWidget::StudentTestsWidget(QList <QStringList> list,  QWidget *parent) : QWidget(parent) {
-    goBack = new QPushButton("back", this);
-    start = new QPushButton("start", this);
+    goBack = new QPushButton("Назад", this);
+    start = new QPushButton("Старт", this);
 
     table = new QTableView(this);
     model = new QStandardItemModel(list.size(), params.size(), this);

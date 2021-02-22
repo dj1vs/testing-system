@@ -3,11 +3,11 @@
 #include "AddUserWidget.h"
 
 AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent) {
-    loginLabel = new QLabel("Login:", this);
-    passwordLabel = new QLabel("Password:", this);
-    nameLabel = new QLabel("Name:", this);
-    surnameLabel = new QLabel("Surname:", this);
-    roleLabel = new QLabel("Role:", this);
+    loginLabel = new QLabel("Логин:", this);
+    passwordLabel = new QLabel("Пароль:", this);
+    nameLabel = new QLabel("Имя:", this);
+    surnameLabel = new QLabel("Фамилия:", this);
+    roleLabel = new QLabel("Роль:", this);
 
     roleBox = new QComboBox(this);
     roleBox->addItems({"admin+", "admin", "teacher", "student"});
@@ -16,8 +16,8 @@ AddUserWidget::AddUserWidget(QWidget *parent) : QWidget(parent) {
     password = new QLineEdit(this);
     name = new QLineEdit(this);
     surname = new QLineEdit(this);
-    addUser = new QPushButton("Add user", this);
-    goBack = new QPushButton("Go back", this);
+    addUser = new QPushButton("Добавить пользователя", this);
+    goBack = new QPushButton("Назад", this);
 
     QFormLayout *layout = new QFormLayout();
     layout->addRow(loginLabel, login);

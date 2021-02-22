@@ -7,15 +7,15 @@
 
 AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent) {
     QList <QLabel *> labels;
-    const QList <QString> labelNames = {"Test name", "Subject", "Date"};
+    const QList <QString> labelNames = {"Название теста", "Предмет", "Дата"};
     for (int i = 0; i < labelNames.size(); ++i) {
         QLabel *buf = new QLabel(labelNames[i], this);
         labels.push_back(buf);
     }
     nameEdit = new QLineEdit(this);
     subjectEdit = new QLineEdit(this);
-    isManualCheck = new QCheckBox("Add task manual?", this);
-    createButton = new QPushButton("Create test", this);
+    isManualCheck = new QCheckBox("Добавить тест вручную?", this);
+    createButton = new QPushButton("Создать тест", this);
     dateEdit = new QCalendarWidget(this);
     dateEdit->setMinimumDate(QDate::currentDate());
     connect(createButton, &QPushButton::clicked, this, [this] {
@@ -52,10 +52,10 @@ AddTestWidget::AddTestWidget(QWidget *parent) : QWidget(parent) {
     setLayout(layout);
 }
 void AddTestWidget::setParamsRandom() {
-    randomThemeLabel  = new QLabel("Theme", this);
-    randomAmountLabel = new QLabel("Amount", this);
+    randomThemeLabel  = new QLabel("Тема", this);
+    randomAmountLabel = new QLabel("Количество", this);
     randomThemeEdit = new QLineEdit(this);
-    randomShowMy = new QCheckBox("Select only my tasks", this);
+    randomShowMy = new QCheckBox("Выбирать только мои задания", this);
     randomAmountBox = new QSpinBox(this);
     randomAmountBox->setMinimum(1);
     randomButtonBox = new QDialogButtonBox(QDialogButtonBox::Ok
@@ -103,14 +103,14 @@ void AddTestWidget::setManual() {
     for (auto &i : manualThemes)
         manualSortTheme->addItem(i);
     manualSortTheme->setCurrentIndex(0);
-    manualSortMine = new QCheckBox("Only mine");
+    manualSortMine = new QCheckBox("Только мои");
 
-    manualAllLabel = new QLabel("all");
-    manualPickedLabel = new QLabel("picked");
+    manualAllLabel = new QLabel("Все");
+    manualPickedLabel = new QLabel("Выбранные");
     manualAll = new QTableView();
     manualPicked = new QTableView();
     manualAllModel = new QStandardItemModel(manualTaskList.size(), 6);
-    QList <QString> params = {"ID", "Subject", "Task", "Answer options", "Answer", "Theme"};
+    QList <QString> params = {"ID", "Предмет", "Задание", "Варианты ответа", "Ответ", "Тема"};
     for (int i = 0; i < 6; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
@@ -128,18 +128,18 @@ void AddTestWidget::setManual() {
     manualPickedModel = new QStandardItemModel(0, 2);
     manualPicked->setModel(manualPickedModel);
 
-    QList <QString> paramsPicked = {"ID", "Task"};
+    QList <QString> paramsPicked = {"ID", "Задание"};
     for (int i = 0; i < 2; ++i) {
         QByteArray ba = paramsPicked[i].toLocal8Bit();
         const char* c_str = ba.data();
         manualPickedModel->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
     }
 
-    manualSort = new QPushButton("Sort");
-    manualDelete = new QPushButton("Delete");
-    manualPick = new QPushButton("Pick");
-    manualUp = new QPushButton("Up");
-    manualDown = new QPushButton("Down");
+    manualSort = new QPushButton("Сортировка");
+    manualDelete = new QPushButton("Удалить");
+    manualPick = new QPushButton("Выбрать");
+    manualUp = new QPushButton("Вверх");
+    manualDown = new QPushButton("Вниз");
     connect(manualPick, &QPushButton::clicked, this, [this] {
         if (manualAll->selectionModel()->hasSelection()) {
             int row = manualAll->selectionModel()->currentIndex().row();
@@ -213,9 +213,9 @@ void AddTestWidget::setManual() {
                                            | QDialogButtonBox::Cancel);
 
     QFormLayout *sortLayout = new QFormLayout();
-    sortLayout->addRow(tr("task text"), manualSortTask);
-    sortLayout->addRow(tr("subject"), manualSortSubject);
-    sortLayout->addRow(tr("theme"), manualSortTheme);
+    sortLayout->addRow(tr("Текст задание"), manualSortTask);
+    sortLayout->addRow(tr("Предмет"), manualSortSubject);
+    sortLayout->addRow(tr("Тема"), manualSortTheme);
     sortLayout->addWidget(manualSortMine);
     sortLayout->addWidget(manualSort);
 

@@ -3,7 +3,7 @@
 #include "StudentResultsWidget.h"
 
 StudentResultsWidget::StudentResultsWidget(QList <QStringList> new_list, QWidget *parent) : QWidget(parent), list(new_list) {
-    const QStringList params = {"Subject", "Test", "Test date", "Percent"};
+    const QStringList params = {"Предмет", "Тест", "Дата теста", "Процента"};
 
     QTableView *table = new QTableView();
     QStandardItemModel *model = new QStandardItemModel(list.size(), params.size(), nullptr);
@@ -22,7 +22,7 @@ StudentResultsWidget::StudentResultsWidget(QList <QStringList> new_list, QWidget
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     table->setModel(model);
 
-    QPushButton *goBack = new QPushButton("go back");
+    QPushButton *goBack = new QPushButton("назад");
     connect(goBack, &QPushButton::clicked, this, [this] {emit finished(); });
 
     QVBoxLayout *l = new QVBoxLayout();

@@ -4,14 +4,14 @@
 #include "AppointGroupWidget.h"
 
 AppointGroupWidget::AppointGroupWidget(QWidget *parent) : QWidget(parent) {
-    nameLabel = new QLabel("Teacher name:", this);
-    surnameLabel = new QLabel("Teacher surname:", this);
-    titleLabel = new QLabel("Group name:", this);
+    nameLabel = new QLabel("Имя учителя:", this);
+    surnameLabel = new QLabel("Фамилия учителя:", this);
+    titleLabel = new QLabel("Название группы:", this);
     name = new QLineEdit();
     surname = new QLineEdit();
     title = new QLineEdit();
-    sendAppointGroup = new QPushButton("Appoint group", this);
-    goBack = new QPushButton("Go back", this);
+    sendAppointGroup = new QPushButton("Назначить группу", this);
+    goBack = new QPushButton("Назад", this);
 
     QFormLayout *f = new QFormLayout();
     f->addRow(nameLabel, name);

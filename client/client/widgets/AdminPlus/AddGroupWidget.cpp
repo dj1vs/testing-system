@@ -5,10 +5,10 @@
 #include "AddGroupWidget.h"
 
 AddGroupWidget::AddGroupWidget(QWidget *parent) : QWidget(parent) {
-    titleLabel = new QLabel("Group title: ", this);
+    titleLabel = new QLabel("Название группы: ", this);
     title = new QLineEdit(this);
-    sendGroup = new QPushButton("&Add group", this);
-    goBack = new QPushButton("&Go back", this);
+    sendGroup = new QPushButton("&Добавить группу", this);
+    goBack = new QPushButton("&Назад", this);
 
     connect(sendGroup, &QPushButton::clicked, this, [this] {emit sendGroupClicked();});
     connect(goBack, &QPushButton::clicked, this, [this] {emit goBackClicked();});

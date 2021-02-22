@@ -13,7 +13,10 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this,         SLOT(slotError(QAbstractSocket::SocketError)));
 
+
+
     setMinimumSize(WINW, WINH);
+    setWindowTitle("Тестирующая система");
 
     setAuthorizationWindow();
 }
@@ -82,7 +85,7 @@ void MyClient::solveMsg(QString msg) {
     if (cmd == "authorize") {
         if (StringOperator::cutArg(msg, "status") == "0") {
             QString role = StringOperator::cutArg(msg, "role");
-            showMsg("Succesfuly logged in!\nRole: " + role);
+            showMsg("Успешный вход!\nРоль: " + role);
             id = StringOperator::cutArg(msg, "id").toInt();
             delete aw;
             if (role == "admin+")
@@ -94,58 +97,57 @@ void MyClient::solveMsg(QString msg) {
             else if (role == "student")
                 setStudentWindow();
         } else {
-           showError("Invalid login/password :(");
+           showError("Неправильный логин/пароль :(");
         }
     } else if (cmd == "add group") {
         QString r = StringOperator::cutArg(msg, "status");
         if (r == "0")
-            showMsgBox("Group added succesfully");
+            showMsgBox("Группа успешно добавлена");
         else
             showError("This group already exists!");
     } else if (cmd == "add to group") {
         int r = StringOperator::cutArg(msg, "status").toInt();
         switch (r) {
         case 0:
-            showMsg("added to group succesfully");
+            showMsg("Добавление в группу прошло успешно");
             break;
         case 1:
-            showError("Cant find group with entered name");
+            showError("Группы с введённым именем не существует");
             break;
         case 2:
-            showError("Cant find student with entered name");
+            showError("Ученика с введённым именем не существует");
             break;
         case 3:
-            showError("Already added");
+            showError("Уже добавлен");
             break;
         }
     } else if (cmd == "appoint") {
         int r = StringOperator::cutArg(msg, "status").toInt();
         switch (r) {
         case 0:
-            showMsg("successfully appointed");
+            showMsg("Успешно назначено");
             break;
         case 1:
             showError("Введённые имя и фамилия не принадлежат ни одному учителю");
             break;
         case 2:
-            showError("No groups with this name\nOr\nThis group is already appointed");
+            showError("Группы с введённым именем не существует\nИли\nЭта группа уже была назначена");
             break;
         }
     } else if (cmd == "add user") {
         int r = StringOperator::cutArg(msg, "status").toInt();
         switch (r) {
         case 0:
-            showMsg("User succesfully added");
+            showMsg("Пользователь успешно добавлен");
             break;
         case 1:
-            showError("This user already exists");
+            showError("Этот пользователь уже добавлен");
             break;
         }
     } else if (cmd == "view all results") {
-        qDebug() << msg;
         if (StringOperator::cutArg(msg, "status") == "sended") {
             if (allResultsList.isEmpty()) {
-                showError("No results");
+                showError("Результатов ещё нет");
                 return;
             }
             delete adminW;
@@ -193,7 +195,7 @@ void MyClient::solveMsg(QString msg) {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended") {
             if (allPlannedTestsList.isEmpty()) {
-                showError("No tests");
+                showError("Тестов ещё нет");
                 return;
             }
             if (state == APPOINTTEST) {
@@ -205,7 +207,7 @@ void MyClient::solveMsg(QString msg) {
                 connect(appointTestW->goBack, &QPushButton::clicked, this, [this] {delete appointTestW; setTeacherWindow();});
                 connect(appointTestW->submit, &QPushButton::clicked, this, [this] {
                     slotSendToServer("{cmd='appoint test';testname='" + appointTestW->getTest() + "';groupname='" + appointTestW->getGroup() + "';}");
-                showMsg("sended!"); });
+                showMsg("Отправлено!"); });
                 setCentralWidget(appointTestW);
             } else {
                 atw = new AllTestsWidget(this, allPlannedTestsList);
@@ -248,11 +250,10 @@ void MyClient::solveMsg(QString msg) {
     } else if (cmd == "add task") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended")
-            showMsg("task added successfully");
+            showMsg("Задание добавлено успешно");
     } else if (cmd == "add test") {
-        showMsg("added!");
+        showMsg("добавлено!");
     } else if (cmd == "get all tasks") {
-        qDebug() << StringOperator::cutArg(msg, "status");
         if (StringOperator::cutArg(msg, "status") == "sending") {
             allTasksList.push_back({StringOperator::cutArg(msg, "taskid"), StringOperator::cutArg(msg, "subject"), StringOperator::cutArg(msg, "tasktext"), StringOperator::cutArg(msg, "answeroptions")
                                    , StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme"), StringOperator::cutArg(msg, "teacherid")});
@@ -264,10 +265,9 @@ void MyClient::solveMsg(QString msg) {
     } else if (cmd == "add separated test") {
         QString testId = StringOperator::cutArg(msg, "testid");
         QList <QString> list = addTestW->getPickedTasks();
-        showMsg(QString::number(list.size()));
         for (auto &i : list)
             slotSendToServer("{cmd='appoint task to test';taskid='" + i + "';testid='" + testId + "';}");
-        showMsg("sended!");
+        showMsg("Отправлено!");
     } else if (cmd == "get teacher groups") {
         if (StringOperator::cutArg(msg, "status") == "sending") {
             teacherGroups.push_back(StringOperator::cutArg(msg, "groupname"));
@@ -292,7 +292,6 @@ void MyClient::solveMsg(QString msg) {
                 buf.push_back(StringOperator::cutArg(msg, params[i]));
             teacherResults.push_back(buf);
         } else {
-            qDebug() << teacherResults;
             teacherResultsW = new TeacherResultsWidget(this, teacherResults);
             connect(teacherResultsW->goBack, &QPushButton::clicked, this, [this] {delete teacherResultsW; teacherResults.clear(); setTeacherWindow(); });
             setCentralWidget(teacherResultsW);
@@ -307,7 +306,7 @@ void MyClient::solveMsg(QString msg) {
            connect(studentTestsW->start, &QPushButton::clicked, this, [this] {
                QString testname = studentTestsW->getSelectedTest();
               if (testname == "") {
-                  showError("select test first");
+                  showError("Сначала выберите тест");
               } else {
                   state = COMPLETETEST;
                   slotSendToServer("{cmd='view test tasks';testname='" + testname + "';}");
@@ -337,7 +336,7 @@ void MyClient::setAdminPlusWindow() {
         connect(agw, &AddGroupWidget::sendGroupClicked, this, [this] {
             QString groupTitle = agw->getGroupTitle();
             if (groupTitle == "") {
-                showError("Group title is empty");
+                showError("Название группы пустое");
                 return;
             }
             QString req = "{cmd='add group';";
@@ -446,7 +445,7 @@ void MyClient::setTeacherWindow() {
             QString subject = addTaskW->getSubject();
 
             if (task == "" || answer == "" || theme == "" || subject == "" || answerOptions.isEmpty()) {
-                showError("Заполните все поля.");
+                showError("Заполните все поля");
                 return;
             } else {
                 QString msg = "{cmd='add task';id='" + QString::number(id) + "';tasktext='" + task + "';";

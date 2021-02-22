@@ -6,15 +6,15 @@
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     quesitionLabel = new QLabel("Вопрос:");
-    answerLabel = new QLabel("Answer");
-    answerOptionsLabel = new QLabel("Answer options");
-    themeLabel = new QLabel("Theme");
-    subjectLabel = new QLabel("Subject");
+    answerLabel = new QLabel("Ответ");
+    answerOptionsLabel = new QLabel("Варианты ответа");
+    themeLabel = new QLabel("Тема");
+    subjectLabel = new QLabel("Предмет");
 
-    save = new QPushButton("save");
-    quit = new QPushButton("quit");
-    newOption = new QPushButton("add new answer option");
-    deleteSelected = new QPushButton("delete selected");
+    save = new QPushButton("Сохранить");
+    quit = new QPushButton("Выйти");
+    newOption = new QPushButton("Добавить вариант ответа");
+    deleteSelected = new QPushButton("Удалить выделенное");
 
     connect(newOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions(); });
@@ -58,8 +58,8 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
 
 void AddTaskWidget::showAddAnswerOptions() {
     bool ok;
-    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                         tr("New answer option:"), QLineEdit::Normal, "", &ok);
+    QString text = QInputDialog::getText(this, tr("Ввод"),
+                                         tr("Новый вариант ответа:"), QLineEdit::Normal, "", &ok);
     if (ok && !text.isEmpty()) {
         answerOptions.push_back(text);
         answerOptionsModel->setStringList(answerOptions);

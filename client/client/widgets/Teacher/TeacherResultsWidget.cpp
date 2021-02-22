@@ -15,8 +15,8 @@ TeacherResultsWidget::TeacherResultsWidget(QWidget *parent, QList <QList <QStrin
             subjects.push_back(i[5]);
     }
 
-    goBack = new QPushButton("go back");
-    sort = new QPushButton("sort");
+    goBack = new QPushButton("Назад");
+    sort = new QPushButton("Сортировка");
     table = new QTableView();
     model = new QStandardItemModel(list.size(), params.size());
     for (int i = 0; i < params.size(); ++i) {
@@ -70,16 +70,16 @@ void TeacherResultsWidget::showSort() {
         subjectBox->addItem(i);
     subjectBox->setCurrentIndex(0);
 
-    sortByDate = new QCheckBox("Sort bu date");
+    sortByDate = new QCheckBox("Сортировать по дате");
     sortDateEdit = new QDateEdit();
     buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok
                                      | QDialogButtonBox::Cancel);
 
     QFormLayout *l = new QFormLayout();
-    l->addRow(tr("student"), studentBox);
-    l->addRow(tr("group"), groupBox);
-    l->addRow(tr("testname"), testnameBox);
-    l->addRow(tr("subject"), subjectBox);
+    l->addRow(tr("Ученик"), studentBox);
+    l->addRow(tr("Группа"), groupBox);
+    l->addRow(tr("Тест"), testnameBox);
+    l->addRow(tr("Предмет"), subjectBox);
     l->addRow(sortByDate);
     l->addRow(sortDateEdit);
     l->addRow(buttonBox);

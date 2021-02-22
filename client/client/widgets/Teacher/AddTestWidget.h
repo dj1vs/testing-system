@@ -52,7 +52,7 @@ class AddTestWidget : public QWidget {
 
  private:
     QList <QLabel *> labels;
-    const QList <QString> labelNames = {"Test name", "Subject", "Date"};
+    const QList <QString> labelNames = {"Тест", "Предмет", "Дата"};
     QLineEdit *nameEdit;
     QLineEdit *subjectEdit;
     QCheckBox *isManualCheck;

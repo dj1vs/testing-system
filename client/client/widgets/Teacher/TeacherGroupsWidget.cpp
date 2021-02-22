@@ -4,7 +4,7 @@
 #include "TeacherGroupsWidget.h"
 
 TeacherGroupsWidget::TeacherGroupsWidget(QWidget *parent, QList <QString> list) : QWidget(parent) {
-    goBack = new QPushButton("GoBack");
+    goBack = new QPushButton("Назад");
     view = new QTableView();
     model = new QStandardItemModel(list.size(), 2);
     for (int i = 0; i < 2; ++i) {
@@ -37,7 +37,7 @@ void TeacherGroupsWidget::showGroupStudents(QList <QList <QString>> groupStudent
     QTableView *table = new QTableView(this);
     table->setAttribute(Qt::WA_DeleteOnClose);
     QStandardItemModel *model = new QStandardItemModel(groupStudents.size(), 2, this);
-    QList <QString> params = {"Name", "Surname"};
+    QList <QString> params = {"Имя", "Фамилия"};
     for (int i = 0; i < 2; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();

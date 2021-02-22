@@ -7,7 +7,7 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
     table = new QTableView(this);
     table->setAttribute(Qt::WA_DeleteOnClose);
     model = new QStandardItemModel(testsList.size(), testsList[0].size() + 1, this);
-    QList <QString> params = {"Teacher name", "Teacher surname", "Test", "Subject", "Date", "Tasks"};
+    QList <QString> params = {"Имя учителя", "Фамилия учителя", "Тест", "Предмет", "Дата", "Задания"};
     for (int i = 0; i < testsList[0].size()+1; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();
@@ -31,8 +31,8 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
         table->setIndexWidget(index, button);
     }
 
-    goBack = new QPushButton("Go back");
-    sort = new QPushButton("Sort");
+    goBack = new QPushButton("Назад");
+    sort = new QPushButton("Сортировать");
     connect(sort, &QPushButton::clicked, this, &AllTestsWidget::showAllPlannedTestsSort);
     goBack->setAttribute(Qt::WA_DeleteOnClose);
 
@@ -45,11 +45,11 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
     setLayout(layout);
 }
 void AllTestsWidget::showAllPlannedTestsSort() {
-    sortNameLabel = new QLabel("Teacher name:", this);
-    sortSurnameLabel = new QLabel("Teacher surname:", this);
-    sortTestLabel = new QLabel("Test name:", this);
-    sortDateLabel = new QLabel("Date (dd.MM.yyyy):", this);
-    sortSubjectLabel = new QLabel("Subject:", this);
+    sortNameLabel = new QLabel("Имя учителя:", this);
+    sortSurnameLabel = new QLabel("Фамилия учителя:", this);
+    sortTestLabel = new QLabel("Тест:", this);
+    sortDateLabel = new QLabel("Дата (dd.MM.yyyy):", this);
+    sortSubjectLabel = new QLabel("Предмет:", this);
     sortName = new QLineEdit();
     sortSurname = new QLineEdit();
     sortTest = new QLineEdit();
@@ -136,13 +136,13 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
     taskList = l;
     if (!taskList.size()) {
         QErrorMessage *d = new QErrorMessage(this);
-        d->showMessage("This test is empty");
+        d->showMessage("Этот тест пустой");
         return;
     }
     tasksAmount = taskList.size();
     currTask = 0;
-    taskNext = new QPushButton("next");
-    taskPrev = new QPushButton("prev");
+    taskNext = new QPushButton("Далее");
+    taskPrev = new QPushButton("Назад");
 
     connect(taskNext, SIGNAL(clicked()), this, SLOT(showNextTask()));
     connect(taskPrev, SIGNAL(clicked()), this, SLOT(showPrevTask()));

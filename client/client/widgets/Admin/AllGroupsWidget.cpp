@@ -6,7 +6,7 @@ AllGroupsWidget::AllGroupsWidget(QWidget *parent, QList <QStringList> l) : QWidg
     table = new QTableView();
     model = new QStandardItemModel(list.size(), 3, this);
 
-    QList <QString> params = {"Name", "Teachers", "Students"};
+    QList <QString> params = {"Группа", "Учитель", "Ученики"};
 
     for (int i = 0; i < 3; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
@@ -30,14 +30,9 @@ AllGroupsWidget::AllGroupsWidget(QWidget *parent, QList <QStringList> l) : QWidg
         QPushButton *button = new QPushButton(this);
         button->setAccessibleName(str);
         buttonsList.push_back(button);
-
-//        connect(button, &QPushButton::clicked, this,
-//                [this, button] () {slotSendToServer("{cmd='view group students';groupname='" + button->accessibleName() + "';}"); });
-
-
         table->setIndexWidget(index, button);
     }
-    goBack = new QPushButton("Go Back", this);
+    goBack = new QPushButton("Назад", this);
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(table);
     layout->addWidget(goBack);
@@ -49,7 +44,7 @@ void AllGroupsWidget::showGroupStudents(QList <QList <QString>> groupStudents) {
     QTableView *table = new QTableView(this);
     table->setAttribute(Qt::WA_DeleteOnClose);
     QStandardItemModel *model = new QStandardItemModel(groupStudents.size(), 2, this);
-    QList <QString> params = {"Name", "Surname"};
+    QList <QString> params = {"Имя", "Фамилия"};
     for (int i = 0; i < 2; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
         const char* c_str = ba.data();

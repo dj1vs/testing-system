@@ -3,9 +3,9 @@
 #include "StudentWidget.h"
 
 StudentWidget::StudentWidget(QWidget *parent) : QWidget(parent) {
-    currentTests = new QPushButton("current tests");
-    results = new QPushButton("results");
-    goBack = new QPushButton("go back");
+    currentTests = new QPushButton("Текущие тесты");
+    results = new QPushButton("Результаты");
+    goBack = new QPushButton("Назад");
 
     QVBoxLayout *l = new QVBoxLayout();
     l->addWidget(currentTests);

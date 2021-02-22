@@ -4,14 +4,14 @@
 #include "AddToGroupWidget.h"
 
 AddToGroupWidget::AddToGroupWidget(QWidget *parent) : QWidget(parent) {
-    nameLabel = new QLabel("Name:", this);
-    surnameLabel = new QLabel("Surname:", this);
-    titleLabel = new QLabel("Group title:", this);
+    nameLabel = new QLabel("Имя:", this);
+    surnameLabel = new QLabel("Фамилия:", this);
+    titleLabel = new QLabel("Название группы:", this);
     name = new QLineEdit(this);
     surname = new QLineEdit(this);
     title = new QLineEdit(this);
-    sendToGroup = new QPushButton("&Add", this);
-    goBack = new QPushButton("&Go back", this);
+    sendToGroup = new QPushButton("&Добавить", this);
+    goBack = new QPushButton("&Назад", this);
 
     QFormLayout *fl = new QFormLayout();
     fl->addRow(nameLabel, name);

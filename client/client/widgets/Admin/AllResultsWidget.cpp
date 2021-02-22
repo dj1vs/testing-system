@@ -4,7 +4,7 @@
 #include "AllResultsWidget.h"
 
 AllResultsWidget::AllResultsWidget(QWidget *parent, QList <QList <QString>> l) : QWidget(parent), list(l) {
-    goBack = new QPushButton("Go Back", this);
+    goBack = new QPushButton("Назад", this);
     sort = new QPushButton("Редактировать параметры сортировки", this);
 
     connect(sort, &QPushButton::clicked, this,
@@ -13,7 +13,7 @@ AllResultsWidget::AllResultsWidget(QWidget *parent, QList <QList <QString>> l) :
     table = new QTableView();
     model = new QStandardItemModel(list.size(), 5, this);
 
-    QList <QString> params = {"Test", "Subject", "Name", "Surname", "Percent"};
+    QList <QString> params = {"Тест", "Предмет", "Имя", "Фамилия", "Процент"};
 
     for (int i = 0; i < 5; ++i) {
         QByteArray ba = params[i].toLocal8Bit();
@@ -39,17 +39,17 @@ AllResultsWidget::AllResultsWidget(QWidget *parent, QList <QList <QString>> l) :
     setLayout(layout);
 }
 void AllResultsWidget::showAllResultsSort() {
-    sortNameLabel = new QLabel("Name:", this);
-    sortSurnameLabel = new QLabel("Surname:", this);
-    sortSubjectLabel = new QLabel("Subject:", this);
-    sortTestLabel = new QLabel("Test:", this);
+    sortNameLabel = new QLabel("Имя:", this);
+    sortSurnameLabel = new QLabel("Фамилия:", this);
+    sortSubjectLabel = new QLabel("Предмет:", this);
+    sortTestLabel = new QLabel("Тест:", this);
 
     sortName = new QLineEdit(this);
     sortSurname = new QLineEdit(this);
     sortSubject = new QLineEdit(this);
     sortTest = new QLineEdit(this);
 
-    save = new QPushButton("Save", this);
+    save = new QPushButton("Сохранить", this);
 
     QHBoxLayout *name = new QHBoxLayout();
     name->addWidget(sortNameLabel);

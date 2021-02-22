@@ -38,7 +38,7 @@ class TeacherResultsWidget : public QWidget {
     QDialogButtonBox *buttonBox;
 
     const QList <QString> params =
-    {"name", "surname", "group", "test name", "percent", "subject", "date"};
+    {"Имя", "Фамилия", "Группа", "Тест", "Процент", "Предмет", "Дата"};
 
     QList <QList <QString>> list;
     QList <QList<QString>> students;

@@ -3,10 +3,10 @@
 #include "AdminWidget.h"
 
 AdminWidget::AdminWidget(QWidget *parent) : QWidget(parent) {
-    results = new QPushButton("View Results", this);
-    groups = new QPushButton("View Groups", this);
-    tests = new QPushButton("View Planned Tests", this);
-    goBack = new QPushButton("Go back", this);
+    results = new QPushButton("Результаты", this);
+    groups = new QPushButton("Группы", this);
+    tests = new QPushButton("Тесты", this);
+    goBack = new QPushButton("Назад", this);
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(groups);
