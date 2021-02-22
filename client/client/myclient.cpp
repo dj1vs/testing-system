@@ -142,7 +142,12 @@ void MyClient::solveMsg(QString msg) {
             break;
         }
     } else if (cmd == "view all results") {
+        qDebug() << msg;
         if (StringOperator::cutArg(msg, "status") == "sended") {
+            if (allResultsList.isEmpty()) {
+                showError("No results");
+                return;
+            }
             delete adminW;
             arw = new AllResultsWidget(this, allResultsList);
             connect(arw->goBack, &QPushButton::clicked, this, [this] {delete arw; setAdminWindow();});
