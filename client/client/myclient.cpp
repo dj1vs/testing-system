@@ -187,6 +187,10 @@ void MyClient::solveMsg(QString msg) {
     } else if (cmd == "view all planned tests") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended") {
+            if (allPlannedTestsList.isEmpty()) {
+                showError("No tests");
+                return;
+            }
             if (state == APPOINTTEST) {
                 delete teacherW;
                 QStringList testList;
@@ -198,16 +202,16 @@ void MyClient::solveMsg(QString msg) {
                     slotSendToServer("{cmd='appoint test';testname='" + appointTestW->getTest() + "';groupname='" + appointTestW->getGroup() + "';}");
                 showMsg("sended!"); });
                 setCentralWidget(appointTestW);
-                return;
+            } else {
+                atw = new AllTestsWidget(this, allPlannedTestsList);
+                connect(atw->goBack, &QPushButton::clicked, this,
+                        [this] {delete atw; setAdminWindow();});
+                for (int i = 0; i < atw->buttons.size(); ++i) {
+                    connect(atw->buttons[i], &QPushButton::clicked, this, [this, i]
+                    {slotSendToServer("{cmd='view test tasks';testname='" + atw->buttons[i]->accessibleName() + "';}");});
+                }
+                setCentralWidget(atw);
             }
-            atw = new AllTestsWidget(this, allPlannedTestsList);
-            connect(atw->goBack, &QPushButton::clicked, this,
-                    [this] {delete atw; setAdminWindow();});
-            for (int i = 0; i < atw->buttons.size(); ++i) {
-                connect(atw->buttons[i], &QPushButton::clicked, this, [this, i]
-                {slotSendToServer("{cmd='view test tasks';testname='" + atw->buttons[i]->accessibleName() + "';}");});
-            }
-            setCentralWidget(atw);
         } else if (status == "started") {
             allPlannedTestsList.clear();
         } else {
