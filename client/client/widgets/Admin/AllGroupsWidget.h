@@ -15,21 +15,19 @@ class AllGroupsWidget : public QWidget {
     Q_OBJECT
 
  public:
-    explicit AllGroupsWidget(QWidget *parent = nullptr, QTableView *t = nullptr, QStandardItemModel *m = nullptr);
+    explicit AllGroupsWidget(QWidget *parent = nullptr, QList <QStringList> l = {});
 
  public:
     QPushButton *goBack;
-    QStandardItemModel *model;
-    QList <QPushButton *> list1;
-    QList <QPushButton *> list2;
+    QList <QPushButton *> buttonsList;
 
  private:
     QTableView *table;
+    QStandardItemModel *model;
     QVBoxLayout *layout;
-    QList <QString> list;
+    QList <QStringList> list;
 
  public slots:
-    void showGroupTeachers(QList <QList <QString>> groupTeachers);
     void showGroupStudents(QList <QList <QString>> groupStudents);
 };
 

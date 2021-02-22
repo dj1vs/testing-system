@@ -75,7 +75,7 @@ class MyClient : public QMainWindow {
 
  private:
     enum STATE {AUTHORIZATION,
-                ADMIN,
+                ADMIN, VIEWALLGROUPS,
                 ADMINPLUS, ADDGROUP,
                 TEACHER, APPOINTTEST, STUDENT, COMPLETETEST } state = AUTHORIZATION;
     const int WINH = 450;
@@ -88,7 +88,7 @@ class MyClient : public QMainWindow {
  private:
     QList <QList <QString>> allResultsList;
     QList <QStringList> studentPlannedTests;
-    QList <QString> allGroupsList;
+    QList <QStringList> allGroupsList;
     QList <QList<QString>> groupStudents;
     QList <QList <QString>> groupTeachers;
     QList <QList<QString>> allPlannedTestsTaskList;

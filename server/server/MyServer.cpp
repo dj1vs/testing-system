@@ -72,7 +72,6 @@ void MyServer::sendToClient(QTcpSocket* pSocket, const QString& str) {
 
 void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
     if (!StringOperator::validatePackage(msg)) {
-        qDebug() << "Invalid package: " + msg;
         return;
     }
     QString cmd = StringOperator::cutArg(msg, "cmd");
@@ -253,30 +252,18 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             sendToClient(pSocket, "{cmd='view all results';status='sended';}");
         }
     } else if (cmd == "view all groups") {
-        QString req = "SELECT name FROM groups";
+        QString req = "SELECT groups.name, users.name, users.surname FROM groups INNER JOIN users ON users.id = groups.teacherid";
         QSqlQuery query = QSqlQuery(db);
         if (!query.exec(req)) {
             printSQLError(query);
         } else {
             while (query.next()) {
-                QString processMsg = "{cmd='view all groups';name='" + query.record().field(0).value().toString()+ "';}";
+                QString teacherName = query.record().field(1).value().toString() + " " + query.record().field(2).value().toString();
+                QString groupName = query.record().field(0).value().toString();
+                QString processMsg = "{cmd='view all groups';name='" + groupName + "';teachername='" + teacherName + "';}";
                 sendToClient(pSocket, processMsg);
             }
             sendToClient(pSocket, "{cmd='view all groups';status='sended';}");
-        }
-    } else if (cmd == "view group teachers") {
-        QString req = "SELECT users.name, users.surname FROM groups "
-                      "INNER JOIN users ON groups.teacherid = users.id WHERE groups.name = '" + StringOperator::cutArg(msg, "groupname") + "';";
-        QSqlQuery query = QSqlQuery(db);
-        if (!query.exec(req)) {
-            printSQLError(query);
-        } else {
-            while (query.next()) {
-                QString procMsg = "{cmd='view group teachers';name='" + query.record().field(0).value().toString();
-                procMsg += "';surname='" + query.record().field(1).value().toString() + "';}";
-                sendToClient(pSocket, procMsg);
-            }
-            sendToClient(pSocket, "{cmd='view group teachers';status='sended';}");
         }
     } else if (cmd == "view group students") {
         QString req = "SELECT users.name, users.surname FROM group_by_user "

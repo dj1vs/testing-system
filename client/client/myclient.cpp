@@ -3,6 +3,7 @@
 
 MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     : QMainWindow(parent) {
+    m_nNextBlockSize = 0;
     m_pTcpSocket = new QTcpSocket(this);
     m_pTcpSocket->connectToHost(strHost, nPort);
 
@@ -75,7 +76,6 @@ void MyClient::slotSendToServer(QString msg) {
 
 void MyClient::solveMsg(QString msg) {
     if (!StringOperator::validatePackage(msg)) {
-        qDebug() << "Recieved invalid package:" << msg;
         return;
     }
     QString cmd = StringOperator::cutArg(msg, "cmd");
@@ -158,45 +158,12 @@ void MyClient::solveMsg(QString msg) {
         StringOperator::cutArg(msg, "percent")});
     } else if (cmd == "view all groups") {
         if (StringOperator::cutArg(msg, "status") == "sended") {
-            QTableView *table = new QTableView();
-            QStandardItemModel *model = new QStandardItemModel(allGroupsList.size(), 3, this);
-
-            QList <QString> params = {"Name", "Teachers", "Students"};
-
-            for (int i = 0; i < 3; ++i) {
-                QByteArray ba = params[i].toLocal8Bit();
-                const char* c_str = ba.data();
-                model->setHeaderData(i, Qt::Horizontal, QObject::tr(c_str));
+            allGroupsW = new AllGroupsWidget(this, allGroupsList);
+            state = VIEWALLGROUPS;
+            for (int i = 0; i < allGroupsW->buttonsList.size(); ++i) {
+                connect(allGroupsW->buttonsList[i], &QPushButton::clicked, this,
+                    [this, i] () {slotSendToServer("{cmd='view group students';groupname='" + allGroupsW->buttonsList[i]->accessibleName() + "';}"); });
             }
-
-            for (int row = 0; row < allGroupsList.size(); ++row) {
-                QModelIndex index = model->index(row, 0, QModelIndex());
-                model->setData(index, allGroupsList[row]);
-            }
-
-            table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-            table->setModel(model);
-
-            for (int row = 0; row < allGroupsList.size(); ++row) {
-                QModelIndex index1 = model->index(row, 1, QModelIndex());
-                QString str = model->index(row, 0, QModelIndex()).data().toString();
-                QPushButton *button1 = new QPushButton(this);
-                button1->setAccessibleName(str);
-                connect(button1, &QPushButton::clicked, this,
-                        [this, button1] () {slotSendToServer("{cmd='view group teachers';groupname='" + button1->accessibleName() + "';}"); });
-                table->setIndexWidget(index1, button1);
-                QModelIndex index2 = model->index(row, 2, QModelIndex());
-                QPushButton *button2 = new QPushButton(this);
-                button2->setAccessibleName(str);
-
-                connect(button2, &QPushButton::clicked, this,
-                        [this, button2] () {slotSendToServer("{cmd='view group students';groupname='" + button2->accessibleName() + "';}"); });
-
-
-                table->setIndexWidget(index2, button2);
-            }
-
-            allGroupsW = new AllGroupsWidget(this, table, model);
             connect(allGroupsW->goBack, &QPushButton::clicked, this, [this] {
                delete allGroupsW;
                groupStudents.clear(); groupTeachers.clear();
@@ -205,19 +172,11 @@ void MyClient::solveMsg(QString msg) {
             setCentralWidget(allGroupsW);
             return;
         }
-        allGroupsList.push_back(StringOperator::cutArg(msg, "name"));
-    } else if (cmd == "view group teachers") {
-        QString status = StringOperator::cutArg(msg, "status");
-        if (status == "sended") {
-            allGroupsW->showGroupTeachers(groupTeachers);
-            groupTeachers.clear();
-        } else {
-            groupTeachers.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "surname")});
-        }
+        allGroupsList.push_back({StringOperator::cutArg(msg, "name"), StringOperator::cutArg(msg, "teachername")});
     } else if (cmd == "view group students") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended") {
-            if (teacherGroupsW != nullptr)
+            if (state != VIEWALLGROUPS)
                 teacherGroupsW->showGroupStudents(groupStudents);
             else
                 allGroupsW->showGroupStudents(groupStudents);
