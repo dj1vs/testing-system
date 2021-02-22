@@ -16,15 +16,10 @@
 #include <QSqlTableModel>
 #include <QRandomGenerator>
 
-#include <iostream>
-#include <utility>
+#include <utility>  //  for std::swap
 
 #include "../../lib/DateConverter.h"
 #include "../../lib/StringOperator.h"
-
-class QTcpServer;
-class QTcpSocket;
-
 
 class MyServer : public QObject {
     Q_OBJECT
@@ -33,19 +28,25 @@ class MyServer : public QObject {
     explicit MyServer(int nPort, QObject *parent = nullptr);
 
  private:
+    //  оснавная переменная для работы с сервером
     QTcpServer* m_ptcpServer;
+    //  хранение длины следующего полученного от сокета блока
     quint16 m_nNextBlockSize;
+
+    //  переменная БД
     QSqlDatabase db;
 
  private:
     void sendToClient(QTcpSocket* pSocket, const QString& str);
+
+    //  обработать полученное от пользователя сообщение и получить
+    //  нужные для отправки данные
     void solveMsg(QTcpSocket* pSocket, QString msg);
+
+    //  вывести в консоль ошибку, возникшую при выполнении SQL запроса
     void printSQLError(QSqlQuery query) {qDebug() << "Can not run database query :("
                                          << query.lastError().databaseText()
                                          << query.lastError().driverText(); }
-
-
-
  public slots:
     virtual void slotNewConnection();
     void slotReadClient();

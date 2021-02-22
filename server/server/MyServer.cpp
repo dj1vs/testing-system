@@ -2,7 +2,10 @@
 #include "MyServer.h"
 
 MyServer::MyServer(int nPort, QObject *parent) : QObject(parent), m_nNextBlockSize(0) {
+    //  создать сервер
     m_ptcpServer = new QTcpServer(this);
+
+    //  проверить, работавет ли сервер, если нет, вывести почему
     if (!m_ptcpServer->listen(QHostAddress::Any, nPort)) {
             qDebug() << "Server Error";
             qDebug() << "Unable to start the server:";
@@ -10,14 +13,20 @@ MyServer::MyServer(int nPort, QObject *parent) : QObject(parent), m_nNextBlockSi
             m_ptcpServer->close();
             return;
         }
+
+    //  подсоединить слот для новых соединений
     connect(m_ptcpServer, SIGNAL(newConnection()), this, SLOT(slotNewConnection()));
+
     qDebug() << "Server started succesfully :)\n";
 
+    // инициализация переменной для общения с БД и обозначение нужных входных данных
     db = QSqlDatabase::addDatabase("QPSQL");
     db.setHostName("127.0.0.1");
     db.setDatabaseName("systemdb");
     db.setUserName("postgres");
     db.setPassword("123");
+
+    //  попробовать соединиться с БД
     if (db.open())
         qDebug() << "Succesfully connected to database! :)";
     else
@@ -25,20 +34,28 @@ MyServer::MyServer(int nPort, QObject *parent) : QObject(parent), m_nNextBlockSi
 }
 
 void MyServer::slotNewConnection() {
+    //получить сокет нового соединения
     QTcpSocket* pClientSocket = m_ptcpServer->nextPendingConnection();
+
     qDebug() << "New client connected!";
+
+    //  подсоединить слоты для подключившегося клиента(на чтение и на удаление при выходе)
     connect(pClientSocket, SIGNAL(disconnected()), pClientSocket, SLOT(deleteLater()));
     connect(pClientSocket, SIGNAL(readyRead()), this, SLOT(slotReadClient()));
+
+    //  отправить клиенту подтверждающий сигнал
     sendToClient(pClientSocket, "{cmd='welcome';}");
 }
 
 void MyServer::slotReadClient() {
+    // получить сокет отправителя
     QTcpSocket* pClientSocket = static_cast<QTcpSocket*>(sender());
-        QDataStream in(pClientSocket);
-        in.setVersion(QDataStream::Qt_DefaultCompiledVersion);
-        for (;;) {
-            if (!m_nNextBlockSize) {
-                if (pClientSocket->bytesAvailable() < static_cast<qint64>(sizeof(quint16))) {
+    QDataStream in(pClientSocket);
+    in.setVersion(QDataStream::Qt_DefaultCompiledVersion);
+    //  цикл используется на случай, если не все данные от клиента придут одновременно
+    for (;;) {
+        if (!m_nNextBlockSize) {
+            if (pClientSocket->bytesAvailable() < static_cast<qint64>(sizeof(quint16))) {
                     break;
                 }
                 in >> m_nNextBlockSize;
