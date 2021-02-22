@@ -12,5 +12,5 @@ AuthorizationWidget::AuthorizationWidget(QWidget *parent) : QWidget(parent) {
     f->addRow(tr("Password"), password);
     f->addWidget(authorize);
 
-    this->setLayout(f);
+    setLayout(f);
 }

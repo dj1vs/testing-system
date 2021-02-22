@@ -1,4 +1,6 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include "AddTaskWidget.h"
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
@@ -11,13 +13,13 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     save = new QPushButton("save");
     quit = new QPushButton("quit");
     newOption = new QPushButton("add new answer option");
-    deleteEmpty = new QPushButton("delete empty");
+    deleteSelected = new QPushButton("delete selected");
 
     connect(newOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions(); });
 
-    connect(deleteEmpty, &QPushButton::clicked, this,
-            [this] {addTaskAnswerOptionsDeleteEmpty(); });
+    connect(deleteSelected, &QPushButton::clicked, this,
+            [this] {answerOptionsDeleteSelected(); });
 
     quesition = new QTextEdit();
     answer = new QTextEdit();
@@ -28,13 +30,19 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     theme = new QLineEdit();
     subject = new QLineEdit();
 
-    layout = new QVBoxLayout();
+    QVBoxLayout *answerOptionsButtonsLayout = new QVBoxLayout();
+    answerOptionsButtonsLayout->addWidget(deleteSelected);
+    answerOptionsButtonsLayout->addWidget(newOption);
+
+    QHBoxLayout *answerOptionsLayout = new QHBoxLayout();
+    answerOptionsLayout->addWidget(answerOptionsView);
+    answerOptionsLayout->addLayout(answerOptionsButtonsLayout);
+
+    QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(quesitionLabel);
     layout->addWidget(quesition);
     layout->addWidget(answerOptionsLabel);
-    layout->addWidget(answerOptionsView);
-    layout->addWidget(deleteEmpty);
-    layout->addWidget(newOption);
+    layout->addLayout(answerOptionsLayout);
     layout->addWidget(answerLabel);
     layout->addWidget(answer);
     layout->addWidget(subjectLabel);
@@ -57,10 +65,9 @@ void AddTaskWidget::showAddAnswerOptions() {
         answerOptionsView->setModel(answerOptionsModel);
     }
 }
-void AddTaskWidget::addTaskAnswerOptionsDeleteEmpty() {
-    for (int i = 0; i < answerOptionsModel->rowCount(); ++i) {
-        if (answerOptionsModel->stringList().at(i) == "")
-            answerOptionsModel->removeRow(i);
-    }
+void AddTaskWidget::answerOptionsDeleteSelected() {
+    int row = answerOptionsView->selectionModel()->currentIndex().row();
+    answerOptionsModel->removeRow(row);
+    answerOptions.removeAt(row);
     answerOptionsView->setModel(answerOptionsModel);
 }

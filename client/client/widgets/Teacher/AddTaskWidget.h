@@ -6,7 +6,6 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QListView>
-#include <QVBoxLayout>
 #include <QTextEdit>
 #include <QStringListModel>
 #include <QInputDialog>
@@ -37,19 +36,18 @@ class AddTaskWidget : public QWidget {
     QLabel *themeLabel;
     QLabel *subjectLabel;
     QPushButton *newOption;
-    QPushButton *deleteEmpty;
+    QPushButton *deleteSelected;
     QTextEdit *quesition;
     QTextEdit *answer;
     QStringListModel *answerOptionsModel;
     QListView *answerOptionsView;
     QLineEdit *theme;
     QLineEdit *subject;
-    QVBoxLayout *layout;
     QList <QString> answerOptions;
 
  private:
     void showAddAnswerOptions();
-    void addTaskAnswerOptionsDeleteEmpty();
+    void answerOptionsDeleteSelected();
 };
 
 #endif  // ADDTASKWIDGET_H
