@@ -9,6 +9,7 @@
 #include <QTextEdit>
 #include <QStringListModel>
 #include <QLineEdit>
+#include <QFile>
 
 class AddTaskWidget : public QWidget {
     Q_OBJECT
@@ -45,6 +46,7 @@ class AddTaskWidget : public QWidget {
     QLineEdit *theme;
     QLineEdit *subject;
     QList <QString> answerOptions;
+    QString imageFileName = ":NONE:";
 
  private:
     void showAddAnswerOptions();

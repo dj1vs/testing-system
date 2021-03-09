@@ -99,7 +99,7 @@ class MyClient : public QMainWindow {
  private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err); }
     void showMsg(QString msg) {statusBar()->showMessage(msg); }
-    void showMsgBox(QString msg) {QMessageBox msgBox; msgBox.setText(msg); msgBox.exec(); }
+    void showMsgBox(QString msg) {QMessageBox msgBox; msgBox.setText(msg); msgBox.show(); }
     void setAuthorizationWindow();
     void setAdminPlusWindow();
     void setAdminWindow();

@@ -2,6 +2,8 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QInputDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 #include "AddTaskWidget.h"
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
@@ -22,6 +24,17 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
 
     connect(deleteSelected, &QPushButton::clicked, this,
             [this] {answerOptionsDeleteSelected(); });
+
+    connect(addImage, &QPushButton::clicked, this, [this] {
+        imageFileName = QFileDialog::getOpenFileName(this,
+            tr("Открыть изображение"), "/home", tr("Image Files (*.png *.jpg *.bmp)"));
+        int fileSize = QFile(imageFileName).size();
+        if (fileSize > 104857600) {
+            QMessageBox msgBox; msgBox.setText("File is too large! (> 100 MB).\nTry to compress it or use other file."); msgBox.show();
+        } else {
+            imageFileName = ":NONE:";
+        }
+    });
 
     quesition = new QTextEdit();
     answer = new QTextEdit();
