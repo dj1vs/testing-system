@@ -30,6 +30,7 @@ class AddTaskWidget : public QWidget {
     QPushButton *newTestButton;
     QPushButton *viewTeacherGroupsButton;
     QPushButton *viewTeacherResultsButton;
+    QPushButton *addImage;
     QLabel *quesitionLabel;
     QLabel *answerLabel;
     QLabel *answerOptionsLabel;

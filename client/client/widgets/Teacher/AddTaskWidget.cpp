@@ -15,6 +15,7 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     quit = new QPushButton("Выйти");
     newOption = new QPushButton("Добавить вариант ответа");
     deleteSelected = new QPushButton("Удалить выделенное");
+    addImage = new QPushButton("Добавить изображение");
 
     connect(newOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions(); });
@@ -46,6 +47,7 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     layout->addLayout(answerOptionsLayout);
     layout->addWidget(answerLabel);
     layout->addWidget(answer);
+    layout->addWidget(addImage);
     layout->addWidget(subjectLabel);
     layout->addWidget(subject);
     layout->addWidget(themeLabel);

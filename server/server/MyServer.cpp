@@ -54,6 +54,7 @@ void MyServer::slotReadClient() {
     in.setVersion(QDataStream::Qt_DefaultCompiledVersion);
     //  цикл используется на случай, если не все данные от клиента придут одновременно
     for (;;) {
+        //  получить размер следующего блока со всеми очевидными исключениями
         if (!m_nNextBlockSize) {
             if (pClientSocket->bytesAvailable() < static_cast<qint64>(sizeof(quint16))) {
                     break;
@@ -64,18 +65,24 @@ void MyServer::slotReadClient() {
             if (pClientSocket->bytesAvailable() < m_nNextBlockSize) {
                 break;
             }
+
+
+            //  получение сообщения в виде QString
             QTime   time;
             QString str;
             in >> time >> str;
-
             QString strMessage = str;
+
+            //  обработка полученного сообщения
             solveMsg(pClientSocket, strMessage);
 
+            //  обш=нуляем размер следующего блока
             m_nNextBlockSize = 0;
         }
 }
 
 void MyServer::sendToClient(QTcpSocket* pSocket, const QString& str) {
+    //  преобразование строки в нужный формат для отправки
     QByteArray  arrBlock;
     QDataStream out(&arrBlock, QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_DefaultCompiledVersion);
@@ -84,27 +91,39 @@ void MyServer::sendToClient(QTcpSocket* pSocket, const QString& str) {
     out.device()->seek(0);
     out << quint16(arrBlock.size() - sizeof(quint16));
 
+    //  непосредственно отправка
     pSocket->write(arrBlock);
 }
 
 void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
+    //  если пакет составлен неправильно, игнорируем
     if (!StringOperator::validatePackage(msg)) {
         return;
     }
+    //  записываем в cmd команд узапроса пользователя
     QString cmd = StringOperator::cutArg(msg, "cmd");
     if (cmd == "authorize") {
+        //  авторизация пользователя в системе
+
+
+        //  получение необходимых строк из запроса
         QString login = StringOperator::cutArg(msg, "login");
         QString pass = StringOperator::cutArg(msg, "pass");
+
+        //  поиск пользователей с отправленным логином и паролем
         QString sqlRequest = "SELECT role, id FROM users WHERE "
                              "login = '" + login + "' AND "
                              "password = '" + pass + "'";
         QSqlQuery query = QSqlQuery(db);
+
         if (!query.exec(sqlRequest)) {
             printSQLError(query);
         } else {
+            //  если такого пользователя нет, отправляем ошибку
             if (query.size() == 0) {
                 sendToClient(pSocket, "{cmd='authorize';status='1';}");
             } else {
+                // иначе отправляем клиенту посылку с успешным статусом, ролью пользователя и его id
                 while (query.next()) {
                     QString str = "{cmd='authorize';status='0';role='";
                     str += query.record().field(0).value().toString() + "';";
@@ -114,53 +133,78 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             }
         }
     } else if (cmd == "add group") {
+        //  добавление новой группы
+
+
+        //  берём из запроса название новой группы
         QString groupName = StringOperator::cutArg(msg, "groupname");
         QSqlQuery query = QSqlQuery(db);
+
+        //  проверяем, есть ли группа с таким же названием
         if (!query.exec("SELECT id FROM groups WHERE name = '" + groupName + "';")) {
             printSQLError(query);
         } else if (query.size()) {
+            //  если такая группа есть, отправляем ошибку
             sendToClient(pSocket, "{cmd='add group';staus='group already exists';}");
             return;
         }
+
+        //  добавление группы
         query.prepare("INSERT INTO groups (name) "
                        "VALUES (:name)");
         query.bindValue(":name", groupName);
         if (query.exec())
+            //  в случае успешного добавления отправить посылку со статусом 0 клиенту
             sendToClient(pSocket,  "{cmd='add group';status='0';}");
         else
             printSQLError(query);
     } else if (cmd == "add to group") {
+        //  добавить пользователя в группу
+
+
         int groupId = 0;
         int userId = 0;
+        //получаем из запроса нужные данные
         QString name = StringOperator::cutArg(msg, "studentsname");
         QString surname = StringOperator::cutArg(msg, "studentssurname");
         QString title = StringOperator::cutArg(msg, "groupname");
+
+        //  ищем группы с отправленным именем
         QString sqlRequest = "SELECT id FROM groups WHERE name = '" + title + "';";
         QSqlQuery query = QSqlQuery(db);
         if (!query.exec(sqlRequest)) {
             printSQLError(query);
         } else {
             if (!query.size()) {
+                //  в случае ненахода отправить клиенту ошибку
                 sendToClient(pSocket, "{cmd='add to group';status='1';}");
                 return;
             } else {
+                //  иначе сохранить id группы
                 while (query.next())
                     groupId = query.record().field(0).value().toInt();
             }
         }
+
+        //  ищем пользователей с введёнными именем и фамилией
         sqlRequest = "SELECT id FROM users WHERE name = '" + name;
         sqlRequest += "' AND surname = '" + surname + "';";
         if (!query.exec(sqlRequest)) {
             printSQLError(query);
         } else {
             if (!query.size()) {
+                //  если таких польщователей нет, отправить ошибку
                 sendToClient(pSocket, "{cmd='add to group';status='2';}");
                 return;
             } else {
+                //  если пользователь найден, записать его id
                 while (query.next())
                     userId = query.record().field(0).value().toInt();
             }
         }
+
+        //  проверяем, есть ли уже этот пользователь в группе с названием из запроса
+        //  если есть, отправить ошибку
         sqlRequest = "SELECT group_by_user.userId FROM group_by_user"
                      " INNER JOIN users ON users.id = group_by_user.userId"
                      " INNER JOIN groups ON groups.id = group_by_user.groupId"
@@ -173,6 +217,8 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             return;
         }
 
+        //  добавить пользователя в группу
+        //  в случае удачи отправить пользователю статус 0
         query.prepare("INSERT INTO group_by_user (userId, groupId) "
                       "VALUES (:userId, :groupId)");
         query.bindValue(":userId", userId);
@@ -182,11 +228,18 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
         else
             printSQLError(query);
     } else if (cmd == "appoint") {
+        //  назначить группу преподавателю
+
+
+        //  получаем необходимые данные из запроса
         QString teacherName = StringOperator::cutArg(msg, "teachername");
         QString teacherSurname = StringOperator::cutArg(msg, "teachersurname");
         QString groupName = StringOperator::cutArg(msg, "groupname");
         int teacherId = 0;
 
+        //  ищем учителя с данными из запроса
+        //  если таких учителейц нет, выдаём ошибку
+        //  иначе записываем id учителя
         QString sqlRequest = "SELECT id FROM users WHERE "
                              "role = 'teacher' AND name = '" + teacherName + "'"
                              " AND surname = '" + teacherSurname + "';";
@@ -200,6 +253,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             while (query.next())
                 teacherId = query.record().field(0).value().toInt();
         }
+
+        //  проверяем, есть ли у группы с именем groupName  назначенный учитель
+        //  если есть, отправляем ошибку
         sqlRequest = "SELECT id FROM groups WHERE name = '" + groupName + "' AND teacherid IS NULL;";
         if (!query.exec(sqlRequest)) {
             printSQLError(query);
@@ -208,6 +264,8 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             return;
         }
 
+        //  обновляем таблицу с группами и ставим id учителя
+        //  если всё прошло успешно отправляем клиенту код 0
         query.prepare("UPDATE groups SET teacherid = (:teacherid) "
                         "WHERE name = '" + groupName + "';");
         query.bindValue(":teacherid", teacherId);
@@ -216,12 +274,18 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
         else
             printSQLError(query);
     } else if (cmd == "add user") {
+        //  добавить нового пользователя в систему
+
+
+        //  получаем нужные данные из запроса
         QString name = StringOperator::cutArg(msg, "name");
         QString surname = StringOperator::cutArg(msg, "surname");
         QString login = StringOperator::cutArg(msg, "login");
         QString pass = StringOperator::cutArg(msg, "pass");
         QString role = StringOperator::cutArg(msg, "role");
 
+        //  проверяем, есть ли пользователь с такими же данными
+        //  если есть, отправляем ошибку
         QString sqlRequest = "SELECT id FROM users WHERE "
                              "(name = '" + name + "' AND "
                              "surname = '" + surname + "' AND "
@@ -235,6 +299,9 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             sendToClient(pSocket, "{cmd='add user', status='1'");
             return;
         }
+
+        //  добавляем пользователя
+        //  если все прошло успешно отправляем код 0
         query.prepare("INSERT INTO users (login, password, name, surname, role)"
                         "VALUES (:login, :password, :name, :surname, :role);");
         query.bindValue(":login", login);
@@ -248,7 +315,15 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
         else
             sendToClient(pSocket, "{cmd='add user', status='0'");
     } else if (cmd == "view all results") {
+        //  просмотреть ВСЕ результаты
+
+
+
+        //  оповещаем клиента о начале отправки данных
         sendToClient(pSocket, "{cmd='view all results';status='started';}");
+
+        //  выбираем все данные о результатах и по одному query.record() отсылаем клиенту
+
         QString req = "SELECT tests.name, tests.subject, users.name, users.surname, results.percent "
                       "FROM results INNER JOIN users ON results.studentid = users.id "
                       "INNER JOIN tests ON results.testid = tests.id;";
@@ -265,8 +340,14 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
                 sendToClient(pSocket, processMsg);
             }
         }
+
+        //  оповещаем клиента о том, что все данные высланы
         sendToClient(pSocket, "{cmd='view all results';status='sended';}");
     } else if (cmd == "view all groups") {
+        //  просмотр всех групп
+
+
+        //  делавем запрос по данным всех групп и отсылаем по одному query.record() пользователюЫ
         QString req = "SELECT groups.name, users.name, users.surname FROM groups INNER JOIN users ON users.id = groups.teacherid";
         QSqlQuery query = QSqlQuery(db);
         if (!query.exec(req)) {
