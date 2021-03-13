@@ -21,6 +21,7 @@ class AddTaskWidget : public QWidget {
     QList <QString> getAnswerOptions() const {return answerOptionsModel->stringList(); }
     QString getTheme() const {return theme->text(); }
     QString getSubject() const {return subject->text(); }
+    QString getImageFileName() const {return imageFileName;};
 
  public:
     QPushButton *save;
@@ -32,6 +33,7 @@ class AddTaskWidget : public QWidget {
     QPushButton *viewTeacherGroupsButton;
     QPushButton *viewTeacherResultsButton;
     QPushButton *addImage;
+    QPushButton *viewImage;
     QLabel *quesitionLabel;
     QLabel *answerLabel;
     QLabel *answerOptionsLabel;
@@ -51,6 +53,8 @@ class AddTaskWidget : public QWidget {
  private:
     void showAddAnswerOptions();
     void answerOptionsDeleteSelected();
+ signals:
+    void showLargeFileError();
 };
 
 #endif  // ADDTASKWIDGET_H

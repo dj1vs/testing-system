@@ -13,6 +13,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QErrorMessage>
+#include <QNetworkAccessManager>
 
 #include "../../lib/DateConverter.h"
 #include "../../lib/StringOperator.h"
@@ -84,6 +85,7 @@ class MyClient : public QMainWindow {
     quint16 id = -1;
     int testid = 0;
     QTcpSocket* m_pTcpSocket;
+    QNetworkAccessManager *m_manager;
     quint16 m_nNextBlockSize;
 
  private:
@@ -99,7 +101,7 @@ class MyClient : public QMainWindow {
  private:
     void showError(QString err) {QErrorMessage *d = new QErrorMessage(this); d->showMessage(err); }
     void showMsg(QString msg) {statusBar()->showMessage(msg); }
-    void showMsgBox(QString msg) {QMessageBox msgBox; msgBox.setText(msg); msgBox.show(); }
+    void showMsgBox(QString msg) {QMessageBox msgBox; msgBox.setText(msg); msgBox.exec(); }
     void setAuthorizationWindow();
     void setAdminPlusWindow();
     void setAdminWindow();

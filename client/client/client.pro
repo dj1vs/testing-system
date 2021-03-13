@@ -36,6 +36,7 @@ SOURCES += \
 
 HEADERS += \
     ../../lib/DateConverter.h \
+    ../../lib/ImageViewDialog.h \
     ../../lib/StringOperator.h \
     myclient.h \
     widgets/Admin/AdminWidget.h \

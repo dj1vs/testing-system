@@ -1,4 +1,5 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFile>
 #include "MyServer.h"
 
 MyServer::MyServer(int nPort, QObject *parent) : QObject(parent), m_nNextBlockSize(0) {
@@ -56,7 +57,7 @@ void MyServer::slotReadClient() {
     for (;;) {
         //  получить размер следующего блока со всеми очевидными исключениями
         if (!m_nNextBlockSize) {
-            if (pClientSocket->bytesAvailable() < static_cast<qint64>(sizeof(quint16))) {
+            if (pClientSocket->bytesAvailable() < static_cast<qint64>(sizeof(quint64))) {
                     break;
                 }
                 in >> m_nNextBlockSize;
@@ -72,6 +73,8 @@ void MyServer::slotReadClient() {
             QString str;
             in >> time >> str;
             QString strMessage = str;
+
+            qDebug() << str;
 
             //  обработка полученного сообщения
             solveMsg(pClientSocket, strMessage);
@@ -415,6 +418,7 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
             sendToClient(pSocket, "{cmd='view test tasks';status='sended';}");
         }
     } else if (cmd == "add task") {
+        qDebug() << 1;
         quint16 id = StringOperator::cutArg(msg, "id").toInt();
         QString tasktext = StringOperator::cutArg(msg, "tasktext");
         QString answer = StringOperator::cutArg(msg, "answer");
@@ -423,6 +427,13 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
         QString answerOptions = StringOperator::cutArg(msg, "answerOptions");
 
         QSqlQuery query = QSqlQuery(db);
+
+        int taskId = 1;
+        if (!query.exec("SELECT COUNT(*) FROM tasks"))
+            printSQLError(query);
+        else if (query.next())
+            taskId += query.record().field(0).value().toInt();
+
         query.prepare("INSERT INTO tasks (task, answeroptions, answer, theme, subject, teacherid) "\
                         "VALUES (:task, :answeroptions, :answer, :theme, :subject, :teacherid);");
         query.bindValue(":task", tasktext);
@@ -434,7 +445,27 @@ void MyServer::solveMsg(QTcpSocket* pSocket, QString msg) {
         if (!query.exec())
             printSQLError(query);
         else
-            sendToClient(pSocket, "{cmd='add task';status='sended';}");
+            sendToClient(pSocket, "{cmd='add task';status='sended';taskid='" + QString::number(taskId) + "';}");
+    } else if (cmd == "add task image") {
+        QSqlQuery query = QSqlQuery(db);
+        int imageId = 1;
+        if (!query.exec("SELECT COUNT(*) FROM images"))
+            printSQLError(query);
+        else if (query.next())
+            imageId += query.record().field(0).value().toInt();
+
+        QString sender = StringOperator::cutArg(msg, "sender");
+        QString taskid = StringOperator::cutArg(msg, "taskid");
+        query.prepare("INSERT INTO images (userid) VALUES (:userid)");
+        query.bindValue(":userid", sender);
+        if (!query.exec())
+            printSQLError(query);
+        qDebug() << 6;
+        query.prepare("UPDATE tasks SET imageid = :imageid WHERE id = " + taskid);
+        query.bindValue(":imageid", imageId);
+        if (!query.exec())
+            printSQLError(query);
+        sendToClient(pSocket, "{cmd='add task image';imageid='" + QString::number(imageId) + "';}");
     } else if (cmd == "get all tasks") {
         QSqlQuery query = QSqlQuery(db);
         if (!query.exec("SELECT * FROM tasks")) {

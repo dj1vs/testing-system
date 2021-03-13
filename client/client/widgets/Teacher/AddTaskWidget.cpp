@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "AddTaskWidget.h"
+#include "../../lib/ImageViewDialog.h"
 
 AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     quesitionLabel = new QLabel("Вопрос:");
@@ -18,6 +19,7 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     newOption = new QPushButton("Добавить вариант ответа");
     deleteSelected = new QPushButton("Удалить выделенное");
     addImage = new QPushButton("Добавить изображение");
+    viewImage = new QPushButton("Просмотреть изображение");
 
     connect(newOption, &QPushButton::clicked, this,
             [this] {showAddAnswerOptions(); });
@@ -28,12 +30,18 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     connect(addImage, &QPushButton::clicked, this, [this] {
         imageFileName = QFileDialog::getOpenFileName(this,
             tr("Открыть изображение"), "/home", tr("Image Files (*.png *.jpg *.bmp)"));
-        int fileSize = QFile(imageFileName).size();
-        if (fileSize > 104857600) {
-            QMessageBox msgBox; msgBox.setText("File is too large! (> 100 MB).\nTry to compress it or use other file."); msgBox.show();
-        } else {
+        QFile file(imageFileName);
+        if (!file.open(QIODevice::ReadOnly)){
+            QMessageBox msg; msg.setText("Can't open file :("); msg.exec();
             imageFileName = ":NONE:";
         }
+    });
+    connect(viewImage, &QPushButton::clicked, this, [this] {
+        if (imageFileName == ":NONE:") {
+            QMessageBox msg; msg.setText("Image not opened"); msg.exec();
+            return;
+        }
+        ImageViewDialog::ViewImage(imageFileName);
     });
 
     quesition = new QTextEdit();
@@ -53,6 +61,10 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     answerOptionsLayout->addWidget(answerOptionsView);
     answerOptionsLayout->addLayout(answerOptionsButtonsLayout);
 
+    QHBoxLayout *imageLayout = new QHBoxLayout();
+    imageLayout->addWidget(addImage);
+    imageLayout->addWidget(viewImage);
+
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(quesitionLabel);
     layout->addWidget(quesition);
@@ -60,7 +72,7 @@ AddTaskWidget::AddTaskWidget(QWidget *parent) : QWidget(parent) {
     layout->addLayout(answerOptionsLayout);
     layout->addWidget(answerLabel);
     layout->addWidget(answer);
-    layout->addWidget(addImage);
+    layout->addLayout(imageLayout);
     layout->addWidget(subjectLabel);
     layout->addWidget(subject);
     layout->addWidget(themeLabel);

@@ -1,4 +1,8 @@
 // Copyright 2021 Dmitriy Trifonov
+#include <QFileInfo>
+#include <QBuffer>
+#include <QTextCodec>
+#include <QNetworkReply>
 #include "myclient.h"
 
 MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
@@ -7,13 +11,15 @@ MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
     m_pTcpSocket = new QTcpSocket(this);
     m_pTcpSocket->connectToHost(strHost, nPort);
 
+
     connect(m_pTcpSocket, &QTcpSocket::connected,
             this, [this] {showMsg("Received the connected() signal");});
     connect(m_pTcpSocket, SIGNAL(readyRead()), SLOT(slotReadyRead()));
     connect(m_pTcpSocket, SIGNAL(error(QAbstractSocket::SocketError)),
             this,         SLOT(slotError(QAbstractSocket::SocketError)));
 
-
+    m_manager = new QNetworkAccessManager(this);
+    connect(m_manager, &QNetworkAccessManager::finished, this, [] {qDebug() << "Finished";});
 
     setMinimumSize(WINW, WINH);
     setWindowTitle("Тестирующая система");
@@ -250,7 +256,34 @@ void MyClient::solveMsg(QString msg) {
     } else if (cmd == "add task") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended")
+        {
+            QString image = addTaskW->getImageFileName();
+            if (image != ":NONE:") {
+//                QFile *m_file = new QFile(image);
+//                m_file->open(QIODevice::ReadOnly);
+//                QFileInfo fileInfo(* m_file);
+//                QUrl url("ftp://127.0.0.1/../../home/dmitriy/FTPServer/img" + fileInfo.fileName());
+//                url.setUserName("dmitriy");
+//                url.setPassword("123");
+//                url.setPort(21);
+//                QNetworkReply *reply = m_manager->put(QNetworkRequest(url), m_file);
+//                connect(reply, &QNetworkReply::uploadProgress, this, [] (qint64 bytesSent, qint64 bytesTotal ){qDebug() << bytesSent << bytesTotal;});
+                QString req = "{cmd='add task image';taskid='" + StringOperator::cutArg(msg, "taskid") + "';sender='" + QString::number(id) + "';}";
+                slotSendToServer(req);
+            }
             showMsg("Задание добавлено успешно");
+        }
+    } else if (cmd == "add task image") {
+        QString name = StringOperator::cutArg(msg, "imageid");
+        QFile *m_file = new QFile(addTaskW->getImageFileName());
+        m_file->open(QIODevice::ReadOnly);
+        QFileInfo fileInfo(* m_file);
+        QUrl url("ftp://127.0.0.1/../../home/dmitriy/FTPServer/img/" + name + "." + fileInfo.completeSuffix());
+        url.setUserName("dmitriy");
+        url.setPassword("123");
+        url.setPort(21);
+        QNetworkReply *reply = m_manager->put(QNetworkRequest(url), m_file);
+        connect(reply, &QNetworkReply::uploadProgress, this, [] (qint64 bytesSent, qint64 bytesTotal ){qDebug() << bytesSent << bytesTotal;});
     } else if (cmd == "add test") {
         showMsg("добавлено!");
     } else if (cmd == "get all tasks") {
