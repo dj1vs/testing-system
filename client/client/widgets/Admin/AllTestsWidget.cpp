@@ -36,7 +36,6 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
     connect(sort, &QPushButton::clicked, this, &AllTestsWidget::showAllPlannedTestsSort);
     goBack->setAttribute(Qt::WA_DeleteOnClose);
 
-    connect(sort, SIGNAL(clicked()), this, SLOT(showAllPlannedTestsSort()));
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(table);
     layout->addWidget(sort);

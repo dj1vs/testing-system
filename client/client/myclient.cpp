@@ -3,6 +3,7 @@
 #include <QBuffer>
 #include <QTextCodec>
 #include <QNetworkReply>
+#include <QEventLoop>
 #include "myclient.h"
 
 MyClient::MyClient(const QString& strHost, int nPort, QWidget *parent)
@@ -234,6 +235,21 @@ void MyClient::solveMsg(QString msg) {
     } else if (cmd == "view test tasks") {
         QString status = StringOperator::cutArg(msg, "status");
         if (status == "sended") {
+            for (int i = 0; i < allPlannedTestsTaskList.size(); ++i) {
+                QEventLoop loop;
+                QNetworkAccessManager mgr;
+                connect(&mgr, &QNetworkAccessManager::finished, &loop, &QEventLoop::quit);
+                QUrl url("ftp://127.0.0.1/../../home/dmitriy/FTPServer/img/" + allPlannedTestsTaskList[i][5] + ".jpg");
+                url.setUserName("dmitriy");
+                url.setPassword("123");
+                url.setPort(21);
+                QNetworkReply *reply = mgr.get(QNetworkRequest(url));
+                loop.exec();
+                QFile img(allPlannedTestsTaskList[i][5] + ".jpg");
+                img.open(QIODevice::WriteOnly);
+                img.write(reply->readAll());
+                qDebug() << allPlannedTestsTaskList[i][5];
+            }
            if (state == COMPLETETEST) {
                delete studentTestsW;
                completeTestW = new CompleteTestWidget(allPlannedTestsTaskList, this);
@@ -251,7 +267,7 @@ void MyClient::solveMsg(QString msg) {
             allPlannedTestsTaskList.clear();
         } else {
             allPlannedTestsTaskList.push_back({StringOperator::cutArg(msg, "testname"), StringOperator::cutArg(msg, "taskname"), StringOperator::cutArg(msg, "answeroptions"),
-                                              StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme")});
+                                              StringOperator::cutArg(msg, "answertext"), StringOperator::cutArg(msg, "theme"), StringOperator::cutArg(msg, "imageid")});
         }
     } else if (cmd == "add task") {
         QString status = StringOperator::cutArg(msg, "status");

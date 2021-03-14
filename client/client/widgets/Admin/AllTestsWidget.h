@@ -56,7 +56,7 @@ class AllTestsWidget : public QWidget {
     QStringListModel *taskAnswerOptionsModel;
     QListView *taskAnswerOptionsView;
 
- private:
+ private slots:
     void showAllPlannedTestsSort();
     void editAllPlannedTestsTable();
     void showNextTask();
