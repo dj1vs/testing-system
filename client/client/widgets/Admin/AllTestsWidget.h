@@ -13,6 +13,7 @@
 #include <QTextBrowser>
 #include <QStringListModel>
 #include <QListView>
+#include"../../../../lib/ImageViewDialog.h"
 
 class AllTestsWidget : public QWidget {
     Q_OBJECT
@@ -51,6 +52,7 @@ class AllTestsWidget : public QWidget {
     quint16 currTask = 0;
     QPushButton *taskNext;
     QPushButton *taskPrev;
+    QPushButton *taskImage;
     QTextBrowser *taskText;
     QTextBrowser *taskAnswer;
     QStringListModel *taskAnswerOptionsModel;

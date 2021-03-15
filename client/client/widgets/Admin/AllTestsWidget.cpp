@@ -42,6 +42,7 @@ AllTestsWidget::AllTestsWidget(QWidget *parent, QList<QList <QString>> l) : QWid
     layout->addWidget(goBack);
 
     setLayout(layout);
+
 }
 void AllTestsWidget::showAllPlannedTestsSort() {
     sortNameLabel = new QLabel("Имя учителя:", this);
@@ -142,9 +143,13 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
     currTask = 0;
     taskNext = new QPushButton("Далее");
     taskPrev = new QPushButton("Назад");
+    taskImage = new QPushButton("Просмотреть изображение");
 
     connect(taskNext, SIGNAL(clicked()), this, SLOT(showNextTask()));
     connect(taskPrev, SIGNAL(clicked()), this, SLOT(showPrevTask()));
+    connect (taskImage, &QPushButton::clicked, this, [this] {
+        ImageViewDialog::ViewImage(taskList[currTask][5] + ".jpg");
+    });
     taskText = new QTextBrowser();
     taskAnswer = new QTextBrowser();
     taskText->setText(taskList[0][1]);
@@ -161,6 +166,7 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
 
     QVBoxLayout *layout = new QVBoxLayout();
     layout->addWidget(taskText);
+    layout->addWidget(taskImage);
     layout->addWidget(taskAnswerOptionsView);
     layout->addWidget(taskAnswer);
     layout->addLayout(buttons);
@@ -168,6 +174,13 @@ void AllTestsWidget::showTestTasks(QList <QList<QString>> l) {
     QDialog *d = new QDialog(this);
     d->setLayout(layout);
     d->show();
+
+    connect(d, &QDialog::finished, this, [this] {
+        for (int i = 0; i < taskList.size(); ++i) {
+            QFile file(taskList[i][5] + ".jpg");
+            file.remove();
+        }
+    });
 }
 void AllTestsWidget::showNextTask() {
     if (currTask+1 >= taskList.size())

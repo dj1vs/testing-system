@@ -6,13 +6,14 @@
 #include <QTableView>
 #include "CompleteTestWidget.h"
 
-CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QWidget(parent), testList(list) {
+CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *parent) : QDialog(parent), testList(list) {
     testname = testList[0][0];
     for (int i = 0; i < testList.size(); ++i)
         answers.push_back("");
     currentIndex = 0;
     next = new QPushButton("Вперёд");
     previous = new QPushButton("Назад");
+    image = new QPushButton("Посмотреть изображение");
     taskText = new QTextBrowser();
     buttonsBox = new QGroupBox();
 
@@ -43,9 +44,27 @@ CompleteTestWidget::CompleteTestWidget(QList <QList <QString>> list, QWidget *pa
             setIndexTask();
         }
     });
+    connect (image, &QPushButton::clicked, this, [this] {
+        ImageViewDialog::ViewImage(testList[currentIndex][5] + ".jpg");
+    });
+
+    connect(this, &QDialog::finished, this, [this] {
+        for (int i = 0; i < testList.size(); ++i) {
+            QFile file(testList[i][5] + ".jpg");
+            file.remove();
+        }
+    });
+
+    connect(this, &CompleteTestWidget::finished, this, [this] {
+        for (int i = 0; i < testList.size(); ++i) {
+            QFile file(testList[i][5] + ".jpg");
+            file.remove();
+        }
+    });
 
     QHBoxLayout *buttonsLayout = new QHBoxLayout();
     buttonsLayout->addWidget(previous);
+    buttonsLayout->addWidget(image);
     buttonsLayout->addWidget(next);
 
     generalLayout = new QVBoxLayout();

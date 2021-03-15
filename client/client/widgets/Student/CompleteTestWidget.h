@@ -3,13 +3,15 @@
 #define COMPLETETESTWIDGET_H
 
 #include <QWidget>
+#include <QDialog>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QList>
 #include <QTextBrowser>
 #include <QGroupBox>
 #include <QVBoxLayout>
-class CompleteTestWidget : public QWidget {
+#include"../../../../lib/ImageViewDialog.h"
+class CompleteTestWidget : public QDialog {
     Q_OBJECT
 
  public:
@@ -25,6 +27,7 @@ class CompleteTestWidget : public QWidget {
     QTextBrowser *taskText;
     QPushButton *next;
     QPushButton *previous;
+    QPushButton *image;
     QPushButton *finish;
     QList <QList <QString>> testList;
     QVBoxLayout *generalLayout;
